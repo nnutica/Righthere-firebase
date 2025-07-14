@@ -1,0 +1,31 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.log
+
+# Firebase secrets
+.env
+Firebasemauiapp/Resources/Raw/*.json
+
+# Visual Studio
+.vs/
+*.userprefs
+
+# Rider
+.idea/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# VS Code
+.vscode/
+
+# Temporary files
+*.tmp
+*.temp

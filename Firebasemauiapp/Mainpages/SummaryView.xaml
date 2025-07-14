@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Firebasemauiapp.Mainpages.SummaryView"
+             Title="SummaryView">
+    <ScrollView>
+        <VerticalStackLayout>
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">
+                <Grid Grid.Row="0">
+                    <!--  Header Section  -->
+                    <Label
+                        Padding="15"
+                        Background="#2a614e"
+                        FontAttributes="Bold"
+                        FontSize="24"
+                        HeightRequest="70"
+                        HorizontalOptions="Center"
+                        HorizontalTextAlignment="Center"
+                        Text="Summary"
+                        TextColor="White"
+                        VerticalOptions="Center"
+                        WidthRequest="420"/>
+                </Grid>
+
+                <!--  Mood Description  -->
+                <Grid Grid.Row="1">
+                    <Label
+                        x:Name="Emotiontext"
+                        Margin="0,10,0,20"
+                        FontSize="14"
+                        HeightRequest="100"
+                        HorizontalTextAlignment="Center"
+                        TextColor="Black"
+                        WidthRequest="360"/>
+                </Grid>
+
+                <!--  Image Section  -->
+                <Grid Grid.Row="2">
+                    <Image
+                        x:Name="EmotionImage"
+                        Aspect="AspectFill"
+                        HeightRequest="150"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        WidthRequest="150"/>
+                </Grid>
+
+                <!--  Placeholder for Graphs  -->
+                <Grid Grid.Row="3">
+                    <HorizontalStackLayout HorizontalOptions="Center"
+                                           Spacing="20">
+
+                        <!-- Keyword -->
+                        <Frame
+                            Padding="15"
+                            BackgroundColor="White"
+                            CornerRadius="15"
+                            HasShadow="True"
+                            HeightRequest="120"
+                            WidthRequest="150">
+                            <VerticalStackLayout>
+                                <Label
+                                    FontSize="12"
+                                    HorizontalTextAlignment="Center"
+                                    Text="Keyword"
+                                    TextColor="Black"/>
+                                <Label
+                                    x:Name="Keywordtext"
+                                    Margin="0,10,0,0"
+                                    FontAttributes="Bold"
+                                    FontSize="16"
+                                    HorizontalTextAlignment="Center"
+                                    TextColor="Black"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                        <!-- Mood -->
+                        <Frame
+                            Padding="15"
+                            BackgroundColor="White"
+                            CornerRadius="15"
+                            HasShadow="True"
+                            HeightRequest="120"
+                            WidthRequest="150">
+                            <VerticalStackLayout>
+                                <Label
+                                    FontSize="12"
+                                    HorizontalTextAlignment="Center"
+                                    Text="Mood"
+                                    TextColor="Black"/>
+                                <Label
+                                    x:Name="Moodtex"
+                                    Margin="0,10,0,0"
+                                    FontAttributes="Bold"
+                                    FontSize="16"
+                                    HorizontalTextAlignment="Center"
+                                    TextColor="Gray"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <!--  Advice Section  -->
+                <Grid Grid.Row="4"
+                      ColumnDefinitions="Auto,*">
+                    <Label
+                        Grid.Column="0"
+                        Margin="0,20,0,5"
+                        Padding="10"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        Text="Advice :"
+                        TextColor="Black"/>
+
+                    <Label
+                        x:Name="Advicetext"
+                        Grid.Column="1"
+                        Margin="0,20,0,20"
+                        Padding="10"
+                        FontSize="14"
+                        HorizontalTextAlignment="Center"
+                        TextColor="Black"/>
+                </Grid>
+
+                <!--  score Section  -->
+                <Grid Grid.Row="5">
+                    <HorizontalStackLayout HorizontalOptions="Center"
+                                           Spacing="20">
+                        <Frame
+                            Padding="15"
+                            BackgroundColor="White"
+                            CornerRadius="15"
+                            HasShadow="True"
+                            HeightRequest="120"
+                            WidthRequest="150">
+                            <VerticalStackLayout>
+                                <Label
+                                    FontSize="12"
+                                    HorizontalTextAlignment="Center"
+                                    Text="Sentiment Score"
+                                    TextColor="Black"/>
+                                <Label
+                                    x:Name="scoretext"
+                                    Margin="0,10,0,0"
+                                    FontAttributes="Bold"
+                                    FontSize="16"
+                                    HorizontalTextAlignment="Center"
+                                    TextColor="Gray"/>
+                            </VerticalStackLayout>
+                        </Frame>
+
+
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <!--  Next Button  -->
+                <Grid Grid.Row="6">
+                    <Button
+                        x:Name="NextButton"
+                        Margin="0,80,0,100"
+                        Padding="10"
+                        BackgroundColor="Transparent"
+                        Clicked="GoMainPage"
+                        FontSize="16"
+                        HorizontalOptions="Center"
+                        Text="Next ➤"
+                        TextColor="Black"/>
+                </Grid>
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

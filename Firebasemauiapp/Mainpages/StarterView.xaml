@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Firebasemauiapp.Mainpages.StarterView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="StarterView">
+    <VerticalStackLayout Padding="30"
+            Spacing="20">
+        <Label
+            FontAttributes="Bold"
+            FontSize="32"
+            HorizontalOptions="Center"
+            Text="Welcome!"/>
+
+        <Label
+            FontSize="24"
+            HorizontalOptions="Center"
+            Text="{Binding UserName}"
+            TextColor="Blue"/>
+
+        <Label
+            FontSize="16"
+            HorizontalOptions="Center"
+            Text="{Binding UserEmail}"
+            TextColor="Gray"/>
+
+        <Button
+            Margin="0,30,0,0"
+            BackgroundColor="Green"
+            Command="{Binding GoToDiaryCommand}"
+            HorizontalOptions="Center"
+            Text="Write Diary"
+            TextColor="White"
+            WidthRequest="150"/>
+
+        <Button
+            Margin="0,10,0,0"
+            BackgroundColor="Red"
+            Command="{Binding LogOutCommand}"
+            HorizontalOptions="Center"
+            Text="Log Out"
+            TextColor="White"
+            WidthRequest="150"/>
+    </VerticalStackLayout>
+</ContentPage>

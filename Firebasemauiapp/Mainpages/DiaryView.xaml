@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Firebasemauiapp.Mainpages.DiaryView"
+             Title="DiaryView">
+    <VerticalStackLayout Padding="20">
+
+        <!--  Reason Selection  -->
+        <Frame
+            Margin="0,0,0,10"
+            Padding="10"
+            BackgroundColor="White"
+            CornerRadius="20"
+            HasShadow="True"
+            WidthRequest="350">
+            <ScrollView Orientation="Horizontal">
+                <HorizontalStackLayout Spacing="10">
+                    <Label
+                        FontAttributes="Bold"
+                        Text="Reason :"
+                        VerticalOptions="Center"/>
+
+                    <Button
+                        Padding="5,2"
+                        CornerRadius="10"
+                        Text="friend"
+                        WidthRequest="60"
+                        Clicked="OnReasonButtonClicked"
+                        x:Name="FriendButton"/>
+
+                    <Button
+                        Padding="5,2"
+                        CornerRadius="10"
+                        Text="work"
+                        WidthRequest="60"
+                        Clicked="OnReasonButtonClicked"
+                        x:Name="WorkButton"/>
+
+                    <Button
+                        Padding="5,2"
+                        CornerRadius="10"
+                        Text="family"
+                        WidthRequest="60"
+                        Clicked="OnReasonButtonClicked"
+                        x:Name="FamilyButton"/>
+
+                    <Button
+                        Padding="5,2"
+                        CornerRadius="10"
+                        Text="school"
+                        WidthRequest="60"
+                        Clicked="OnReasonButtonClicked"
+                        x:Name="SchoolButton"/>
+                </HorizontalStackLayout>
+            </ScrollView>
+        </Frame>
+
+        <!--  Entry Field  -->
+        <Frame
+            Margin="0,0,0,10"
+            Padding="10"
+            BackgroundColor="White"
+            CornerRadius="20"
+            HasShadow="True"
+            WidthRequest="350">
+            <Editor
+                x:Name="DiaryEntry"
+                BackgroundColor="White"
+                HeightRequest="300"
+                Placeholder="share something good..."
+                TextColor="Black"
+                VerticalOptions="Start"
+                VerticalTextAlignment="Start"
+                WidthRequest="330"/>
+        </Frame>
+
+        <!--  ✅ Loading Indicator  -->
+        <ActivityIndicator
+            x:Name="LoadingIndicator"
+            Margin="10"
+            IsRunning="False"
+            IsVisible="False"
+            Color="Blue"/>
+
+        <!--  ✅ ปุ่ม Next  -->
+        <Button
+            x:Name="AnalyzeButton"
+            Margin="0,100,0,120"
+            BackgroundColor="Transparent"
+            Clicked="OnAnalyzeClicked"
+            FontSize="16"
+            HorizontalOptions="Center"
+            Text="Next ➤"
+            TextColor="Black"/>
+    </VerticalStackLayout>
+</ContentPage>
