@@ -17,78 +17,64 @@ public class API
     public async Task SendData(string Diary)
     {
         using HttpClient client = new HttpClient();
-        
-        // ลิสต์ URL ที่จะลองเชื่อมต่อ
-        var urls = new[]
-        {
-            "http://192.168.1.107:8000/getadvice", // IP ของเครื่องจริง
-            "http://10.0.2.2:8000/getadvice",      // Android Emulator
-            "http://localhost:8000/getadvice",      // Local development
-            "http://127.0.0.1:8000/getadvice"      // Localhost IP
-        };
+
+        string url = "http://10.0.2.2:8000/getadvice"; // Android Emulator URL
 
         var data = new { text = Diary }; // API ต้องการ key "text"
         string jsonData = JsonSerializer.Serialize(data);
         HttpContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
-        Exception lastException = null;
-
-        // ลองเชื่อมต่อกับ URL ทีละตัว
-        foreach (string url in urls)
+        try
         {
-            try
+            Console.WriteLine($"🚀 Connecting to: {url}");
+
+            HttpResponseMessage response = await client.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            if (responseBody == null)
             {
-                Console.WriteLine($"🚀 Trying URL: {url}");
-                
-                HttpResponseMessage response = await client.PostAsync(url, content);
-                response.EnsureSuccessStatusCode();
-                string responseBody = await response.Content.ReadAsStringAsync();
-
-                if (responseBody == null)
-                {
-                    throw new Exception("Failed to parse API response");
-                }
-
-                if (!responseBody.Contains("emotion") || !responseBody.Contains("advice"))
-                {
-                    throw new Exception("API response missing required fields (emotion, advice)");
-                }
-
-                // แปลง JSON เป็น Dictionary
-                var responseData = JsonSerializer.Deserialize<Dictionary<string, string>>(responseBody);
-
-                // ดึงค่าต่างๆ
-                emotion = responseData["emotion"] ?? "";
-                string adviceRaw = responseData["advice"] ?? "";
-
-                // ใช้ Regex แยกค่าต่าง ๆ ออกจาก adviceRaw
-                suggestion = ExtractValue(adviceRaw, "Suggestion");
-                emotionalReflection = ExtractValue(adviceRaw, "Emotional Reflection");
-                mood = ExtractValue(adviceRaw, "Mood");
-                keywords = ExtractValue(adviceRaw, "Keywords");
-                score = ExtractValue(adviceRaw, "Score");
-
-                // แสดงผลลัพธ์
-                Console.WriteLine($"✅ Success with URL: {url}");
-                Console.WriteLine($"Emotion: {emotion}");
-                Console.WriteLine($"Suggestion: {suggestion}");
-                Console.WriteLine($"Emotional Reflection: {emotionalReflection}");
-                Console.WriteLine($"Mood: {mood}");
-                Console.WriteLine($"Keywords: {keywords}");
-                Console.WriteLine($"Score: {score}");
-                
-                return; // สำเร็จแล้ว ออกจาก method
+                throw new Exception("Failed to parse API response");
             }
-            catch (Exception ex)
+
+            if (!responseBody.Contains("emotion") || !responseBody.Contains("advice"))
             {
-                Console.WriteLine($"❌ Failed with {url}: {ex.Message}");
-                lastException = ex;
-                continue; // ลอง URL ถัดไป
+                throw new Exception("API response missing required fields (emotion, advice)");
             }
+
+            // แปลง JSON เป็น Dictionary
+            var responseData = JsonSerializer.Deserialize<Dictionary<string, string>>(responseBody);
+
+            if (responseData == null)
+            {
+                throw new Exception("Failed to deserialize API response");
+            }
+
+            // ดึงค่าต่างๆ
+            emotion = responseData["emotion"] ?? "";
+            string adviceRaw = responseData["advice"] ?? "";
+
+            // ใช้ Regex แยกค่าต่าง ๆ ออกจาก adviceRaw
+            suggestion = ExtractValue(adviceRaw, "Suggestion");
+            emotionalReflection = ExtractValue(adviceRaw, "Emotional Reflection");
+            mood = ExtractValue(adviceRaw, "Mood");
+            keywords = ExtractValue(adviceRaw, "Keywords");
+            score = ExtractValue(adviceRaw, "Score");
+
+            // แสดงผลลัพธ์
+            Console.WriteLine($"✅ Success with URL: {url}");
+            Console.WriteLine($"Emotion: {emotion}");
+            Console.WriteLine($"Suggestion: {suggestion}");
+            Console.WriteLine($"Emotional Reflection: {emotionalReflection}");
+            Console.WriteLine($"Mood: {mood}");
+            Console.WriteLine($"Keywords: {keywords}");
+            Console.WriteLine($"Score: {score}");
         }
-
-        // ถ้าทุก URL ล้มเหลว
-        throw new Exception($"Connection failure - all URLs failed. Last error: {lastException?.Message}");
+        catch (Exception ex)
+        {
+            Console.WriteLine($"❌ Connection failed: {ex.Message}");
+            throw new Exception($"Connection failure: {ex.Message}");
+        }
     }
 
     private string ExtractValue(string text, string label)
