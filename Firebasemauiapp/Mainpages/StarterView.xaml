@@ -3,26 +3,32 @@
     x:Class="Firebasemauiapp.Mainpages.StarterView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="StarterView">
-    <VerticalStackLayout Padding="30"
-            Spacing="20">
+    Title="StarterView"
+    BackgroundImageSource="main_bg.png"
+    Shell.NavBarIsVisible="False">
+    <VerticalStackLayout Padding="30" Spacing="20">
         <Label
             FontAttributes="Bold"
             FontSize="32"
             HorizontalOptions="Center"
-            Text="Welcome!"/>
+            Text="Welcome!" />
 
         <Label
             FontSize="24"
             HorizontalOptions="Center"
             Text="{Binding UserName}"
-            TextColor="Blue"/>
-
+            TextColor="Blue" />
+        <Image
+            x:Name="MoodTreeImage"
+            HeightRequest="200"
+            HorizontalOptions="Center"
+            Source="empty.png"
+            WidthRequest="200" />
         <Label
             FontSize="16"
             HorizontalOptions="Center"
             Text="{Binding UserEmail}"
-            TextColor="Gray"/>
+            TextColor="Gray" />
 
         <Button
             Margin="0,30,0,0"
@@ -31,7 +37,7 @@
             HorizontalOptions="Center"
             Text="Write Diary"
             TextColor="White"
-            WidthRequest="150"/>
+            WidthRequest="150" />
 
         <Button
             Margin="0,10,0,0"
@@ -40,6 +46,6 @@
             HorizontalOptions="Center"
             Text="Log Out"
             TextColor="White"
-            WidthRequest="150"/>
+            WidthRequest="150" />
     </VerticalStackLayout>
 </ContentPage>

@@ -1,16 +1,97 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Firebasemauiapp.Pages.SignUpView"
-             Title="SignUpView">
-    <VerticalStackLayout>
-        <Entry Text="{Binding Email}"/>
-        <Entry Text="{Binding Username}"/>
-        <Entry IsPassword="True"
-                Text="{Binding Password}"/>
-        <Button Command="{Binding SignUpCommand}"
-                Text="Sign Up"/>
-        <Button Command="{Binding NavigateSignInCommand}"
-                Text="Already have an account? Sign in"/>
+<ContentPage
+    x:Class="Firebasemauiapp.Pages.SignUpView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="SignUpView"
+    Shell.NavBarIsVisible="False">
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Offset="0.1" Color="#D7E7FF" />
+            <GradientStop Offset="1.0" Color="#8BB7BA" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+    <VerticalStackLayout
+        Padding="20"
+        Spacing="15"
+        VerticalOptions="Start">
+        <Label
+            FontAttributes="Bold"
+            FontSize="24"
+            HorizontalOptions="Center"
+            Text="Registration"
+            TextColor="#2A614E" />
+
+        <Label
+            FontSize="14"
+            HorizontalOptions="Center"
+            HorizontalTextAlignment="Center"
+            Text="Create an account to unlock a safe space for your feelings and memories"
+            TextColor="Black" />
+        <Grid RowDefinitions="*,*,*,*,*,*,*">
+            <Border
+                Grid.Row="0"
+                Margin="0,20,0,0"
+                Padding="0"
+                BackgroundColor="White"
+                HeightRequest="50"
+                Stroke="#2A614E"
+                StrokeShape="RoundRectangle 10">
+                <Entry Placeholder="Email" Text="{Binding Email}" />
+            </Border>
+            <Border
+                Grid.Row="1"
+                Margin="0,20,0,0"
+                Padding="0"
+                BackgroundColor="White"
+                HeightRequest="50"
+                Stroke="#2A614E"
+                StrokeShape="RoundRectangle 10">
+                <Entry Placeholder="Username" Text="{Binding Username}" />
+            </Border>
+            <Border
+                Grid.Row="2"
+                Margin="0,20,0,0"
+                Padding="0"
+                BackgroundColor="White"
+                HeightRequest="50"
+                Stroke="#2A614E"
+                StrokeShape="RoundRectangle 10">
+                <Entry
+                    IsPassword="True"
+                    Placeholder="Password"
+                    Text="{Binding Password}" />
+            </Border>
+            <Button
+                Grid.Row="3"
+                Margin="0,20,0,0"
+                BackgroundColor="#2A614E"
+                Command="{Binding SignUpCommand}"
+                FontSize="16"
+                HeightRequest="50"
+                Text="Sign Up"
+                TextColor="White" />
+
+            <HorizontalStackLayout
+                Grid.Row="4"
+                Margin="0,20,0,0"
+                HorizontalOptions="Center">
+                <Label
+                    FontSize="14"
+                    HorizontalOptions="Center"
+                    Text="Already have an account? "
+                    TextColor="Gray" />
+                <Label
+                    FontSize="14"
+                    HorizontalOptions="Center"
+                    Text="SignIn"
+                    TextColor="#2A614E"
+                    TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateSignInCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
+        </Grid>
     </VerticalStackLayout>
 </ContentPage>

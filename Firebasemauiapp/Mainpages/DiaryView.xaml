@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Firebasemauiapp.Mainpages.DiaryView"
-             Title="DiaryView">
+<ContentPage
+    x:Class="Firebasemauiapp.Mainpages.DiaryView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="DiaryView">
     <VerticalStackLayout Padding="20">
 
         <!--  Reason Selection  -->
@@ -18,39 +19,39 @@
                     <Label
                         FontAttributes="Bold"
                         Text="Reason :"
-                        VerticalOptions="Center"/>
+                        VerticalOptions="Center" />
 
                     <Button
+                        x:Name="FriendButton"
                         Padding="5,2"
+                        Clicked="OnReasonButtonClicked"
                         CornerRadius="10"
                         Text="friend"
-                        WidthRequest="60"
-                        Clicked="OnReasonButtonClicked"
-                        x:Name="FriendButton"/>
+                        WidthRequest="60" />
 
                     <Button
+                        x:Name="WorkButton"
                         Padding="5,2"
+                        Clicked="OnReasonButtonClicked"
                         CornerRadius="10"
                         Text="work"
-                        WidthRequest="60"
-                        Clicked="OnReasonButtonClicked"
-                        x:Name="WorkButton"/>
+                        WidthRequest="60" />
 
                     <Button
+                        x:Name="FamilyButton"
                         Padding="5,2"
+                        Clicked="OnReasonButtonClicked"
                         CornerRadius="10"
                         Text="family"
-                        WidthRequest="60"
-                        Clicked="OnReasonButtonClicked"
-                        x:Name="FamilyButton"/>
+                        WidthRequest="60" />
 
                     <Button
+                        x:Name="SchoolButton"
                         Padding="5,2"
+                        Clicked="OnReasonButtonClicked"
                         CornerRadius="10"
                         Text="school"
-                        WidthRequest="60"
-                        Clicked="OnReasonButtonClicked"
-                        x:Name="SchoolButton"/>
+                        WidthRequest="60" />
                 </HorizontalStackLayout>
             </ScrollView>
         </Frame>
@@ -71,7 +72,7 @@
                 TextColor="Black"
                 VerticalOptions="Start"
                 VerticalTextAlignment="Start"
-                WidthRequest="330"/>
+                WidthRequest="330" />
         </Frame>
 
         <!--  ✅ Loading Indicator  -->
@@ -80,7 +81,7 @@
             Margin="10"
             IsRunning="False"
             IsVisible="False"
-            Color="Blue"/>
+            Color="Blue" />
 
         <!--  ✅ ปุ่ม Next  -->
         <Button
@@ -91,6 +92,6 @@
             FontSize="16"
             HorizontalOptions="Center"
             Text="Next ➤"
-            TextColor="Black"/>
+            TextColor="Black" />
     </VerticalStackLayout>
 </ContentPage>

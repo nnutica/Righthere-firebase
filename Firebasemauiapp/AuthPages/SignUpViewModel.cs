@@ -34,7 +34,7 @@ public partial class SignUpViewModel : ObservableObject
     [RelayCommand]
     private async Task NavigateSignIn()
     {
-        await Shell.Current.GoToAsync("//SignIn");
+        await Shell.Current.GoToAsync("//signin");
     }
 
 }
