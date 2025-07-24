@@ -19,5 +19,9 @@
         Title="Starter"
         ContentTemplate="{DataTemplate main:StarterView}"
         Route="starter"/>
+    <ShellContent
+        Title="Summary"
+        ContentTemplate="{DataTemplate main:SummaryView}"
+        Route="summary"/>
 
 </Shell>

@@ -35,7 +35,8 @@ public partial class StarterViewModel : ObservableObject
     [RelayCommand]
     private async Task GoToDiary()
     {
-        await Shell.Current.Navigation.PushAsync(new DiaryView(_diaryDatabase, _authClient));
+        var diaryViewModel = new DiaryViewModel(_diaryDatabase, _authClient);
+        await Shell.Current.Navigation.PushAsync(new DiaryView(diaryViewModel));
     }
 
     [RelayCommand]

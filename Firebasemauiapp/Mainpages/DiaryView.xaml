@@ -19,39 +19,51 @@
                     <Label
                         FontAttributes="Bold"
                         Text="Reason :"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"/>
 
                     <Button
                         x:Name="FriendButton"
                         Padding="5,2"
-                        Clicked="OnReasonButtonClicked"
+                        BackgroundColor="{Binding FriendButtonBackground}"
+                        Command="{Binding SelectReasonCommand}"
+                        CommandParameter="friend"
                         CornerRadius="10"
                         Text="friend"
-                        WidthRequest="60" />
+                        TextColor="{Binding FriendButtonText}"
+                        WidthRequest="60"/>
 
                     <Button
                         x:Name="WorkButton"
                         Padding="5,2"
-                        Clicked="OnReasonButtonClicked"
+                        BackgroundColor="{Binding WorkButtonBackground}"
+                        Command="{Binding SelectReasonCommand}"
+                        CommandParameter="work"
                         CornerRadius="10"
                         Text="work"
-                        WidthRequest="60" />
+                        TextColor="{Binding WorkButtonText}"
+                        WidthRequest="60"/>
 
                     <Button
                         x:Name="FamilyButton"
                         Padding="5,2"
-                        Clicked="OnReasonButtonClicked"
+                        BackgroundColor="{Binding FamilyButtonBackground}"
+                        Command="{Binding SelectReasonCommand}"
+                        CommandParameter="family"
                         CornerRadius="10"
                         Text="family"
-                        WidthRequest="60" />
+                        TextColor="{Binding FamilyButtonText}"
+                        WidthRequest="60"/>
 
                     <Button
                         x:Name="SchoolButton"
                         Padding="5,2"
-                        Clicked="OnReasonButtonClicked"
+                        BackgroundColor="{Binding SchoolButtonBackground}"
+                        Command="{Binding SelectReasonCommand}"
+                        CommandParameter="school"
                         CornerRadius="10"
                         Text="school"
-                        WidthRequest="60" />
+                        TextColor="{Binding SchoolButtonText}"
+                        WidthRequest="60"/>
                 </HorizontalStackLayout>
             </ScrollView>
         </Frame>
@@ -69,29 +81,31 @@
                 BackgroundColor="White"
                 HeightRequest="300"
                 Placeholder="share something good..."
+                Text="{Binding DiaryContent}"
                 TextColor="Black"
                 VerticalOptions="Start"
                 VerticalTextAlignment="Start"
-                WidthRequest="330" />
+                WidthRequest="330"/>
         </Frame>
 
         <!--  ✅ Loading Indicator  -->
         <ActivityIndicator
             x:Name="LoadingIndicator"
             Margin="10"
-            IsRunning="False"
-            IsVisible="False"
-            Color="Blue" />
+            Color="Blue"
+            IsRunning="{Binding IsLoadingVisible}"
+            IsVisible="{Binding IsLoadingVisible}"/>
 
         <!--  ✅ ปุ่ม Next  -->
         <Button
             x:Name="AnalyzeButton"
             Margin="0,100,0,120"
             BackgroundColor="Transparent"
-            Clicked="OnAnalyzeClicked"
+            Command="{Binding AnalyzeContentCommand}"
             FontSize="16"
             HorizontalOptions="Center"
-            Text="Next ➤"
-            TextColor="Black" />
+            IsEnabled="{Binding IsAnalyzing, Converter={StaticResource InvertedBoolConverter}}"
+            Text="{Binding AnalyzeButtonText}"
+            TextColor="Black"/>
     </VerticalStackLayout>
 </ContentPage>

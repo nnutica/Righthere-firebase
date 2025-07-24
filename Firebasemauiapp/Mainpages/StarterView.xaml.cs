@@ -17,8 +17,5 @@ public partial class StarterView : ContentPage
 		_authClient = authClient;
 	}
 
-	private async void OnWriteDiaryClicked(object sender, EventArgs e)
-	{
-		await Navigation.PushAsync(new DiaryView(_diaryDatabase, _authClient));
-	}
+
 }
