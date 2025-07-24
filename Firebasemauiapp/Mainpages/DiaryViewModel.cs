@@ -143,7 +143,7 @@ public partial class DiaryViewModel : ObservableObject
 
             // Store data in static class for transfer
             SummaryPageData.SetData(SelectedReason, DiaryContent, mood, suggestion, keyword, emotion, score.ToString());
-            
+
             // Navigate to Summary
             await Shell.Current.GoToAsync("//summary");
         }

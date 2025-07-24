@@ -52,9 +52,9 @@ public partial class SummaryViewModel : ObservableObject
         // Load data from static helper
         if (!string.IsNullOrEmpty(SummaryPageData.Reason))
         {
-            SetData(SummaryPageData.Reason, SummaryPageData.Content!, 
+            SetData(SummaryPageData.Reason, SummaryPageData.Content!,
                    SummaryPageData.Mood!, SummaryPageData.Suggestion!,
-                   SummaryPageData.Keywords!, SummaryPageData.Emotion!, 
+                   SummaryPageData.Keywords!, SummaryPageData.Emotion!,
                    SummaryPageData.Score!);
         }
         return Task.CompletedTask;
