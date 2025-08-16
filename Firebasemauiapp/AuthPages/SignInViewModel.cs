@@ -26,24 +26,33 @@ public partial class SignInViewModel : ObservableObject
     {
         try
         {
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+            {
+                if (Shell.Current != null)
+                    await Shell.Current.DisplayAlert("Error", "Please enter both email and password.", "OK");
+                return;
+            }
+
             await _authClient.SignInWithEmailAndPasswordAsync(Email, Password);
             OnPropertyChanged(nameof(Username));
 
-            // Navigate to Starter page after successful login
-            await Shell.Current.GoToAsync("//starter");
+            // Navigate to Main TabBar after successful login
+            if (Shell.Current != null)
+                await Shell.Current.GoToAsync("//main/starter");
         }
         catch (Exception ex)
         {
             // Handle login error
-            await Shell.Current.DisplayAlert("Error", $"Login failed: {ex.Message}", "OK");
+            if (Shell.Current != null)
+                await Shell.Current.DisplayAlert("Error", $"Login failed: {ex.Message}", "OK");
         }
     }
 
     [RelayCommand]
-
     private async Task NavigateSignUp()
     {
-        await Shell.Current.GoToAsync("//signup");
+        if (Shell.Current != null)
+            await Shell.Current.GoToAsync("//signup");
     }
 
 }

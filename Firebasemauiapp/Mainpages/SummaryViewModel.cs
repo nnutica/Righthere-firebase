@@ -114,12 +114,12 @@ public partial class SummaryViewModel : ObservableObject
         }
 
         // Navigate back to starter page
-        await Shell.Current.GoToAsync("//starter");
+        await Shell.Current.GoToAsync("//main/starter");
     }
 
     private async void GoToStarter()
     {
-        await Shell.Current.GoToAsync("//starter");
+        await Shell.Current.GoToAsync("//main/starter");
     }
 
     private void SetEmotionImage(string mood)

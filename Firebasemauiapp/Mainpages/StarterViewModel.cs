@@ -33,23 +33,18 @@ public partial class StarterViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task GoToDiary()
-    {
-        var diaryViewModel = new DiaryViewModel(_diaryDatabase, _authClient);
-        await Shell.Current.Navigation.PushAsync(new DiaryView(diaryViewModel));
-    }
-
-    [RelayCommand]
     private async Task LogOut()
     {
         try
         {
             _authClient.SignOut();
-            await Shell.Current.GoToAsync("//signin");
+            if (Shell.Current != null)
+                await Shell.Current.GoToAsync("//signin");
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Error", $"Logout failed: {ex.Message}", "OK");
+            if (Shell.Current != null)
+                await Shell.Current.DisplayAlert("Error", $"Logout failed: {ex.Message}", "OK");
         }
     }
 }

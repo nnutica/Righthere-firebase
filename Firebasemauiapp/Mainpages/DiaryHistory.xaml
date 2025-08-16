@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Firebasemauiapp.Mainpages.DiaryHistory"
+             Title="Diary History"
+             BackgroundImageSource="main_bg.png">
+    
+    <Grid>
+        <!-- Loading Indicator -->
+        <ActivityIndicator IsVisible="{Binding IsLoading}" 
+                          IsRunning="{Binding IsLoading}"
+                          Color="Blue"
+                          VerticalOptions="Center"
+                          HorizontalOptions="Center" />
+        
+        <!-- Empty State -->
+        <StackLayout IsVisible="{Binding IsEmpty}" 
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center"
+                    Padding="20">
+            <Image Source="empty.png" 
+                  HeightRequest="100" 
+                  WidthRequest="100"/>
+            <Label Text="No diary entries found" 
+                  FontSize="18" 
+                  HorizontalOptions="Center" 
+                  TextColor="Gray"/>
+            <Label Text="Start writing your first diary!" 
+                  FontSize="14" 
+                  HorizontalOptions="Center" 
+                  TextColor="Gray"/>
+        </StackLayout>
+        
+        <!-- Diary List -->
+        <RefreshView Command="{Binding LoadDiaryHistoryCommand}" 
+                    IsRefreshing="{Binding IsLoading}"
+                    IsVisible="{Binding IsEmpty, Converter={StaticResource InvertedBoolConverter}}">
+            
+            <CollectionView ItemsSource="{Binding DiaryGroups}"
+                           BackgroundColor="Transparent">
+                
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="15,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            
+                            <!-- Date Header -->
+                            <Label Grid.Row="0"
+                                  Text="{Binding DateString}"
+                                  FontSize="16"
+                                  FontAttributes="Bold"
+                                  TextColor="DarkBlue"
+                                  Margin="0,10,0,5"/>
+                            
+                            <!-- Diaries for this date -->
+                            <CollectionView Grid.Row="1" 
+                                          ItemsSource="{Binding Diaries}"
+                                          SelectionMode="None">
+                                
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BackgroundColor="White"
+                                               Stroke="LightGray"
+                                               StrokeThickness="1"
+                                               Margin="5"
+                                               Padding="15">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="10"/>
+                                            </Border.StrokeShape>
+                                            
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewDiaryCommand}"
+                                                                     CommandParameter="{Binding .}"/>
+                                            </Border.GestureRecognizers>
+                                            
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="Auto"/>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                
+                                                <!-- Time -->
+                                                <Label Grid.Row="0" Grid.Column="0"
+                                                      Text="{Binding CreatedAtDateTime, StringFormat='{0:HH:mm}'}"
+                                                      FontSize="12"
+                                                      TextColor="Gray"/>
+                                                
+                                                <!-- Delete Button -->
+                                                <Button Grid.Row="0" Grid.Column="1"
+                                                       Text="🗑️"
+                                                       BackgroundColor="Transparent"
+                                                       FontSize="16"
+                                                       Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteDiaryCommand}"
+                                                       CommandParameter="{Binding .}"/>
+                                                
+                                                <!-- Reason/Topic -->
+                                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                                      Text="{Binding Reason}"
+                                                      FontSize="16"
+                                                      FontAttributes="Bold"
+                                                      TextColor="DarkBlue"
+                                                      Margin="0,5"/>
+                                                
+                                                <!-- Content Preview -->
+                                                <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                                                      Text="{Binding Content}"
+                                                      FontSize="14"
+                                                      TextColor="Black"
+                                                      MaxLines="2"
+                                                      LineBreakMode="TailTruncation"
+                                                      Margin="0,0,0,5"/>
+                                                
+                                                <!-- Mood -->
+                                                <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
+                                                      Text="{Binding Mood, StringFormat='Mood: {0}'}"
+                                                      FontSize="12"
+                                                      TextColor="Purple"
+                                                      FontAttributes="Italic"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                            
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

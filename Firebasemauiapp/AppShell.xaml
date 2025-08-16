@@ -5,9 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:Firebasemauiapp.Pages"
     xmlns:main="clr-namespace:Firebasemauiapp.Mainpages"
-    Title="Firebasemauiapp">
+    Title="Firebasemauiapp"
+    CurrentItem="{x:Reference signin}">
 
+    <!-- Authentication Pages (No Tabs) -->
     <ShellContent
+        x:Name="signin"
         Title="Sign In"
         ContentTemplate="{DataTemplate pages:SignInView}"
         Route="signin"/>
@@ -15,13 +18,36 @@
         Title="Sign Up"
         ContentTemplate="{DataTemplate pages:SignUpView}"
         Route="signup"/>
-    <ShellContent
-        Title="Starter"
-        ContentTemplate="{DataTemplate main:StarterView}"
-        Route="starter"/>
-    <ShellContent
-        Title="Summary"
-        ContentTemplate="{DataTemplate main:SummaryView}"
-        Route="summary"/>
+
+    <!-- Main App with TabBar -->
+    <TabBar Route="main">
+        <Tab Title="Home" Icon="empty.png">
+            <ShellContent
+                Title="Home"
+                ContentTemplate="{DataTemplate main:StarterView}"
+                Route="starter"/>
+        </Tab>
+        
+        <Tab Title="Diary" Icon="dotnet_bot.png">
+            <ShellContent
+                Title="Diary"
+                ContentTemplate="{DataTemplate main:DiaryView}"
+                Route="diary"/>
+        </Tab>
+        
+        <Tab Title="History" Icon="logo.png">
+            <ShellContent
+                Title="History"
+                ContentTemplate="{DataTemplate main:DiaryHistory}"
+                Route="history"/>
+        </Tab>
+        
+        <Tab Title="Summary" Icon="logo.png">
+            <ShellContent
+                Title="Summary"
+                ContentTemplate="{DataTemplate main:SummaryView}"
+                Route="summary"/>
+        </Tab>
+    </TabBar>
 
 </Shell>

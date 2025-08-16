@@ -26,15 +26,34 @@ public partial class SignUpViewModel : ObservableObject
     [RelayCommand]
     private async Task SignUp()
     {
-        await _authClient.CreateUserWithEmailAndPasswordAsync(Email, Password, Username);
+        try
+        {
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Username))
+            {
+                if (Shell.Current != null)
+                    await Shell.Current.DisplayAlert("Error", "Please fill in all fields.", "OK");
+                return;
+            }
 
-        await Shell.Current.GoToAsync("//SignIn");
+            await _authClient.CreateUserWithEmailAndPasswordAsync(Email, Password, Username);
+            
+            // Navigate to sign in page after successful registration
+            if (Shell.Current != null)
+                await Shell.Current.GoToAsync("//signin");
+        }
+        catch (Exception ex)
+        {
+            // Handle registration error
+            if (Shell.Current != null)
+                await Shell.Current.DisplayAlert("Error", $"Registration failed: {ex.Message}", "OK");
+        }
     }
 
     [RelayCommand]
     private async Task NavigateSignIn()
     {
-        await Shell.Current.GoToAsync("//signin");
+        if (Shell.Current != null)
+            await Shell.Current.GoToAsync("//signin");
     }
 
 }
