@@ -42,12 +42,7 @@
                 Route="history"/>
         </Tab>
         
-        <Tab Title="Summary" Icon="logo.png">
-            <ShellContent
-                Title="Summary"
-                ContentTemplate="{DataTemplate main:SummaryView}"
-                Route="summary"/>
-        </Tab>
+        
     </TabBar>
 
 </Shell>
