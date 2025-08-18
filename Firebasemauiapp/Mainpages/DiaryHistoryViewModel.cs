@@ -39,7 +39,7 @@ public partial class DiaryHistoryViewModel : ObservableObject
         {
             IsLoading = true;
             var currentUser = _authClient.User;
-            
+
             if (currentUser == null)
             {
                 if (Shell.Current != null)
@@ -47,8 +47,9 @@ public partial class DiaryHistoryViewModel : ObservableObject
                 return;
             }
 
+            // ลองดึงข้อมูล diary
             var diaries = await _diaryDatabase.GetDiariesByUserAsync(currentUser.Uid);
-            
+
             // Group diaries by date
             var groupedDiaries = diaries
                 .OrderByDescending(d => d.CreatedAtDateTime)
@@ -68,11 +69,36 @@ public partial class DiaryHistoryViewModel : ObservableObject
             }
 
             IsEmpty = !DiaryGroups.Any();
+
+            // ถ้าไม่มีข้อมูล อาจเป็นเพราะ user ยังไม่เคยเขียน diary
+            if (IsEmpty)
+            {
+                Console.WriteLine($"No diaries found for user: {currentUser.Uid}");
+            }
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"Error loading diary history: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+
+            var errorMessage = "Failed to load diary history";
+
+            // ตรวจสอบประเภทของ error
+            if (ex.Message.Contains("FailedPrecondition"))
+            {
+                errorMessage = "Database configuration error. Please check Firestore settings.";
+            }
+            else if (ex.Message.Contains("permission"))
+            {
+                errorMessage = "Permission denied. Please check your login status.";
+            }
+            else if (ex.Message.Contains("network") || ex.Message.Contains("connection"))
+            {
+                errorMessage = "Network error. Please check your internet connection.";
+            }
+
             if (Shell.Current != null)
-                await Shell.Current.DisplayAlert("Error", $"Failed to load diary history: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Error", $"{errorMessage}\n\nDetails: {ex.Message}", "OK");
         }
         finally
         {
@@ -96,7 +122,7 @@ public partial class DiaryHistoryViewModel : ObservableObject
                 diary.EmotionalReflection ?? "",
                 diary.SentimentScore.ToString()
             );
-            
+
             if (Shell.Current != null)
                 await Shell.Current.Navigation.PushAsync(new SummaryView(summaryViewModel));
         }
@@ -108,9 +134,9 @@ public partial class DiaryHistoryViewModel : ObservableObject
         if (diary == null || Shell.Current == null) return;
 
         bool result = await Shell.Current.DisplayAlert(
-            "Delete Diary", 
-            "Are you sure you want to delete this diary entry?", 
-            "Yes", 
+            "Delete Diary",
+            "Are you sure you want to delete this diary entry?",
+            "Yes",
             "No");
 
         if (result)

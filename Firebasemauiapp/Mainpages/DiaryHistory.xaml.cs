@@ -1,5 +1,6 @@
 using Firebase.Auth;
 using Firebasemauiapp.Data;
+using System;
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -17,6 +18,15 @@ public partial class DiaryHistory : ContentPage
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		await _viewModel.InitializeAsync();
+		try
+		{
+			Console.WriteLine("DiaryHistory page appearing, initializing ViewModel...");
+			await _viewModel.InitializeAsync();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Error in OnAppearing: {ex.Message}");
+			await DisplayAlert("Error", $"Failed to initialize diary history: {ex.Message}", "OK");
+		}
 	}
 }

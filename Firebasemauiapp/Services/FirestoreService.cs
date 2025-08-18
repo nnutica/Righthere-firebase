@@ -64,10 +64,19 @@ public class FirestoreService
     public async Task<FirestoreDb> GetDatabaseAsync()
     {
         // รอจนกว่า initialization จะเสร็จ
-        while (db == null)
+        int attempts = 0;
+        while (db == null && attempts < 50) // รอไม่เกิน 5 วินาที
         {
             await Task.Delay(100);
+            attempts++;
         }
+
+        if (db == null)
+        {
+            throw new Exception("Firestore database is not initialized. Please check your configuration.");
+        }
+
+        Console.WriteLine("Firestore database is ready for use");
         return db;
     }
 }
