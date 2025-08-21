@@ -6,21 +6,23 @@
     Title="SignUpView"
     Shell.NavBarIsVisible="False">
     <ContentPage.Background>
-        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Offset="0.1" Color="#D7E7FF" />
-            <GradientStop Offset="1.0" Color="#8BB7BA" />
+        <LinearGradientBrush StartPoint="0,0" EndPoint="2,2">
+            <GradientStop Offset="0.1" Color="#FFFFFF" />
+            <GradientStop Offset="1" Color="#50A65D" />
+            <GradientStop Offset="1.5" Color="#FFFFFF" />
+            <GradientStop Offset="2" Color="#50A65D" />
         </LinearGradientBrush>
     </ContentPage.Background>
     <VerticalStackLayout
         Padding="20"
         Spacing="15"
-        VerticalOptions="Start">
+        VerticalOptions="Center">
         <Label
             FontAttributes="Bold"
             FontSize="24"
             HorizontalOptions="Center"
             Text="Registration"
-            TextColor="#2A614E" />
+            TextColor="#50A65D" />
 
         <Label
             FontSize="14"
@@ -31,31 +33,31 @@
         <Grid RowDefinitions="*,*,*,*,*,*,*">
             <Border
                 Grid.Row="0"
-                Margin="0,20,0,0"
+                Margin="15,20,15,10"
                 Padding="0"
                 BackgroundColor="White"
                 HeightRequest="50"
-                Stroke="#2A614E"
+                Stroke="#50A65D"
                 StrokeShape="RoundRectangle 10">
                 <Entry Placeholder="Email" Text="{Binding Email}" />
             </Border>
             <Border
                 Grid.Row="1"
-                Margin="0,20,0,0"
+                Margin="15,20,15,10"
                 Padding="0"
                 BackgroundColor="White"
                 HeightRequest="50"
-                Stroke="#2A614E"
+                Stroke="#50A65D"
                 StrokeShape="RoundRectangle 10">
                 <Entry Placeholder="Username" Text="{Binding Username}" />
             </Border>
             <Border
                 Grid.Row="2"
-                Margin="0,20,0,0"
+                Margin="15,20,15,10"
                 Padding="0"
                 BackgroundColor="White"
                 HeightRequest="50"
-                Stroke="#2A614E"
+                Stroke="#50A65D"
                 StrokeShape="RoundRectangle 10">
                 <Entry
                     IsPassword="True"
@@ -64,8 +66,8 @@
             </Border>
             <Button
                 Grid.Row="3"
-                Margin="0,20,0,0"
-                BackgroundColor="#2A614E"
+                Margin="15,20,15,10"
+                BackgroundColor="#50A65D"
                 Command="{Binding SignUpCommand}"
                 FontSize="16"
                 HeightRequest="50"
@@ -74,7 +76,7 @@
 
             <HorizontalStackLayout
                 Grid.Row="4"
-                Margin="0,20,0,0"
+                Margin="15,20,15,10"
                 HorizontalOptions="Center">
                 <Label
                     FontSize="14"
@@ -85,7 +87,7 @@
                     FontSize="14"
                     HorizontalOptions="Center"
                     Text="SignIn"
-                    TextColor="#2A614E"
+                    TextColor="#50A65D"
                     TextDecorations="Underline">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateSignInCommand}" />

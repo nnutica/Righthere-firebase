@@ -26,7 +26,7 @@ public partial class DiaryViewModel : ObservableObject
     private bool _isLoadingVisible = false;
 
     [ObservableProperty]
-    private string _analyzeButtonText = "Next ➤";
+    private string _analyzeButtonText = "Next";
 
     // Button colors for UI
     [ObservableProperty]

@@ -6,7 +6,7 @@
     Title="StarterView"
     BackgroundImageSource="main_bg.png"
     Shell.NavBarIsVisible="False">
-    <VerticalStackLayout Padding="30" Spacing="20">
+    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
         <Label
             FontAttributes="Bold"
             FontSize="32"
@@ -26,13 +26,14 @@
             WidthRequest="200" />
         
         <Label
+            Margin="0,-20,0,0"
             FontSize="16"
             HorizontalOptions="Center"
             Text="{Binding UserEmail}"
-            TextColor="Gray" />
+            TextColor="Black"/>
 
         <Button
-            Margin="0,10,0,0"
+            Margin="0,30,0,0"
             BackgroundColor="Red"
             Command="{Binding LogOutCommand}"
             HorizontalOptions="Center"

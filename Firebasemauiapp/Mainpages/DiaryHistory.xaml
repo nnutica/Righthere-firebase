@@ -62,8 +62,8 @@
                                 
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
-                                        <Border BackgroundColor="White"
-                                               Stroke="LightGray"
+                                        <Border BackgroundColor="#F8FAED"
+                                               Stroke="#50A65D"
                                                StrokeThickness="1"
                                                Margin="5"
                                                Padding="15">

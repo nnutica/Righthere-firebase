@@ -21,21 +21,21 @@
 
     <!-- Main App with TabBar -->
     <TabBar Route="main">
-        <Tab Title="Home" Icon="empty.png">
+        <Tab Title="Home" Icon="home.png">
             <ShellContent
                 Title="Home"
                 ContentTemplate="{DataTemplate main:StarterView}"
                 Route="starter"/>
         </Tab>
         
-        <Tab Title="Diary" Icon="dotnet_bot.png">
+        <Tab Title="Diary" Icon="diary.png">
             <ShellContent
                 Title="Diary"
                 ContentTemplate="{DataTemplate main:DiaryView}"
                 Route="diary"/>
         </Tab>
         
-        <Tab Title="History" Icon="logo.png">
+        <Tab Title="History" Icon="history.png">
             <ShellContent
                 Title="History"
                 ContentTemplate="{DataTemplate main:DiaryHistory}"
