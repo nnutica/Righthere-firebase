@@ -10,9 +10,11 @@
         <Frame
             Margin="0,0,0,10"
             Padding="10"
-            BackgroundColor="White"
+            BackgroundColor="#F8FAED"
             CornerRadius="20"
+            Opacity="30"
             HasShadow="True"
+            BorderColor="#50A65D"
             WidthRequest="350">
             <ScrollView Orientation="Horizontal">
                 <HorizontalStackLayout Spacing="10">
@@ -72,13 +74,15 @@
         <Frame
             Margin="0,0,0,10"
             Padding="10"
-            BackgroundColor="White"
+            BackgroundColor="#F8FAED"
             CornerRadius="20"
             HasShadow="True"
+            Opacity="30"
+            BorderColor="#50A65D"
             WidthRequest="350">
             <Editor
                 x:Name="DiaryEntry"
-                BackgroundColor="White"
+                BackgroundColor="#F8FAED"
                 HeightRequest="300"
                 Placeholder="share something good..."
                 Text="{Binding DiaryContent}"
@@ -99,13 +103,14 @@
         <!--  ✅ ปุ่ม Next  -->
         <Button
             x:Name="AnalyzeButton"
-            Margin="0,100,0,120"
-            BackgroundColor="Transparent"
+            Margin="0,200,0,120"
+            BackgroundColor="#50A65D"
             Command="{Binding AnalyzeContentCommand}"
             FontSize="16"
-            HorizontalOptions="Center"
+            VerticalOptions="End"
+            HorizontalOptions="End"
             IsEnabled="{Binding IsAnalyzing, Converter={StaticResource InvertedBoolConverter}}"
             Text="{Binding AnalyzeButtonText}"
-            TextColor="Black"/>
+            TextColor="White"/>
     </VerticalStackLayout>
 </ContentPage>
