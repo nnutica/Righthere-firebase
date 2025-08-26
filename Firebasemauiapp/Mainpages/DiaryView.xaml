@@ -3,7 +3,8 @@
     x:Class="Firebasemauiapp.Mainpages.DiaryView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="DiaryView">
+    Title="DiaryView"
+    BackgroundColor="#FFDEFDBF">
     <VerticalStackLayout Padding="20">
 
         <!--  Reason Selection  -->

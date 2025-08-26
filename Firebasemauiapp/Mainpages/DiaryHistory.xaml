@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:Firebasemauiapp.Converters"
              x:Class="Firebasemauiapp.Mainpages.DiaryHistory"
              Title="Diary History"
-             BackgroundImageSource="main_bg.png">
+             BackgroundColor="#edf6e4">
+
+    <ContentPage.Resources>
+        <converters:SeeMoreLinesConverter x:Key="SeeMoreLinesConverter" />
+        <converters:SeeMoreTextConverter x:Key="SeeMoreTextConverter" />
+    </ContentPage.Resources>
     
     <Grid>
         <!-- Loading Indicator -->
@@ -41,96 +47,73 @@
                 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="15,10">
+                        <Grid Padding="0,10,0,10">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            
                             <!-- Date Header -->
                             <Label Grid.Row="0"
                                   Text="{Binding DateString}"
                                   FontSize="16"
                                   FontAttributes="Bold"
                                   TextColor="DarkBlue"
-                                  Margin="0,10,0,5"/>
-                            
+                                  Margin="10,0,0,10"/>
                             <!-- Diaries for this date -->
-                            <CollectionView Grid.Row="1" 
-                                          ItemsSource="{Binding Diaries}"
-                                          SelectionMode="None">
-                                
+                            <CollectionView Grid.Row="1"
+                                            ItemsSource="{Binding Diaries}"
+                                            SelectionMode="None">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate>
                                         <Border BackgroundColor="#F8FAED"
                                                Stroke="#50A65D"
                                                StrokeThickness="1"
-                                               Margin="5"
-                                               Padding="15">
+                                               Margin="0,0,0,20"
+                                               Padding="18,16,18,12">
                                             <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="10"/>
+                                                <RoundRectangle CornerRadius="14"/>
                                             </Border.StrokeShape>
-                                            
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewDiaryCommand}"
-                                                                     CommandParameter="{Binding .}"/>
-                                            </Border.GestureRecognizers>
-                                            
-                                            <Grid>
+                                            <Grid RowSpacing="8">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
+                                                    <RowDefinition Height="*"/>
                                                     <RowDefinition Height="Auto"/>
                                                 </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                
-                                                <!-- Time -->
-                                                <Label Grid.Row="0" Grid.Column="0"
-                                                      Text="{Binding CreatedAtDateTime, StringFormat='{0:HH:mm}'}"
-                                                      FontSize="12"
-                                                      TextColor="Gray"/>
-                                                
-                                                <!-- Delete Button -->
-                                                <Button Grid.Row="0" Grid.Column="1"
-                                                       Text="🗑️"
-                                                       BackgroundColor="Transparent"
-                                                       FontSize="16"
-                                                       Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteDiaryCommand}"
-                                                       CommandParameter="{Binding .}"/>
-                                                
-                                                <!-- Reason/Topic -->
-                                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                                      Text="{Binding Reason}"
-                                                      FontSize="16"
-                                                      FontAttributes="Bold"
-                                                      TextColor="DarkBlue"
-                                                      Margin="0,5"/>
-                                                
-                                                <!-- Content Preview -->
-                                                <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                                                      Text="{Binding Content}"
-                                                      FontSize="14"
-                                                      TextColor="Black"
-                                                      MaxLines="2"
-                                                      LineBreakMode="TailTruncation"
-                                                      Margin="0,0,0,5"/>
-                                                
-                                                <!-- Mood -->
-                                                <Label Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"
-                                                      Text="{Binding Mood, StringFormat='Mood: {0}'}"
-                                                      FontSize="12"
-                                                      TextColor="Purple"
-                                                      FontAttributes="Italic"/>
+                                                <!-- Content -->
+                                <Label Grid.Row="0"
+                                    Text="{Binding Content}"
+                                    FontSize="15"
+                                    TextColor="Black"
+                                    LineBreakMode="WordWrap"
+                                    Margin="0,0,0,8"
+                                    MaxLines="{Binding IsExpanded, Converter={StaticResource SeeMoreLinesConverter}}"/>
+                                                <!-- Bottom row: icon, score, see more -->
+                                                <Grid Grid.Row="2" ColumnSpacing="8">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <!-- Icon (left) -->
+                                                    <Image Grid.Column="0" Source="{Binding MoodImage}" HeightRequest="48" WidthRequest="48" VerticalOptions="End"/>
+                                                    <!-- Score (center) -->
+                                                    <Border Grid.Column="1" BackgroundColor="#E6F4EA" Stroke="#50A65D" StrokeThickness="1" Padding="8,2" HorizontalOptions="Center" VerticalOptions="End" StrokeShape="RoundRectangle 8">
+                                                        <Label Text="{Binding SentimentScore, StringFormat='Mental Wellness Score : {0}'}" FontSize="14" TextColor="#50A65D" HorizontalOptions="Center"/>
+                                                    </Border>
+                                                    <!-- See more/less (right) -->
+                            <Button Grid.Column="2"
+                                Text="{Binding IsExpanded, Converter={StaticResource SeeMoreTextConverter}}"
+                                FontSize="13"
+                                BackgroundColor="Transparent"
+                                TextColor="#50A65D"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleExpandCommand}"
+                                CommandParameter="{Binding .}"/>
+                                                </Grid>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
-                            
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

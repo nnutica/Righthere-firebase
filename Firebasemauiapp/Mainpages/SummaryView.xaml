@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Firebasemauiapp.Mainpages.SummaryView"
              Title="SummaryView"
-             Background="#F8FAED">
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#edf6e4">
     <ScrollView>
         <VerticalStackLayout>
             <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto">

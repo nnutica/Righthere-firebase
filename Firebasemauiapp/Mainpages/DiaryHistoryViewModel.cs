@@ -25,6 +25,18 @@ public partial class DiaryHistoryViewModel : ObservableObject
     {
         _diaryDatabase = diaryDatabase;
         _authClient = authClient;
+        ToggleExpandCommand = new RelayCommand<DiaryData>(ToggleExpand);
+    }
+
+    public RelayCommand<DiaryData> ToggleExpandCommand { get; }
+
+    private void ToggleExpand(DiaryData diary)
+    {
+        if (diary != null)
+        {
+            diary.IsExpanded = !diary.IsExpanded;
+            // ไม่ต้อง Notify UI ทั้งกลุ่ม เพราะ DiaryData แจ้งเตือนเอง
+        }
     }
 
     public async Task InitializeAsync()

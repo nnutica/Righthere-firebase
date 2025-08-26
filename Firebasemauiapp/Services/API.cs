@@ -59,7 +59,7 @@ public class API
             emotionalReflection = ExtractValue(adviceRaw, "Emotional Reflection");
             mood = ExtractValue(adviceRaw, "Mood");
             keywords = ExtractValue(adviceRaw, "Keywords");
-            score = ExtractValue(adviceRaw, "Score");
+            score = ExtractValue(adviceRaw, "Sentiment Score");
 
             // แสดงผลลัพธ์
             Console.WriteLine($"✅ Success with URL: {url}");

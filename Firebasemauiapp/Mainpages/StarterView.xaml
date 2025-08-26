@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="StarterView"
     BackgroundImageSource="main_bg.png"
-    Shell.NavBarIsVisible="False">
+    Shell.NavBarIsVisible="True">
     <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
         <Label
             FontAttributes="Bold"
@@ -32,13 +32,6 @@
             Text="{Binding UserEmail}"
             TextColor="Black"/>
 
-        <Button
-            Margin="0,30,0,0"
-            BackgroundColor="Red"
-            Command="{Binding LogOutCommand}"
-            HorizontalOptions="Center"
-            Text="Log Out"
-            TextColor="White"
-            WidthRequest="150" />
+    <!-- Log Out button moved to Navigation Bar -->
     </VerticalStackLayout>
 </ContentPage>
