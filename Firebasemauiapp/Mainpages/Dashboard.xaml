@@ -8,8 +8,8 @@
     <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="16">
         <!-- Header -->
         <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Padding="0,0,0,8">
-            <Label Text="Hey Dawn!" FontSize="22" FontAttributes="Bold" TextColor="#3A3A3A" />
-            <Button Text="{Binding TodayString}" FontSize="14" BackgroundColor="#F2F2F2" TextColor="#3A3A3A" CornerRadius="12" Padding="10,2" />
+            <Label Text="Hey !" FontSize="22" FontAttributes="Bold" TextColor="#3A3A3A" />
+            <Button Text="{Binding TodayString}" FontSize="14" BackgroundColor="#F2F2F2" TextColor="#3A3A3A" CornerRadius="12" Padding="5,2" />
         </Grid>
 
         <!-- Mood Card -->

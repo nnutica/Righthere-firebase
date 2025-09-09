@@ -2,11 +2,7 @@
 using Firebase.Auth.Providers;
 using Firebasemauiapp.Pages;
 using Firebasemauiapp.Mainpages;
-
-using Firebase.Auth;
-using Firebase.Auth.Providers;
-using Firebasemauiapp.Pages;
-using Firebasemauiapp.Mainpages;
+using Firebasemauiapp.CommunityPage;
 using Firebasemauiapp.Data;
 using Firebasemauiapp.Services;
 using Microsoft.Extensions.Logging;
@@ -56,6 +52,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<SummaryViewModel>();
 		builder.Services.AddTransient<DiaryHistoryViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
+		builder.Services.AddTransient<CommunityViewModel>();
 
 		// Views
 		builder.Services.AddTransient<SignInView>();
@@ -64,6 +61,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<DiaryView>();
 		builder.Services.AddTransient<SummaryView>();
 		builder.Services.AddTransient<DiaryHistory>();
+		builder.Services.AddTransient<Dashboard>();
+		builder.Services.AddTransient<CommunityPage.CommunityPage>();
 
 		return builder.Build();
 	}

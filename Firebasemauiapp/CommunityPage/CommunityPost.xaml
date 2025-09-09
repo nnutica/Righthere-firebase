@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="Firebasemauiapp.CommunityPage.CommunityPost">
+    
+    <Border BackgroundColor="White" 
+            Stroke="#50A65D" 
+            StrokeThickness="2" 
+            Padding="20"
+            WidthRequest="350"
+            HeightRequest="400">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="15"/>
+        </Border.StrokeShape>
+        
+        <VerticalStackLayout Spacing="15">
+            <!-- Header -->
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Grid.Column="0" 
+                       Text="Create Community Post" 
+                       FontSize="18" 
+                       FontAttributes="Bold" 
+                       TextColor="#50A65D" 
+                       VerticalOptions="Center"/>
+                <Button Grid.Column="1" 
+                        Text="✕" 
+                        FontSize="16" 
+                        BackgroundColor="Transparent" 
+                        TextColor="Gray"
+                        Clicked="OnCloseClicked"
+                        WidthRequest="30" 
+                        HeightRequest="30"/>
+            </Grid>
+            
+            <!-- User Info -->
+            <Label x:Name="UserLabel" 
+                   Text="Posting as: Guest" 
+                   FontSize="14" 
+                   FontAttributes="Bold"
+                   TextColor="#50A65D"/>
+            
+            <!-- Content Input -->
+            <Label Text="What's on your mind?" 
+                   FontSize="14" 
+                   TextColor="#666"/>
+            <Editor x:Name="PostContentEditor"
+                    Placeholder="Share your thoughts with the community..."
+                    HeightRequest="150"
+                    BackgroundColor="#F5F5F5"
+                    TextColor="Black"/>
+            
+            <!-- Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Grid.Column="0"
+                        Text="Cancel" 
+                        BackgroundColor="#E0E0E0" 
+                        TextColor="#666"
+                        CornerRadius="8"
+                        Clicked="OnCancelClicked"/>
+                <Button Grid.Column="1"
+                        Text="Post" 
+                        BackgroundColor="#50A65D" 
+                        TextColor="White"
+                        CornerRadius="8"
+                        Clicked="OnPostClicked"/>
+            </Grid>
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>

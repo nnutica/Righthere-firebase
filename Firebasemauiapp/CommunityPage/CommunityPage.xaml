@@ -4,9 +4,29 @@
              x:Class="Firebasemauiapp.CommunityPage.CommunityPage"
              Title="CommunityPage">
     <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
+       <Grid RowDefinitions="Auto,Auto,*" Padding="16">
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Padding="0,0,0,8">
+            <Label Text="Community" FontSize="22" FontAttributes="Bold" TextColor="#3A3A3A" />
+            <Label Grid.Column="1" 
+                   Text="{Binding UserName}" 
+                   FontSize="14" 
+                   VerticalOptions="Center"
+                   TextColor="#666"
+                   Margin="10,0,0,0"/>
+        </Grid>
+        <Image
+            Grid.Row="1"
+            Source="commuboard.png"
+            BackgroundColor="Transparent"
+            WidthRequest="200"
+            HeightRequest="200"
+            HorizontalOptions="Start"
+            VerticalOptions="End">
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ShowPostPopupCommand}" />
+            </Image.GestureRecognizers>
+        </Image>
+        </Grid>
     </VerticalStackLayout>
 </ContentPage>

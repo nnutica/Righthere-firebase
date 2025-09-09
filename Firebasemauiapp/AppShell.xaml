@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:Firebasemauiapp.Pages"
     xmlns:main="clr-namespace:Firebasemauiapp.Mainpages"
+    xmlns:community="clr-namespace:Firebasemauiapp.CommunityPage"
     Title="Firebasemauiapp"
     CurrentItem="{x:Reference signin}">
 
@@ -50,6 +51,12 @@
                 Title="Dashboard"
                 ContentTemplate="{DataTemplate main:Dashboard}"
                 Route="dashboard"/>
+        </Tab>
+         <Tab Title="Community" Icon="community.png">
+            <ShellContent
+                Title="Community"
+                ContentTemplate="{DataTemplate community:CommunityPage}"
+                Route="community"/>
         </Tab>
         
         

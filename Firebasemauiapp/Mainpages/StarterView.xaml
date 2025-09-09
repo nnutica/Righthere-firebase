@@ -32,6 +32,6 @@
             Text="{Binding UserEmail}"
             TextColor="Black"/>
 
-    <!-- Log Out button moved to Navigation Bar -->
+    
     </VerticalStackLayout>
 </ContentPage>
