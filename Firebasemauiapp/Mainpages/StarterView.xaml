@@ -6,32 +6,29 @@
     Title="StarterView"
     BackgroundImageSource="main_bg.png"
     Shell.NavBarIsVisible="True">
-    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+    <VerticalStackLayout Padding="30"
+            Spacing="20"
+            VerticalOptions="Center">
         <Label
             FontAttributes="Bold"
             FontSize="32"
             HorizontalOptions="Center"
-            Text="Welcome!" />
+            Text="Welcome!"/>
 
         <Label
             FontSize="24"
             HorizontalOptions="Center"
             Text="{Binding UserName}"
-            TextColor="Blue" />
+            TextColor="Blue"/>
         <Image
             x:Name="MoodTreeImage"
             HeightRequest="200"
             HorizontalOptions="Center"
             Source="empty.png"
-            WidthRequest="200" />
-        
-        <Label
-            Margin="0,-20,0,0"
-            FontSize="16"
-            HorizontalOptions="Center"
-            Text="{Binding UserEmail}"
-            TextColor="Black"/>
+            WidthRequest="200"/>
 
-    
+
+
+
     </VerticalStackLayout>
 </ContentPage>

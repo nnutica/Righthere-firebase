@@ -37,17 +37,14 @@ public partial class StarterViewModel : ObservableObject
         if (_authClient.User != null)
         {
             var displayName = _authClient.User.Info?.DisplayName;
-            var email = _authClient.User.Info?.Email ?? string.Empty;
+
 
             // Prefer display name; if missing, fall back to the email's local part
-            if (string.IsNullOrWhiteSpace(displayName) && !string.IsNullOrWhiteSpace(email))
-            {
-                var at = email.IndexOf('@');
-                displayName = at > 0 ? email.Substring(0, at) : email;
-            }
+            if (string.IsNullOrWhiteSpace(displayName))
 
-            UserName = string.IsNullOrWhiteSpace(displayName) ? "Unknown User" : displayName;
-            UserEmail = email;
+
+                UserName = string.IsNullOrWhiteSpace(displayName) ? "Unknown User" : displayName;
+
         }
     }
 
