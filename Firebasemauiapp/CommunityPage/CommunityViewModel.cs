@@ -4,22 +4,33 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
 using CommunityToolkit.Maui.Views;
+using Firebasemauiapp.Data;
 
 namespace Firebasemauiapp.CommunityPage;
 
 public partial class CommunityViewModel : ObservableObject
 {
     private readonly FirebaseAuthClient _authClient;
+    private readonly PostDatabase _postDb;
 
-    [ObservableProperty]
     private string _userName = "Guest";
+    public string UserName
+    {
+        get => _userName;
+        set => SetProperty(ref _userName, value);
+    }
 
-    [ObservableProperty]
     private bool _isLoggedIn;
+    public bool IsLoggedIn
+    {
+        get => _isLoggedIn;
+        set => SetProperty(ref _isLoggedIn, value);
+    }
 
-    public CommunityViewModel(FirebaseAuthClient authClient)
+    public CommunityViewModel(FirebaseAuthClient authClient, PostDatabase postDb)
     {
         _authClient = authClient;
+        _postDb = postDb;
         LoadUserInfoCommand = new AsyncRelayCommand(LoadUserInfo);
         ShowPostPopupCommand = new AsyncRelayCommand(ShowPostPopup);
     }
@@ -43,19 +54,5 @@ public partial class CommunityViewModel : ObservableObject
         return Task.CompletedTask;
     }
 
-    private async Task ShowPostPopup()
-    {
-        // Temporary workaround using DisplayAlert until ShowPopupAsync extension is available
-        var result = await Shell.Current.DisplayPromptAsync("Community Post", 
-            $"User: {UserName}\n\nWhat's on your mind?", 
-            "Post", "Cancel", 
-            placeholder: "Share your thoughts...",
-            maxLength: 500);
-            
-        if (!string.IsNullOrWhiteSpace(result))
-        {
-            // TODO: Save post to backend
-            await Shell.Current.DisplayAlert("Success", "Your post has been shared!", "OK");
-        }
-    }
+    private Task ShowPostPopup() => Task.CompletedTask;
 }

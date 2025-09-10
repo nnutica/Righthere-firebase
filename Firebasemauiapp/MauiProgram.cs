@@ -43,6 +43,7 @@ public static class MauiProgram
 		// เพิ่ม Firestore services
 		builder.Services.AddSingleton<FirestoreService>();
 		builder.Services.AddSingleton<DiaryDatabase>();
+		builder.Services.AddSingleton<PostDatabase>();
 
 		// View Models
 		builder.Services.AddTransient<SignInViewModel>();
