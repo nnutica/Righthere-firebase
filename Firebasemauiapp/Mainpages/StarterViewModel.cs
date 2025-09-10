@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
 using Firebasemauiapp.Data;
+using Microsoft.Maui.Storage;
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -10,25 +11,43 @@ public partial class StarterViewModel : ObservableObject
     private readonly FirebaseAuthClient _authClient;
     private readonly DiaryDatabase _diaryDatabase;
 
-    [ObservableProperty]
     private string _userName = "Guest";
+    public string UserName
+    {
+        get => _userName;
+        set => SetProperty(ref _userName, value);
+    }
 
-    [ObservableProperty]
     private string _userEmail = string.Empty;
+    public string UserEmail
+    {
+        get => _userEmail;
+        set => SetProperty(ref _userEmail, value);
+    }
 
     public StarterViewModel(FirebaseAuthClient authClient, DiaryDatabase diaryDatabase)
     {
         _authClient = authClient;
         _diaryDatabase = diaryDatabase;
-        LoadUserInfo();
+        RefreshUserInfo();
     }
 
-    private void LoadUserInfo()
+    public void RefreshUserInfo()
     {
         if (_authClient.User != null)
         {
-            UserName = _authClient.User.Info?.DisplayName ?? "Unknown User";
-            UserEmail = _authClient.User.Info?.Email ?? string.Empty;
+            var displayName = _authClient.User.Info?.DisplayName;
+            var email = _authClient.User.Info?.Email ?? string.Empty;
+
+            // Prefer display name; if missing, fall back to the email's local part
+            if (string.IsNullOrWhiteSpace(displayName) && !string.IsNullOrWhiteSpace(email))
+            {
+                var at = email.IndexOf('@');
+                displayName = at > 0 ? email.Substring(0, at) : email;
+            }
+
+            UserName = string.IsNullOrWhiteSpace(displayName) ? "Unknown User" : displayName;
+            UserEmail = email;
         }
     }
 
@@ -37,7 +56,17 @@ public partial class StarterViewModel : ObservableObject
     {
         try
         {
+            // Sign out from Firebase client
             _authClient.SignOut();
+
+            // Clear any locally persisted tokens/preferences (best-effort)
+            try { SecureStorage.Default.RemoveAll(); } catch { /* ignore */ }
+            try { Preferences.Default.Clear(); } catch { /* ignore */ }
+
+            // Reset in-memory user info
+            UserName = "Guest";
+            UserEmail = string.Empty;
+
             if (Shell.Current != null)
                 await Shell.Current.GoToAsync("//signin");
         }
