@@ -55,6 +55,7 @@ public partial class SignInViewModel : ObservableObject
                         { "uid", uid },
                         { "email", Email },
                         { "username", string.IsNullOrWhiteSpace(displayName) ? Email : displayName },
+                        {"role", "user" },
                         { "coin", 0 },
                         { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) }
                     };
