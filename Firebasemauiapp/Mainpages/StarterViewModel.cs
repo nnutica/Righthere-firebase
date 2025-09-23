@@ -2,6 +2,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
 using Firebasemauiapp.Data;
+using Firebasemauiapp.Services;
+using Google.Cloud.Firestore;
 using Microsoft.Maui.Storage;
 using Microsoft.Maui.ApplicationModel; // For MainThread
 
@@ -11,6 +13,7 @@ public partial class StarterViewModel : ObservableObject
 {
     private readonly FirebaseAuthClient _authClient;
     private readonly DiaryDatabase _diaryDatabase;
+    private readonly FirestoreService _firestoreService;
 
     private string _userName = "Guest";
     public string UserName
@@ -26,13 +29,15 @@ public partial class StarterViewModel : ObservableObject
         set => SetProperty(ref _userEmail, value);
     }
 
-    public StarterViewModel(FirebaseAuthClient authClient, DiaryDatabase diaryDatabase)
+    public StarterViewModel(FirebaseAuthClient authClient, DiaryDatabase diaryDatabase, FirestoreService firestoreService)
     {
         _authClient = authClient;
         _diaryDatabase = diaryDatabase;
+        _firestoreService = firestoreService;
         // React to auth state changes so UI updates after sign-in/sign-out.
         _authClient.AuthStateChanged += OnAuthStateChanged;
         RefreshUserInfo();
+        _ = RefreshCoinAsync();
     }
 
     public void RefreshUserInfo()
@@ -42,6 +47,7 @@ public partial class StarterViewModel : ObservableObject
         {
             UserName = "Guest";
             UserEmail = string.Empty;
+            Coin = 0;
             return;
         }
 
@@ -68,6 +74,42 @@ public partial class StarterViewModel : ObservableObject
         }
 
         UserEmail = email ?? string.Empty;
+        _ = RefreshCoinAsync();
+    }
+
+    private int _coin;
+    public int Coin
+    {
+        get => _coin;
+        set => SetProperty(ref _coin, value);
+    }
+
+    private async Task RefreshCoinAsync()
+    {
+        try
+        {
+            var user = _authClient.User;
+            if (user?.Uid == null)
+            {
+                Coin = 0;
+                return;
+            }
+
+            var db = await _firestoreService.GetDatabaseAsync();
+            var snap = await db.Collection("users").Document(user.Uid).GetSnapshotAsync();
+            if (snap.Exists && snap.TryGetValue("coin", out int coin))
+            {
+                Coin = coin;
+            }
+            else
+            {
+                Coin = 0;
+            }
+        }
+        catch
+        {
+            Coin = 0;
+        }
     }
 
     private void OnAuthStateChanged(object? sender, UserEventArgs e)

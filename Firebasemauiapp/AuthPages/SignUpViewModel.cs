@@ -2,25 +2,30 @@ using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
+using Firebasemauiapp.Services;
+using Google.Cloud.Firestore;
+using System.Collections.Generic;
 
 namespace Firebasemauiapp.Pages;
 
 public partial class SignUpViewModel : ObservableObject
 {
     private readonly FirebaseAuthClient _authClient;
+    private readonly FirestoreService _firestoreService;
 
     [ObservableProperty]
-    private string _email;
+    private string _email = string.Empty;
 
     [ObservableProperty]
-    private string _username;
+    private string _username = string.Empty;
 
     [ObservableProperty]
-    private string _password;
+    private string _password = string.Empty;
 
-    public SignUpViewModel(FirebaseAuthClient authClient)
+    public SignUpViewModel(FirebaseAuthClient authClient, FirestoreService firestoreService)
     {
         _authClient = authClient;
+        _firestoreService = firestoreService;
     }
 
     [RelayCommand]
@@ -35,7 +40,24 @@ public partial class SignUpViewModel : ObservableObject
                 return;
             }
 
-            await _authClient.CreateUserWithEmailAndPasswordAsync(Email, Password, Username);
+            var credential = await _authClient.CreateUserWithEmailAndPasswordAsync(Email, Password, Username);
+
+            var user = credential?.User;
+            var uid = user?.Uid;
+            if (!string.IsNullOrWhiteSpace(uid))
+            {
+                var db = await _firestoreService.GetDatabaseAsync();
+                var userDoc = db.Collection("users").Document(uid);
+                var payload = new Dictionary<string, object>
+                {
+                    { "uid", uid },
+                    { "email", Email },
+                    { "username", Username },
+                    { "coin", 0 },
+                    { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) }
+                };
+                await userDoc.SetAsync(payload, SetOptions.Overwrite);
+            }
             
             // Navigate to sign in page after successful registration
             if (Shell.Current != null)

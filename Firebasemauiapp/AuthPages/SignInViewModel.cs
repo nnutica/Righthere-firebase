@@ -1,12 +1,16 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
+using Firebasemauiapp.Services;
+using Google.Cloud.Firestore;
+using System.Collections.Generic;
 
 namespace Firebasemauiapp.Pages;
 
 public partial class SignInViewModel : ObservableObject
 {
     private readonly FirebaseAuthClient _authClient;
+    private readonly FirestoreService _firestoreService;
     [ObservableProperty]
     private string _email = string.Empty;
 
@@ -16,9 +20,10 @@ public partial class SignInViewModel : ObservableObject
     public string? Username => _authClient.User?.Info?.DisplayName;
 
 
-    public SignInViewModel(FirebaseAuthClient authClient)
+    public SignInViewModel(FirebaseAuthClient authClient, FirestoreService firestoreService)
     {
         _authClient = authClient;
+        _firestoreService = firestoreService;
     }
 
     [RelayCommand]
@@ -33,8 +38,29 @@ public partial class SignInViewModel : ObservableObject
                 return;
             }
 
-            await _authClient.SignInWithEmailAndPasswordAsync(Email, Password);
+            var result = await _authClient.SignInWithEmailAndPasswordAsync(Email, Password);
             OnPropertyChanged(nameof(Username));
+
+            var uid = result?.User?.Uid;
+            if (!string.IsNullOrWhiteSpace(uid))
+            {
+                var db = await _firestoreService.GetDatabaseAsync();
+                var userDocRef = db.Collection("users").Document(uid);
+                var snapshot = await userDocRef.GetSnapshotAsync();
+                if (!snapshot.Exists)
+                {
+                    var displayName = result!.User!.Info?.DisplayName ?? string.Empty;
+                    var payload = new Dictionary<string, object>
+                    {
+                        { "uid", uid },
+                        { "email", Email },
+                        { "username", string.IsNullOrWhiteSpace(displayName) ? Email : displayName },
+                        { "coin", 0 },
+                        { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) }
+                    };
+                    await userDocRef.SetAsync(payload, SetOptions.Overwrite);
+                }
+            }
 
             // Navigate to Main TabBar after successful login
             if (Shell.Current != null)

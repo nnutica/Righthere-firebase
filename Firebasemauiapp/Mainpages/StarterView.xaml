@@ -5,30 +5,50 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="StarterView"
     BackgroundImageSource="main_bg.png"
-    Shell.NavBarIsVisible="True">
-    <VerticalStackLayout Padding="30"
-            Spacing="20"
-            VerticalOptions="Center">
-        <Label
-            FontAttributes="Bold"
-            FontSize="32"
-            HorizontalOptions="Center"
-            Text="Welcome!"/>
+    Shell.NavBarIsVisible="False">
+    <Grid>
+        <!-- Main content -->
+        <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+            <Label FontAttributes="Bold" FontSize="32" HorizontalOptions="Center" Text="Welcome!"/>
+            <Label FontSize="24" HorizontalOptions="Center" Text="{Binding UserName}" TextColor="Blue"/>
+            <Image x:Name="MoodTreeImage" HeightRequest="200" HorizontalOptions="Center" Source="empty.png" WidthRequest="200"/>
+        </VerticalStackLayout>
 
-        <Label
-            FontSize="24"
-            HorizontalOptions="Center"
-            Text="{Binding UserName}"
-            TextColor="Blue"/>
-        <Image
-            x:Name="MoodTreeImage"
-            HeightRequest="200"
-            HorizontalOptions="Center"
-            Source="empty.png"
-            WidthRequest="200"/>
+        <!-- Coin badge at top-right -->
+        <Border
+            HorizontalOptions="End"
+            VerticalOptions="Start"
+            Margin="16"
+            BackgroundColor="#66000000"
+            StrokeThickness="0">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="12"/>
+            </Border.StrokeShape>
+            <HorizontalStackLayout Padding="10,6" Spacing="6">
+                <Label Text="🪙" FontSize="16" TextColor="Gold"/>
+                <Label Text="{Binding Coin}" FontSize="16" TextColor="White"/>
+            </HorizontalStackLayout>
+        </Border>
 
-
-
-
-    </VerticalStackLayout>
+        <!-- Floating logout button at bottom-right -->
+        <Border
+            HorizontalOptions="End"
+            VerticalOptions="End"
+            Margin="24,24,24,36"
+            BackgroundColor="#FF3B30"
+            StrokeThickness="0">
+            <Border.StrokeShape>
+                <Ellipse/>
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Opacity="0.35" Radius="10"/>
+            </Border.Shadow>
+            <Button
+                Text="Logout"
+                Padding="18,10"
+                BackgroundColor="Transparent"
+                TextColor="White"
+                Command="{Binding LogOutCommand}"/>
+        </Border>
+    </Grid>
 </ContentPage>
