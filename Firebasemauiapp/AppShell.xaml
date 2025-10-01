@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:pages="clr-namespace:Firebasemauiapp.Pages"
     xmlns:main="clr-namespace:Firebasemauiapp.Mainpages"
+    xmlns:quest="clr-namespace:Firebasemauiapp.QuestPage"
     xmlns:community="clr-namespace:Firebasemauiapp.CommunityPage"
     Title="Firebasemauiapp"
     CurrentItem="{x:Reference signin}">
@@ -39,11 +40,11 @@
                 ContentTemplate="{DataTemplate main:DiaryView}"
                 Route="diary"/>
         </Tab>
-         <Tab Title="History" Icon="history.png">
+         <Tab Title="Quests" Icon="quests.png">
             <ShellContent
-                Title="History"
-                ContentTemplate="{DataTemplate main:DiaryHistory}"
-                Route="history"/>
+                Title="Quests"
+                ContentTemplate="{DataTemplate quest:QuestPage}"
+                Route="quests"/>
         </Tab>
 
         <Tab Title="Dashboard" Icon="dashboard.png">
