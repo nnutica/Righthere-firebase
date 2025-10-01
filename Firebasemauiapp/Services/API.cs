@@ -18,7 +18,7 @@ public class API
     {
         using HttpClient client = new HttpClient();
 
-        string url = "http://10.0.2.2:8000/getadvice"; // Android Emulator URL
+        string url = "https://nitinat-right-here.hf.space/getadvice"; // Hugging Face Spaces URL
 
         var data = new { text = Diary }; // API ต้องการ key "text"
         string jsonData = JsonSerializer.Serialize(data);
