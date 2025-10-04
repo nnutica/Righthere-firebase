@@ -39,6 +39,10 @@
                 Title="Diary"
                 ContentTemplate="{DataTemplate main:DiaryView}"
                 Route="diary"/>
+            <ShellContent
+                Title="History"
+                ContentTemplate="{DataTemplate main:DiaryHistory}"
+                Route="history"/>
         </Tab>
          <Tab Title="Quests" Icon="quests.png">
             <ShellContent

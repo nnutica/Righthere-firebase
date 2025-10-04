@@ -8,7 +8,7 @@ public partial class AppShell : Shell
 	public AppShell()
 	{
 		InitializeComponent();
-		
+
 		// Register route mappings
 		Routing.RegisterRoute("signin", typeof(SignInView));
 		Routing.RegisterRoute("signup", typeof(SignUpView));
@@ -16,5 +16,6 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("main/diary", typeof(DiaryView));
 		Routing.RegisterRoute("main/history", typeof(DiaryHistory));
 		Routing.RegisterRoute("main/summary", typeof(SummaryView));
+		Routing.RegisterRoute("main/history", typeof(DiaryHistory));
 	}
 }
