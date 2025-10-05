@@ -3,36 +3,56 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Firebasemauiapp.CommunityPage.CommunityPage"
              Title="CommunityPage">
-    <VerticalStackLayout>
-        <Grid RowDefinitions="Auto,Auto,*"
-              Padding="16">
-            <!-- Header -->
-            <Grid Grid.Row="0"
-                  ColumnDefinitions="*,Auto"
-                  Padding="0,0,0,8">
-                <Label Text="Community"
-                       FontSize="22"
-                       FontAttributes="Bold"
-                       TextColor="#3A3A3A"/>
-                <Label Grid.Column="1"
-                       Text="{Binding UserName}"
-                       FontSize="14"
-                       VerticalOptions="Center"
-                       TextColor="#666"
-                       Margin="10,0,0,0"/>
+    <Grid>
+        <VerticalStackLayout>
+            <Grid RowDefinitions="Auto,Auto,*"
+                  Padding="16">
+                <!-- Header -->
+                <Grid Grid.Row="0"
+                      ColumnDefinitions="*,Auto"
+                      Padding="0,0,0,8">
+                    <Label Text="Community"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="#3A3A3A"/>
+                    <Label Grid.Column="1"
+                           Text="{Binding UserName}"
+                           FontSize="14"
+                           VerticalOptions="Center"
+                           TextColor="#666"
+                           Margin="10,0,0,0"/>
+                </Grid>
+                <Image
+                    Grid.Row="1"
+                    Source="commuboard.png"
+                    BackgroundColor="Transparent"
+                    WidthRequest="200"
+                    HeightRequest="200"
+                    HorizontalOptions="Start"
+                    VerticalOptions="End">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnOpenCommunityPopupTapped"/>
+                    </Image.GestureRecognizers>
+                </Image>
             </Grid>
-            <Image
-                Grid.Row="1"
-                Source="commuboard.png"
-                BackgroundColor="Transparent"
-                WidthRequest="200"
-                HeightRequest="200"
-                HorizontalOptions="Start"
-                VerticalOptions="End">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnOpenCommunityPopupTapped"/>
-                </Image.GestureRecognizers>
-            </Image>
-        </Grid>
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <!-- Floating Action Button for Create Post (ImageButton) -->
+        <ImageButton Source="addpost.png"
+                     BackgroundColor="Transparent"
+                     WidthRequest="60"
+                     HeightRequest="60"
+                     Aspect="AspectFit"
+                     HorizontalOptions="End"
+                     VerticalOptions="End"
+                     Margin="20,20,20,80"
+                     Clicked="OnCreatePostTapped">
+            <ImageButton.Shadow>
+                <Shadow Brush="Black"
+                        Offset="2,2"
+                        Radius="8"
+                        Opacity="0.3"/>
+            </ImageButton.Shadow>
+        </ImageButton>
+    </Grid>
 </ContentPage>

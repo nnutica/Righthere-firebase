@@ -32,4 +32,14 @@ public partial class CommunityPage
 		var popup = new CommunityPost();
 		await this.ShowPopupAsync(popup);
 	}
+
+	private async void OnCreatePostTapped(object? sender, EventArgs e)
+	{
+		var vm = BindingContext as CommunityViewModel;
+		var username = vm?.UserName ?? "Guest";
+
+		// Use parameterless popup that resolves its own services
+		var createPostPopup = new CommunityCreatePost();
+		await this.ShowPopupAsync(createPostPopup);
+	}
 }

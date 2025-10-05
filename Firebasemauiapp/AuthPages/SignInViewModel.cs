@@ -17,6 +17,12 @@ public partial class SignInViewModel : ObservableObject
     [ObservableProperty]
     private string _password = string.Empty;
 
+    [ObservableProperty]
+    private string _errorMessage = string.Empty;
+
+    [ObservableProperty]
+    private bool _hasError = false;
+
     public string? Username => _authClient.User?.Info?.DisplayName;
 
 
@@ -31,10 +37,14 @@ public partial class SignInViewModel : ObservableObject
     {
         try
         {
+            // Clear previous error
+            ErrorMessage = string.Empty;
+            HasError = false;
+
             if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
             {
-                if (Shell.Current != null)
-                    await Shell.Current.DisplayAlert("Error", "Please enter both email and password.", "OK");
+                ErrorMessage = "Please enter both email and password.";
+                HasError = true;
                 return;
             }
 
@@ -63,15 +73,17 @@ public partial class SignInViewModel : ObservableObject
                 }
             }
 
-            // Navigate to Main TabBar after successful login
+            // Clear error and navigate to Main TabBar after successful login
+            ErrorMessage = string.Empty;
+            HasError = false;
             if (Shell.Current != null)
                 await Shell.Current.GoToAsync("//main/starter");
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            // Handle login error
-            if (Shell.Current != null)
-                await Shell.Current.DisplayAlert("Error", $"Login failed: {ex.Message}", "OK");
+            // Handle login error with inline message
+            ErrorMessage = $"Login failed: Username or password is incorrect.";
+            HasError = true;
         }
     }
 

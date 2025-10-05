@@ -20,21 +20,17 @@
         Title="Sign Up"
         ContentTemplate="{DataTemplate pages:SignUpView}"
         Route="signup"/>
-        <ShellContent
-            Title="Summary"
-            ContentTemplate="{DataTemplate main:SummaryView}"
-            Route="summary"/>
+    <ShellContent
+        Title="Summary"
+        ContentTemplate="{DataTemplate main:SummaryView}"
+        Route="summary"/>
 
     <!-- Main App with TabBar -->
     <TabBar Route="main">
-        <Tab Title="Home" Icon="home.png">
-            <ShellContent
-                Title="Home"
-                ContentTemplate="{DataTemplate main:StarterView}"
-                Route="starter"/>
-        </Tab>
-        
-        <Tab Title="Diary" Icon="diary.png">
+
+
+        <Tab Title="Diary"
+             Icon="diary.png">
             <ShellContent
                 Title="Diary"
                 ContentTemplate="{DataTemplate main:DiaryView}"
@@ -44,27 +40,38 @@
                 ContentTemplate="{DataTemplate main:DiaryHistory}"
                 Route="history"/>
         </Tab>
-         <Tab Title="Quests" Icon="quests.png">
+        <Tab Title="Quests"
+             Icon="quests.png">
             <ShellContent
                 Title="Quests"
                 ContentTemplate="{DataTemplate quest:QuestPage}"
                 Route="quests"/>
         </Tab>
-
-        <Tab Title="Dashboard" Icon="dashboard.png">
+        <Tab Title="Home"
+             Icon="home.png">
             <ShellContent
-                Title="Dashboard"
-                ContentTemplate="{DataTemplate main:Dashboard}"
-                Route="dashboard"/>
+                Title="Home"
+                ContentTemplate="{DataTemplate main:StarterView}"
+                Route="starter"/>
         </Tab>
-         <Tab Title="Community" Icon="community.png">
+        <Tab Title="Community"
+             Icon="community_icon.png">
             <ShellContent
                 Title="Community"
                 ContentTemplate="{DataTemplate community:CommunityPage}"
                 Route="community"/>
         </Tab>
-        
-        
+
+        <Tab Title="Dashboard"
+             Icon="dashboard.png">
+            <ShellContent
+                Title="Dashboard"
+                ContentTemplate="{DataTemplate main:Dashboard}"
+                Route="dashboard"/>
+        </Tab>
+
+
+
     </TabBar>
 
 </Shell>

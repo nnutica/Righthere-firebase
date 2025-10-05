@@ -16,12 +16,12 @@
         </Border.StrokeShape>
 
         <Grid RowDefinitions="Auto,Auto,*,Auto"
-                RowSpacing="12">
+              RowSpacing="12">
             <!-- Header -->
             <Grid Grid.Row="0"
-                    ColumnDefinitions="*,Auto">
+                  ColumnDefinitions="*,Auto">
                 <Label Grid.Column="0"
-                       Text="Community"
+                       Text="Community Post"
                        FontSize="20"
                        FontAttributes="Bold"
                        TextColor="#2E7D32"/>
@@ -35,164 +35,122 @@
                         HeightRequest="34"/>
             </Grid>
 
-            <!-- Subheader: user + Add Post -->
+            <!-- Subheader: user + Refresh Button -->
             <Grid Grid.Row="1"
-                    ColumnDefinitions="*,Auto"
-                    ColumnSpacing="10">
+                  ColumnDefinitions="*,Auto"
+                  ColumnSpacing="10">
                 <Label x:Name="UserLabel"
                        Grid.Column="0"
-                       Text="Posting as: Guest"
+                       Text="Viewing as: Guest"
                        FontSize="13"
                        TextColor="#2E7D32"
                        VerticalOptions="Center"/>
                 <Button Grid.Column="1"
-                        Text="＋ Add Post"
+                        Text="🔄 Refresh"
                         Padding="12,6"
                         BackgroundColor="#2E7D32"
                         TextColor="White"
                         CornerRadius="10"
-                        Clicked="OnAddPostToggleClicked"/>
+                        Clicked="OnRefreshClicked"/>
             </Grid>
 
-            <!-- Add Post Panel (collapsible) -->
-            <VerticalStackLayout Grid.Row="2"
-                    Spacing="8"
-                    IsVisible="{Binding IsAdding}">
-                <Border BackgroundColor="#F5F9F6"
-                        Padding="10"
-                        Stroke="#B2DFDB"
-                        StrokeThickness="1">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="12"/>
-                    </Border.StrokeShape>
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="What's on your mind?"
-                                FontSize="14"
-                                TextColor="#555"/>
-                        <Editor x:Name="PostContentEditor"
-                                AutoSize="TextChanges"
-                                Placeholder="Share your thoughts with the community..."
-                                BackgroundColor="White"
-                                MinimumHeightRequest="80"
-                                TextColor="Black"/>
-                        <Grid ColumnDefinitions="*,*"
-                                ColumnSpacing="10"
-                                Margin="0,4,0,0">
-                            <Button Grid.Column="0"
-                                    Text="Cancel"
-                                    BackgroundColor="#ECEFF1"
-                                    TextColor="#666"
-                                    CornerRadius="8"
-                                    Clicked="OnCancelAddPostClicked"/>
-                            <Button Grid.Column="1"
-                                    Text="Post"
-                                    BackgroundColor="#2E7D32"
-                                    TextColor="White"
-                                    CornerRadius="8"
-                                    Clicked="OnPostClicked"/>
-                        </Grid>
-                    </VerticalStackLayout>
-                </Border>
-            </VerticalStackLayout>
+            <!-- Random Post Display -->
+            <Grid Grid.Row="2">
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                   IsVisible="{Binding IsLoading}"
+                                   Color="#2E7D32"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"/>
 
-            <!-- Posts Feed -->
-            <Grid Grid.Row="2"
-                    IsVisible="{Binding NotAdding}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <ActivityIndicator Grid.Row="0"
-                        IsRunning="{Binding IsLoading}"
-                        IsVisible="{Binding IsLoading}"
-                        Color="#2E7D32"/>
-
-                <ContentView Grid.Row="1"
-                        IsVisible="{Binding IsEmpty}">
+                <ContentView IsVisible="{Binding NoPost}">
                     <VerticalStackLayout Spacing="6"
-                            Padding="20"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Center">
-                        <Label Text="No posts yet"
-                                FontSize="16"
-                                TextColor="#777"
-                                HorizontalOptions="Center"/>
+                                         Padding="20"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center">
+                        <Label Text="No posts available"
+                               FontSize="16"
+                               TextColor="#777"
+                               HorizontalOptions="Center"/>
                         <Label Text="Be the first to share something with the community."
-                                FontSize="13"
-                                TextColor="#999"
-                                HorizontalOptions="Center"/>
+                               FontSize="13"
+                               TextColor="#999"
+                               HorizontalOptions="Center"/>
                     </VerticalStackLayout>
                 </ContentView>
 
-                <CollectionView Grid.Row="1"
-                                ItemsSource="{Binding Posts}"
-                                BackgroundColor="Transparent"
-                                IsVisible="{Binding NotEmpty}">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Margin="0,6"
-                                    Padding="12"
-                                    BackgroundColor="White"
-                                    Stroke="#E0E0E0"
-                                    StrokeThickness="1">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="12"/>
-                                </Border.StrokeShape>
-                                <Grid RowDefinitions="Auto,Auto,Auto"
-                                        ColumnDefinitions="*,Auto"
-                                        ColumnSpacing="10">
-                                    <!-- Author + time -->
-                                    <Label Grid.Row="0"
-                                            Grid.ColumnSpan="2"
-                                           Text="{Binding Author}"
-                                           FontAttributes="Bold"
-                                           TextColor="#2E7D32"/>
-                                    <Label Grid.Row="0"
-                                            Grid.Column="1"
-                                           HorizontalTextAlignment="End"
-                                           Text="{Binding CreatedAt, StringFormat='{}{0:dd MMM yyyy HH:mm}'}"
-                                           FontSize="12"
-                                           TextColor="#888"/>
+                <ScrollView IsVisible="{Binding HasPost}">
+                    <Border Margin="0,6"
+                            Padding="16"
+                            BackgroundColor="White"
+                            Stroke="#E0E0E0"
+                            StrokeThickness="1">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12"/>
+                        </Border.StrokeShape>
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto"
+                              ColumnDefinitions="*,Auto"
+                              ColumnSpacing="10"
+                              RowSpacing="8">
+                            <!-- Author -->
+                            <Label Grid.Row="0"
+                                   Grid.Column="0"
+                                   Text="{Binding RandomPost.Author}"
+                                   FontAttributes="Bold"
+                                   FontSize="16"
+                                   TextColor="#2E7D32"/>
+                            <!-- Time -->
+                            <Label Grid.Row="0"
+                                   Grid.Column="1"
+                                   HorizontalTextAlignment="End"
+                                   Text="{Binding RandomPost.CreatedAt, StringFormat='{}{0:dd MMM yyyy HH:mm}'}"
+                                   FontSize="12"
+                                   TextColor="#888"/>
 
-                                    <!-- Content -->
-                                    <Label Grid.Row="1"
-                                            Grid.ColumnSpan="2"
-                                           Text="{Binding Content}"
-                                           FontSize="14"
-                                           TextColor="#333"/>
+                            <!-- Content -->
+                            <Label Grid.Row="1"
+                                   Grid.ColumnSpan="2"
+                                   Text="{Binding RandomPost.Content}"
+                                   FontSize="14"
+                                   TextColor="#333"
+                                   Margin="0,8"/>
 
-                                    <!-- Like row -->
-                                    <Grid Grid.Row="2"
-                                            Grid.ColumnSpan="2"
-                                            ColumnDefinitions="Auto,Auto,*,Auto"
-                                            ColumnSpacing="8"
-                                            Margin="0,6,0,0">
-                                        <Button Grid.Column="0"
-                                                Text="❤"
-                                                Padding="10,4"
-                                                BackgroundColor="#FFEBEE"
-                                                TextColor="#D32F2F"
-                                                CornerRadius="14"
-                                                Command="{Binding Source={x:Reference RootPopup}, Path=BindingContext.LikeCommand}"
-                                                CommandParameter="{Binding .}"/>
-                                        <Label Grid.Column="1"
-                                                Text="{Binding Likes}"
-                                                VerticalOptions="Center"
-                                                TextColor="#D32F2F"/>
-                                    </Grid>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                            <!-- Separator -->
+                            <BoxView Grid.Row="2"
+                                     Grid.ColumnSpan="2"
+                                     HeightRequest="1"
+                                     BackgroundColor="#E0E0E0"
+                                     Margin="0,8"/>
+
+                            <!-- Like section -->
+                            <Grid Grid.Row="3"
+                                  Grid.ColumnSpan="2"
+                                  ColumnDefinitions="Auto,Auto,*"
+                                  ColumnSpacing="8">
+                                <Button Grid.Column="0"
+                                        Text="❤"
+                                        Padding="12,6"
+                                        BackgroundColor="#FFEBEE"
+                                        TextColor="#D32F2F"
+                                        CornerRadius="16"
+                                        FontSize="16"
+                                        Clicked="OnLikeClicked"/>
+                                <Label Grid.Column="1"
+                                       Text="{Binding RandomPost.Likes}"
+                                       VerticalOptions="Center"
+                                       FontSize="14"
+                                       FontAttributes="Bold"
+                                       TextColor="#D32F2F"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ScrollView>
             </Grid>
 
             <!-- Footer: small note -->
             <Label Grid.Row="3"
-                    Text="Community guidelines: Be kind and respectful."
-                    FontSize="11"
-                    TextColor="#9E9E9E"/>
+                   Text="Community guidelines: Be kind and respectful."
+                   FontSize="11"
+                   TextColor="#9E9E9E"/>
         </Grid>
     </Border>
 </toolkit:Popup>

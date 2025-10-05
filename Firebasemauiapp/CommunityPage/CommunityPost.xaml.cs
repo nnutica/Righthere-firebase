@@ -14,13 +14,11 @@ public partial class CommunityPost : Popup
 	private readonly FirebaseAuthClient _auth;
 	private readonly string _userName;
 
-	public ObservableCollection<PostData> Posts { get; } = new();
-
-	private bool _isAdding;
-	public bool IsAdding
+	private PostData? _randomPost;
+	public PostData? RandomPost
 	{
-		get => _isAdding;
-		set { if (_isAdding != value) { _isAdding = value; base.OnPropertyChanged(); base.OnPropertyChanged(nameof(NotAdding)); } }
+		get => _randomPost;
+		set { if (_randomPost != value) { _randomPost = value; base.OnPropertyChanged(); base.OnPropertyChanged(nameof(HasPost)); base.OnPropertyChanged(nameof(NoPost)); } }
 	}
 
 	private bool _isLoading;
@@ -30,11 +28,11 @@ public partial class CommunityPost : Popup
 		set { if (_isLoading != value) { _isLoading = value; base.OnPropertyChanged(); } }
 	}
 
-	public bool NotAdding => !IsAdding;
-	public bool IsEmpty => Posts.Count == 0;
-	public bool NotEmpty => !IsEmpty;
+	public bool HasPost => RandomPost != null;
+	public bool NoPost => RandomPost == null;
 
 	public ICommand LikeCommand { get; }
+	public ICommand RefreshCommand { get; }
 
 	public CommunityPost()
 	{
@@ -45,11 +43,13 @@ public partial class CommunityPost : Popup
 		_postDb = services?.GetService(typeof(PostDatabase)) as PostDatabase ?? throw new InvalidOperationException("PostDatabase service not available");
 		_auth = services?.GetService(typeof(FirebaseAuthClient)) as FirebaseAuthClient ?? throw new InvalidOperationException("FirebaseAuthClient service not available");
 
-		_userName = _auth.User?.Info?.Email ?? _auth.User?.Info?.DisplayName ?? "Guest";
-		UserLabel.Text = $"Posting as: {_userName}";
+		_userName = _auth.User?.Info?.DisplayName ?? _auth.User?.Info?.Email ?? "Guest";
+		UserLabel.Text = $"Viewing as: {_userName}";
 
 		LikeCommand = new Command<PostData>(async (post) => await LikeAsync(post));
-		_ = LoadPostsAsync();
+		RefreshCommand = new Command(async () => await LoadRandomPostAsync());
+
+		_ = LoadRandomPostAsync();
 	}
 
 	public CommunityPost(string userName, PostDatabase postDb, FirebaseAuthClient auth)
@@ -59,11 +59,12 @@ public partial class CommunityPost : Popup
 		_userName = userName;
 		_postDb = postDb;
 		_auth = auth;
-		UserLabel.Text = $"Posting as: {userName}";
+		UserLabel.Text = $"Viewing as: {userName}";
 
 		LikeCommand = new Command<PostData>(async (post) => await LikeAsync(post));
+		RefreshCommand = new Command(async () => await LoadRandomPostAsync());
 
-		_ = LoadPostsAsync();
+		_ = LoadRandomPostAsync();
 	}
 
 	private void OnCloseClicked(object sender, EventArgs e)
@@ -71,36 +72,15 @@ public partial class CommunityPost : Popup
 		CloseAsync();
 	}
 
-	private void OnCancelClicked(object sender, EventArgs e)
+	private void OnRefreshClicked(object sender, EventArgs e)
 	{
-		CloseAsync();
+		_ = LoadRandomPostAsync();
 	}
 
-	private async void OnPostClicked(object sender, EventArgs e)
+	private async void OnLikeClicked(object sender, EventArgs e)
 	{
-		var content = PostContentEditor.Text;
-		if (!string.IsNullOrWhiteSpace(content))
-		{
-			await CreatePostAsync(content);
-			IsAdding = false;
-			PostContentEditor.Text = string.Empty;
-		}
-		else
-		{
-			// Show validation message
-			await DisplayAlert("Validation", "Please enter some content for your post.", "OK");
-		}
-	}
-
-	private void OnAddPostToggleClicked(object sender, EventArgs e)
-	{
-		IsAdding = true;
-	}
-
-	private void OnCancelAddPostClicked(object sender, EventArgs e)
-	{
-		IsAdding = false;
-		PostContentEditor.Text = string.Empty;
+		Console.WriteLine("Like button clicked!");
+		await LikeAsync(RandomPost);
 	}
 
 	private async Task DisplayAlert(string title, string message, string cancel)
@@ -111,23 +91,24 @@ public partial class CommunityPost : Popup
 		}
 	}
 
-	private async Task LoadPostsAsync()
+	private async Task LoadRandomPostAsync()
 	{
 		try
 		{
 			IsLoading = true;
-			Posts.Clear();
-			var list = await _postDb.GetAllPostsAsync();
-			foreach (var p in list.OrderByDescending(p => p.CreatedAt))
+			RandomPost = null;
+
+			var allPosts = await _postDb.GetAllPostsAsync();
+			if (allPosts.Any())
 			{
-				Posts.Add(p);
+				var random = new Random();
+				var randomIndex = random.Next(0, allPosts.Count);
+				RandomPost = allPosts[randomIndex];
 			}
-			base.OnPropertyChanged(nameof(IsEmpty));
-			base.OnPropertyChanged(nameof(NotEmpty));
 		}
 		catch (Exception ex)
 		{
-			await DisplayAlert("Error", $"Failed to load posts: {ex.Message}", "OK");
+			await DisplayAlert("Error", $"Failed to load post: {ex.Message}", "OK");
 		}
 		finally
 		{
@@ -135,54 +116,50 @@ public partial class CommunityPost : Popup
 		}
 	}
 
-	private async Task CreatePostAsync(string content)
-	{
-		try
-		{
-			var author = _auth.User?.Info?.DisplayName ?? _userName;
-			var newPost = new PostData
-			{
-				Content = content,
-				Author = string.IsNullOrWhiteSpace(author) ? "Anonymous" : author,
-				Likes = 0,
-				CreatedAt = DateTime.UtcNow
-			};
-			await _postDb.CreatePostAsync(newPost);
-			// Insert on top
-			Posts.Insert(0, newPost);
-			base.OnPropertyChanged(nameof(IsEmpty));
-			base.OnPropertyChanged(nameof(NotEmpty));
-		}
-		catch (Exception ex)
-		{
-			await DisplayAlert("Error", $"Failed to create post: {ex.Message}", "OK");
-		}
-	}
-
 	private async Task LikeAsync(PostData? post)
 	{
-		if (post == null) return;
+		post ??= RandomPost;
+		if (post == null)
+		{
+			Console.WriteLine("LikeAsync: No post to like");
+			return;
+		}
+
+		Console.WriteLine($"LikeAsync: Starting like for post {post.PostId}, current likes: {post.Likes}");
+
 		try
 		{
-			var index = Posts.IndexOf(post);
-			if (index < 0) return;
-			// Clone to trigger UI update
-			var updated = new PostData
+			// Show immediate feedback
+			var newLikes = post.Likes + 1;
+			RandomPost = new PostData
 			{
 				PostId = post.PostId,
 				Author = post.Author,
 				Content = post.Content,
 				CreatedAt = post.CreatedAt,
-				Likes = post.Likes + 1
+				Likes = newLikes
 			};
-			await _postDb.UpdatePostAsync(updated);
-			Posts[index] = updated;
+			Console.WriteLine($"LikeAsync: UI updated to {newLikes} likes");
+
+			// Try to update database
+			var success = await _postDb.TryIncrementLikesAsync(post.PostId, 1);
+			Console.WriteLine($"LikeAsync: Database update success: {success}");
+
+			if (success)
+			{
+				// Refresh from database to get accurate count
+				var refreshed = await _postDb.GetPostByIdAsync(post.PostId);
+				if (refreshed != null)
+				{
+					Console.WriteLine($"LikeAsync: Refreshed from DB, likes: {refreshed.Likes}");
+					RandomPost = refreshed;
+				}
+			}
 		}
 		catch (Exception ex)
 		{
+			Console.WriteLine($"LikeAsync: Error - {ex.Message}");
 			await DisplayAlert("Error", $"Failed to like post: {ex.Message}", "OK");
 		}
 	}
-
-	// No custom INotifyPropertyChanged needed; we use base.OnPropertyChanged from BindableObject
 }

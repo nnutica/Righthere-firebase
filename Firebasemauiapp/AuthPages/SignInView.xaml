@@ -7,23 +7,29 @@
     Shell.NavBarIsVisible="False">
 
     <ContentPage.Background>
-        <LinearGradientBrush StartPoint="0,0" EndPoint="2,2">
-            <GradientStop Offset="0.1" Color="#FFFFFF" />
-            <GradientStop Offset="1" Color="#50A65D" />
-            <GradientStop Offset="1.5" Color="#FFFFFF" />
-            <GradientStop Offset="2" Color="#50A65D" />
+        <LinearGradientBrush StartPoint="0,0"
+                EndPoint="2,2">
+            <GradientStop Offset="0.1"
+                    Color="#FFFFFF"/>
+            <GradientStop Offset="1"
+                    Color="#50A65D"/>
+            <GradientStop Offset="1.5"
+                    Color="#FFFFFF"/>
+            <GradientStop Offset="2"
+                    Color="#50A65D"/>
         </LinearGradientBrush>
     </ContentPage.Background>
     <Grid Padding="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!--  Header Section  -->
@@ -36,14 +42,14 @@
                 FontSize="24"
                 HorizontalOptions="Center"
                 Text="Welcome Back!"
-                TextColor="#50A65D" />
+                TextColor="#50A65D"/>
             <Label
                 Margin="0,20,0,10"
                 FontSize="14"
                 HorizontalOptions="Center"
                 HorizontalTextAlignment="Center"
                 Text="Access your safe space for thoughts and memories"
-                TextColor="Black" />
+                TextColor="Black"/>
         </StackLayout>
 
         <!--  Email Input  -->
@@ -55,7 +61,8 @@
             HeightRequest="50"
             Stroke="#50A65D"
             StrokeShape="RoundRectangle 10">
-            <Entry Placeholder="Email" Text="{Binding Email}" />
+            <Entry Placeholder="Email"
+                    Text="{Binding Email}"/>
         </Border>
 
         <!--  Password Input  -->
@@ -70,30 +77,40 @@
             <Entry
                 IsPassword="True"
                 Placeholder="Password"
-                Text="{Binding Password}" />
+                Text="{Binding Password}"/>
         </Border>
+
+        <!--  Error Message  -->
+        <Label
+            Grid.Row="4"
+            Margin="15,0,15,20"
+            FontSize="12"
+            HorizontalOptions="Start"
+            IsVisible="{Binding HasError}"
+            Text="{Binding ErrorMessage}"
+            TextColor="Red"/>
 
         <!--  Sign In Button  -->
         <Button
-            Grid.Row="4"
+            Grid.Row="5"
             Margin="15,20,15,10"
             BackgroundColor="#50A65D"
             Command="{Binding SignInCommand}"
             FontSize="16"
             HeightRequest="50"
             Text="Sign In"
-            TextColor="White" />
+            TextColor="White"/>
 
         <!--  Registration Link  -->
         <HorizontalStackLayout
-            Grid.Row="5"
+            Grid.Row="6"
             Margin="0,20,0,0"
             HorizontalOptions="Center">
             <Label
                 FontSize="14"
                 HorizontalOptions="Center"
                 Text="Don't have an account?  "
-                TextColor="Gray" />
+                TextColor="Gray"/>
             <Label
                 FontSize="14"
                 HorizontalOptions="Center"
@@ -101,18 +118,18 @@
                 TextColor="#50A65D"
                 TextDecorations="Underline">
                 <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding NavigateSignUpCommand}" />
+                    <TapGestureRecognizer Command="{Binding NavigateSignUpCommand}"/>
                 </Label.GestureRecognizers>
             </Label>
         </HorizontalStackLayout>
 
         <!--  Username Display  -->
         <Label
-            Grid.Row="6"
+            Grid.Row="7"
             Margin="0,20,0,0"
             HorizontalOptions="Center"
             Text="{Binding Username}"
-            TextColor="#50A65D" />
+            TextColor="#50A65D"/>
 
     </Grid>
 </ContentPage>
