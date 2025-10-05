@@ -79,10 +79,11 @@ public partial class SignInViewModel : ObservableObject
             if (Shell.Current != null)
                 await Shell.Current.GoToAsync("//main/starter");
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             // Handle login error with inline message
             ErrorMessage = $"Login failed: Username or password is incorrect.";
+            Console.WriteLine($"SignIn error: {ex.Message}");
             HasError = true;
         }
     }
