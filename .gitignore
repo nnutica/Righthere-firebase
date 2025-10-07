@@ -29,3 +29,6 @@ ehthumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Firebase (Android) config – do not commit secrets
+Firebasemauiapp/Platforms/Android/google-services.json
