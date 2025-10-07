@@ -36,7 +36,7 @@
         </Tab>
 
         <Tab Title="Quests"
-             Icon="quests.png">
+             Icon="quest.png">
             <ShellContent
                 Title="Quests"
                 ContentTemplate="{DataTemplate quest:QuestPage}"
