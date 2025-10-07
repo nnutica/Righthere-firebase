@@ -7,8 +7,7 @@
     xmlns:main="clr-namespace:Firebasemauiapp.Mainpages"
     xmlns:quest="clr-namespace:Firebasemauiapp.QuestPage"
     xmlns:community="clr-namespace:Firebasemauiapp.CommunityPage"
-    Title="Firebasemauiapp"
-    CurrentItem="{x:Reference signin}">
+    Title="Firebasemauiapp">
 
     <!-- Authentication Pages (No Tabs) -->
     <ShellContent
@@ -28,6 +27,21 @@
     <!-- Main App with TabBar -->
     <TabBar Route="main">
 
+        <Tab Title="Home"
+             Icon="home.png">
+            <ShellContent
+                Title="Home"
+                ContentTemplate="{DataTemplate main:StarterView}"
+                Route="starter"/>
+        </Tab>
+
+        <Tab Title="Quests"
+             Icon="quests.png">
+            <ShellContent
+                Title="Quests"
+                ContentTemplate="{DataTemplate quest:QuestPage}"
+                Route="quests"/>
+        </Tab>
 
         <Tab Title="Diary"
              Icon="diary.png">
@@ -39,20 +53,6 @@
                 Title="History"
                 ContentTemplate="{DataTemplate main:DiaryHistory}"
                 Route="history"/>
-        </Tab>
-        <Tab Title="Quests"
-             Icon="quests.png">
-            <ShellContent
-                Title="Quests"
-                ContentTemplate="{DataTemplate quest:QuestPage}"
-                Route="quests"/>
-        </Tab>
-        <Tab Title="Home"
-             Icon="home.png">
-            <ShellContent
-                Title="Home"
-                ContentTemplate="{DataTemplate main:StarterView}"
-                Route="starter"/>
         </Tab>
         <Tab Title="Community"
              Icon="community_icon.png">

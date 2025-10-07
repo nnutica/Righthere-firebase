@@ -1,5 +1,6 @@
 ﻿using Firebase.Auth;
 using Firebase.Auth.Providers;
+using Firebase.Auth.Repository;
 using Firebasemauiapp.Pages;
 using Firebasemauiapp.Mainpages;
 using Firebasemauiapp.CommunityPage;
@@ -9,6 +10,8 @@ using Firebasemauiapp.Services;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
+using Microsoft.Maui.Storage;
+using System.IO;
 
 namespace Firebasemauiapp;
 
@@ -31,7 +34,8 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		builder.Services.AddSingleton(new FirebaseAuthClient(new FirebaseAuthConfig()
+		// Configure FirebaseAuthClient with persistent session storage
+		var authConfig = new FirebaseAuthConfig()
 		{
 			ApiKey = "AIzaSyCtqanoTU24UXz82KyZI8phmYae09sIx5U",
 			AuthDomain = "righthere-backend.firebaseapp.com",
@@ -39,7 +43,11 @@ public static class MauiProgram
 			[
 				new EmailProvider()
 			],
-		}));
+			// Persist the user session securely in the app data directory
+			UserRepository = new FileUserRepository(FileSystem.AppDataDirectory)
+		};
+
+		builder.Services.AddSingleton(new FirebaseAuthClient(authConfig));
 
 		// เพิ่ม Firestore services
 		builder.Services.AddSingleton<FirestoreService>();
@@ -68,6 +76,11 @@ public static class MauiProgram
 		builder.Services.AddTransient<CommunityPage.CommunityPage>();
 		builder.Services.AddTransient<QuestPage.QuestPage>();
 
-		return builder.Build();
+		var app = builder.Build();
+
+		// Expose service provider for places where DI constructor injection isn't available
+		ServiceHelper.Initialize(app.Services);
+
+		return app;
 	}
 }
