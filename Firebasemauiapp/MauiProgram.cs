@@ -53,6 +53,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<FirestoreService>();
 		builder.Services.AddSingleton<DiaryDatabase>();
 		builder.Services.AddSingleton<PostDatabase>();
+		builder.Services.AddSingleton<AuthRoutingService>();
 
 		// View Models
 		builder.Services.AddTransient<SignInViewModel>();
@@ -78,8 +79,10 @@ public static class MauiProgram
 
 		var app = builder.Build();
 
-		// Expose service provider for places where DI constructor injection isn't available
+
+		// Expose service provider and start auth-driven routing
 		ServiceHelper.Initialize(app.Services);
+		app.Services.GetRequiredService<AuthRoutingService>().Start();
 
 		return app;
 	}
