@@ -40,6 +40,60 @@ public partial class StarterViewModel : ObservableObject
         _ = RefreshCoinAsync();
     }
 
+    [ObservableProperty]
+    private bool _isMenuOpen;
+
+    [RelayCommand]
+    private void ToggleMenu()
+    {
+        IsMenuOpen = !IsMenuOpen;
+    }
+
+    [RelayCommand]
+    private async Task GoWriteDiary()
+    {
+        // Close menu in VM first for better UX
+        IsMenuOpen = false;
+        try
+        {
+            if (_authClient.User == null)
+            {
+                await Shell.Current.DisplayAlert("Login required", "Please sign in again.", "OK");
+                await Shell.Current.GoToAsync("//signin");
+                return;
+            }
+            if (Shell.Current != null)
+                await Shell.Current.GoToAsync("//main/diary");
+        }
+        catch (Exception ex)
+        {
+            if (Shell.Current != null)
+                await Shell.Current.DisplayAlert("Navigation error", ex.Message, "OK");
+        }
+    }
+
+    [RelayCommand]
+    private async Task GoYourDiary()
+    {
+        IsMenuOpen = false;
+        try
+        {
+            if (_authClient.User == null)
+            {
+                await Shell.Current.DisplayAlert("Login required", "Please sign in again.", "OK");
+                await Shell.Current.GoToAsync("//signin");
+                return;
+            }
+            if (Shell.Current != null)
+                await Shell.Current.GoToAsync("//main/history");
+        }
+        catch (Exception ex)
+        {
+            if (Shell.Current != null)
+                await Shell.Current.DisplayAlert("Navigation error", ex.Message, "OK");
+        }
+    }
+
     public void RefreshUserInfo()
     {
         var user = _authClient.User;

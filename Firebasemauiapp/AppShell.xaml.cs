@@ -19,6 +19,5 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("main/diary", typeof(DiaryView));
 		Routing.RegisterRoute("main/history", typeof(DiaryHistory));
 		Routing.RegisterRoute("main/summary", typeof(SummaryView));
-		Routing.RegisterRoute("main/history", typeof(DiaryHistory));
 	}
 }

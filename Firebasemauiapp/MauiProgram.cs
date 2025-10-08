@@ -84,6 +84,9 @@ public static class MauiProgram
 		ServiceHelper.Initialize(app.Services);
 		app.Services.GetRequiredService<AuthRoutingService>().Start();
 
+		// Pre-warm Firestore in background to avoid first-use delay when opening Diary/History
+		_ = app.Services.GetRequiredService<FirestoreService>().GetDatabaseAsync();
+
 		return app;
 	}
 }

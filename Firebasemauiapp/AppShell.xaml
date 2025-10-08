@@ -24,16 +24,10 @@
         ContentTemplate="{DataTemplate main:SummaryView}"
         Route="summary"/>
 
-    <!-- Main App with TabBar -->
-    <TabBar Route="main">
 
-        <Tab Title="Home"
-             Icon="home.png">
-            <ShellContent
-                Title="Home"
-                ContentTemplate="{DataTemplate main:StarterView}"
-                Route="starter"/>
-        </Tab>
+    <!-- Main App with TabBar -->
+    <TabBar Route="main"
+            CurrentItem="{x:Reference homeTab}">
 
         <Tab Title="Quests"
              Icon="quest.png">
@@ -54,6 +48,19 @@
                 ContentTemplate="{DataTemplate main:DiaryHistory}"
                 Route="history"/>
         </Tab>
+
+
+
+        <Tab x:Name="homeTab"
+             Route="home"
+             Title="Home"
+             Icon="home.png">
+            <ShellContent
+                Title="Home"
+                ContentTemplate="{DataTemplate main:StarterView}"
+                Route="starter"/>
+        </Tab>
+
         <Tab Title="Community"
              Icon="community_icon.png">
             <ShellContent

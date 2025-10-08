@@ -106,15 +106,38 @@ public partial class SummaryViewModel : ObservableObject
 
                 string diaryId = await _diaryDatabase.SaveDiaryAsync(diary);
                 await Shell.Current.DisplayAlert("Saved", "Diary entry saved successfully.", "OK");
+
+                // เครียร์ข้อมูลใน SummaryPageData หลังจากเซฟแล้ว
+                SummaryPageData.Clear();
+
+                // ไปหน้า Starter ทั้งหน้าและ Tab พร้อมเครียร์สถานะ Diary
+                await ResetDiaryAndGoToStarter();
             }
             catch (Exception ex)
             {
                 await Shell.Current.DisplayAlert("Error", $"Failed to save diary: {ex.Message}", "OK");
+                return;
             }
         }
+        else
+        {
+            // ถ้าไม่เซฟ ก็กลับไปหน้า Starter แต่ไม่เครียร์ข้อมูล
+            await Shell.Current.GoToAsync("//main/starter");
+        }
+    }
 
-        // Navigate back to starter page
-        await Shell.Current.GoToAsync("//main/starter");
+    private async Task ResetDiaryAndGoToStarter()
+    {
+        try
+        {
+            // ไปหน้า Starter ทั้งหน้าและ Tab
+            await Shell.Current.GoToAsync("//main/starter");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error navigating to starter: {ex.Message}");
+            await Shell.Current.GoToAsync("//main/starter");
+        }
     }
 
     private async void GoToStarter()

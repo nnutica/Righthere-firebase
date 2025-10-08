@@ -171,4 +171,14 @@ public partial class DiaryViewModel : ObservableObject
             await Shell.Current.GoToAsync("//signin");
         }
     }
+
+    public void ResetDiaryForm()
+    {
+        DiaryContent = string.Empty;
+        SelectedReason = "friend";
+        IsAnalyzing = false;
+        IsLoadingVisible = false;
+        AnalyzeButtonText = "Next";
+        UpdateReasonButtonStyles();
+    }
 }

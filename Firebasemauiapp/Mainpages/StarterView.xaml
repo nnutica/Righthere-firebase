@@ -8,10 +8,104 @@
     Shell.NavBarIsVisible="False">
     <Grid>
         <!-- Main content -->
-        <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
-            <Label FontAttributes="Bold" FontSize="32" HorizontalOptions="Center" Text="Welcome!"/>
-            <Label FontSize="24" HorizontalOptions="Center" Text="{Binding UserName}" TextColor="Blue"/>
-            <Image x:Name="MoodTreeImage" HeightRequest="200" HorizontalOptions="Center" Source="empty.png" WidthRequest="200"/>
+        <VerticalStackLayout Padding="30"
+                             Spacing="20"
+                             VerticalOptions="Center">
+            <Label FontAttributes="Bold"
+                   FontSize="32"
+                   HorizontalOptions="Center"
+                   Text="Welcome!"/>
+            <Label FontSize="24"
+                   HorizontalOptions="Center"
+                   Text="{Binding UserName}"
+                   TextColor="Blue"/>
+
+            <!-- Plant and radial menu area -->
+            <Grid x:Name="PlantArea"
+                  WidthRequest="240"
+                  HeightRequest="280"
+                  HorizontalOptions="Center"
+                  VerticalOptions="Center">
+                <!-- Your Diary (top) -->
+                <VerticalStackLayout x:Name="YourDiaryStack"
+                                     IsVisible="False"
+                                     Opacity="0"
+                                     Scale="0.85"
+                                     TranslationY="12"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Start"
+                                     Spacing="6"
+                                     ZIndex="2">
+                    <Border BackgroundColor="#E6E6E6"
+                            WidthRequest="96"
+                            HeightRequest="96"
+                            StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <Ellipse/>
+                        </Border.StrokeShape>
+                        <Grid>
+                            <Image Source="history.png"
+                                   WidthRequest="36"
+                                   HeightRequest="36"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                            <Button Command="{Binding GoYourDiaryCommand}"
+                                    BackgroundColor="Transparent"
+                                    BorderColor="Transparent"/>
+                        </Grid>
+                    </Border>
+                    <Label Text="Your Diary"
+                           FontSize="14"
+                           HorizontalOptions="Center"
+                           TextColor="Black"/>
+                </VerticalStackLayout>
+
+                <!-- Write a Diary (left) -->
+                <VerticalStackLayout x:Name="WriteDiaryStack"
+                                     IsVisible="False"
+                                     Opacity="0"
+                                     Scale="0.85"
+                                     TranslationY="12"
+                                     HorizontalOptions="Start"
+                                     VerticalOptions="Center"
+                                     Spacing="6"
+                                     Margin="0,0,0,0"
+                                     ZIndex="2">
+                    <Border BackgroundColor="#E6E6E6"
+                            WidthRequest="96"
+                            HeightRequest="96"
+                            StrokeThickness="0">
+                        <Border.StrokeShape>
+                            <Ellipse/>
+                        </Border.StrokeShape>
+                        <Grid>
+                            <Image Source="diary.png"
+                                   WidthRequest="36"
+                                   HeightRequest="36"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                            <Button Command="{Binding GoWriteDiaryCommand}"
+                                    BackgroundColor="Transparent"
+                                    BorderColor="Transparent"/>
+                        </Grid>
+                    </Border>
+                    <Label Text="Write a Diary"
+                           FontSize="14"
+                           HorizontalOptions="Center"
+                           TextColor="Black"/>
+                </VerticalStackLayout>
+
+                <!-- Center Plant Button -->
+                <ImageButton x:Name="PlantButton"
+                             Source="empty.png"
+                             BackgroundColor="Transparent"
+                             Command="{Binding ToggleMenuCommand}"
+                             WidthRequest="200"
+                             HeightRequest="200"
+                             HorizontalOptions="Center"
+                             VerticalOptions="End"
+                             ZIndex="1"/>
+            </Grid>
         </VerticalStackLayout>
 
         <!-- Coin badge at top-right -->
@@ -24,9 +118,14 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="12"/>
             </Border.StrokeShape>
-            <HorizontalStackLayout Padding="10,6" Spacing="6">
-                <Label Text="🪙" FontSize="16" TextColor="Gold"/>
-                <Label Text="{Binding Coin}" FontSize="16" TextColor="White"/>
+            <HorizontalStackLayout Padding="10,6"
+                                   Spacing="6">
+                <Label Text="🪙"
+                       FontSize="16"
+                       TextColor="Gold"/>
+                <Label Text="{Binding Coin}"
+                       FontSize="16"
+                       TextColor="White"/>
             </HorizontalStackLayout>
         </Border>
 
@@ -41,7 +140,8 @@
                 <Ellipse/>
             </Border.StrokeShape>
             <Border.Shadow>
-                <Shadow Opacity="0.35" Radius="10"/>
+                <Shadow Opacity="0.35"
+                        Radius="10"/>
             </Border.Shadow>
             <Button
                 Text="Logout"
