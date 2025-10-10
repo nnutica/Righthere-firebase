@@ -7,7 +7,8 @@
     xmlns:main="clr-namespace:Firebasemauiapp.Mainpages"
     xmlns:quest="clr-namespace:Firebasemauiapp.QuestPage"
     xmlns:community="clr-namespace:Firebasemauiapp.CommunityPage"
-    Title="Firebasemauiapp">
+    Title="Firebasemauiapp"
+    FlyoutBehavior="Disabled">
 
     <!-- Authentication Pages (No Tabs) -->
     <ShellContent
@@ -58,7 +59,8 @@
             <ShellContent
                 Title="Home"
                 ContentTemplate="{DataTemplate main:StarterView}"
-                Route="starter"/>
+                Route="starter"
+                Shell.FlyoutBehavior="Flyout"/>
         </Tab>
 
         <Tab Title="Community"
@@ -80,5 +82,22 @@
 
 
     </TabBar>
+
+    <!-- Custom Flyout: only a bottom Logout button -->
+    <Shell.FlyoutContent>
+        <Grid Padding="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="1"
+                    Text="Logout"
+                    Clicked="OnLogoutClicked"
+                    BackgroundColor="#FF3B30"
+                    TextColor="White"
+                    Padding="16,12"
+                    CornerRadius="12"/>
+        </Grid>
+    </Shell.FlyoutContent>
 
 </Shell>

@@ -19,15 +19,6 @@ public partial class StarterView : ContentPage
 		NavigationPage.SetHasNavigationBar(this, true);
 		NavigationPage.SetHasBackButton(this, false);
 		Title = "";
-		// Add Log Out button to Navigation Bar
-		ToolbarItems.Clear();
-		ToolbarItems.Add(new ToolbarItem
-		{
-			Text = "Log Out",
-			Order = ToolbarItemOrder.Primary,
-			Priority = 0,
-			Command = viewModel.LogOutCommand
-		});
 		_diaryDatabase = diaryDatabase;
 		_authClient = authClient;
 	}

@@ -50,6 +50,15 @@ public partial class StarterViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void OpenFlyout()
+    {
+        if (Shell.Current != null)
+        {
+            Shell.Current.FlyoutIsPresented = true;
+        }
+    }
+
+    [RelayCommand]
     private async Task GoWriteDiary()
     {
         // Close menu in VM first for better UX

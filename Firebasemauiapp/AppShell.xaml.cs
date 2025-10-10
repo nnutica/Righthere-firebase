@@ -20,4 +20,20 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("main/history", typeof(DiaryHistory));
 		Routing.RegisterRoute("main/summary", typeof(SummaryView));
 	}
+
+	private async void OnLogoutClicked(object sender, EventArgs e)
+	{
+		try
+		{
+			var auth = ServiceHelper.Get<FirebaseAuthClient>();
+			auth.SignOut();
+			try { SecureStorage.Default.RemoveAll(); } catch { }
+			try { Preferences.Default.Clear(); } catch { }
+			await MainThread.InvokeOnMainThreadAsync(async () => await Shell.Current.GoToAsync("//signin"));
+		}
+		catch (Exception ex)
+		{
+			await MainThread.InvokeOnMainThreadAsync(async () => await DisplayAlert("Error", $"Logout failed: {ex.Message}", "OK"));
+		}
+	}
 }

@@ -13,6 +13,15 @@
 
             <!-- Converters -->
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+
+            <!-- Make Shell navigation bar transparent and remove shadow globally -->
+            <Style TargetType="ContentPage"
+                    ApplyToDerivedTypes="True">
+                <Setter Property="Shell.BackgroundColor"
+                        Value="Transparent"/>
+                <Setter Property="Shell.NavBarHasShadow"
+                        Value="False"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

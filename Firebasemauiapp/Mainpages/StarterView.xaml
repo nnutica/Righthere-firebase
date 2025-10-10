@@ -5,150 +5,158 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="StarterView"
     BackgroundImageSource="main_bg.png"
-    Shell.NavBarIsVisible="False">
+    Shell.FlyoutBehavior="Flyout"
+    Shell.NavBarIsVisible="False"
+    Shell.BackgroundColor="Transparent">
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False"
+                            IsEnabled="False"/>
+    </Shell.BackButtonBehavior>
     <Grid>
-        <!-- Main content -->
-        <VerticalStackLayout Padding="30"
-                             Spacing="20"
-                             VerticalOptions="Center">
-            <Label FontAttributes="Bold"
-                   FontSize="32"
-                   HorizontalOptions="Center"
-                   Text="Welcome!"/>
-            <Label FontSize="24"
-                   HorizontalOptions="Center"
-                   Text="{Binding UserName}"
-                   TextColor="Blue"/>
-
-            <!-- Plant and radial menu area -->
-            <Grid x:Name="PlantArea"
-                  WidthRequest="240"
-                  HeightRequest="280"
-                  HorizontalOptions="Center"
-                  VerticalOptions="Center">
-                <!-- Your Diary (top) -->
-                <VerticalStackLayout x:Name="YourDiaryStack"
-                                     IsVisible="False"
-                                     Opacity="0"
-                                     Scale="0.85"
-                                     TranslationY="12"
-                                     HorizontalOptions="Center"
-                                     VerticalOptions="Start"
-                                     Spacing="6"
-                                     ZIndex="2">
-                    <Border BackgroundColor="#E6E6E6"
-                            WidthRequest="96"
-                            HeightRequest="96"
-                            StrokeThickness="0">
-                        <Border.StrokeShape>
-                            <Ellipse/>
-                        </Border.StrokeShape>
-                        <Grid>
-                            <Image Source="history.png"
-                                   WidthRequest="36"
-                                   HeightRequest="36"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center"/>
-                            <Button Command="{Binding GoYourDiaryCommand}"
-                                    BackgroundColor="Transparent"
-                                    BorderColor="Transparent"/>
-                        </Grid>
-                    </Border>
-                    <Label Text="Your Diary"
-                           FontSize="14"
-                           HorizontalOptions="Center"
-                           TextColor="Black"/>
-                </VerticalStackLayout>
-
-                <!-- Write a Diary (left) -->
-                <VerticalStackLayout x:Name="WriteDiaryStack"
-                                     IsVisible="False"
-                                     Opacity="0"
-                                     Scale="0.85"
-                                     TranslationY="12"
-                                     HorizontalOptions="Start"
-                                     VerticalOptions="Center"
-                                     Spacing="6"
-                                     Margin="0,0,0,0"
-                                     ZIndex="2">
-                    <Border BackgroundColor="#E6E6E6"
-                            WidthRequest="96"
-                            HeightRequest="96"
-                            StrokeThickness="0">
-                        <Border.StrokeShape>
-                            <Ellipse/>
-                        </Border.StrokeShape>
-                        <Grid>
-                            <Image Source="diary.png"
-                                   WidthRequest="36"
-                                   HeightRequest="36"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center"/>
-                            <Button Command="{Binding GoWriteDiaryCommand}"
-                                    BackgroundColor="Transparent"
-                                    BorderColor="Transparent"/>
-                        </Grid>
-                    </Border>
-                    <Label Text="Write a Diary"
-                           FontSize="14"
-                           HorizontalOptions="Center"
-                           TextColor="Black"/>
-                </VerticalStackLayout>
-
-                <!-- Center Plant Button -->
-                <ImageButton x:Name="PlantButton"
-                             Source="empty.png"
-                             BackgroundColor="Transparent"
-                             Command="{Binding ToggleMenuCommand}"
-                             WidthRequest="200"
-                             HeightRequest="200"
-                             HorizontalOptions="Center"
-                             VerticalOptions="End"
-                             ZIndex="1"/>
+        <!-- Custom header row with hamburger menu -->
+        <Grid RowDefinitions="Auto,*">
+            <Grid Grid.Row="0"
+                  BackgroundColor="Transparent"
+                  Padding="12,8,12,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Command="{Binding OpenFlyoutCommand}"
+                        BackgroundColor="#33000000"
+                        TextColor="White"
+                        WidthRequest="44"
+                        HeightRequest="44"
+                        CornerRadius="22"
+                        Padding="0"
+                        FontSize="24"
+                        Text="≡"/>
+                <!-- Coin badge in header, aligned to the right -->
+                <Border Grid.Column="2"
+                        BackgroundColor="#66000000"
+                        StrokeThickness="0"
+                        HorizontalOptions="End"
+                        VerticalOptions="Center">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12"/>
+                    </Border.StrokeShape>
+                    <HorizontalStackLayout Padding="10,6"
+                                           Spacing="6">
+                        <Label Text="🪙"
+                               FontSize="16"
+                               TextColor="Gold"/>
+                        <Label Text="{Binding Coin}"
+                               FontSize="16"
+                               TextColor="White"/>
+                    </HorizontalStackLayout>
+                </Border>
             </Grid>
-        </VerticalStackLayout>
+            <Grid Grid.Row="1">
+                <!-- Main content -->
+                <VerticalStackLayout Padding="30"
+                                     Spacing="20"
+                                     VerticalOptions="Center">
+                    <Label FontAttributes="Bold"
+                           FontSize="32"
+                           HorizontalOptions="Center"
+                           Text="Welcome!"/>
+                    <Label FontSize="24"
+                           HorizontalOptions="Center"
+                           Text="{Binding UserName}"
+                           TextColor="Blue"/>
 
-        <!-- Coin badge at top-right -->
-        <Border
-            HorizontalOptions="End"
-            VerticalOptions="Start"
-            Margin="16"
-            BackgroundColor="#66000000"
-            StrokeThickness="0">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="12"/>
-            </Border.StrokeShape>
-            <HorizontalStackLayout Padding="10,6"
-                                   Spacing="6">
-                <Label Text="🪙"
-                       FontSize="16"
-                       TextColor="Gold"/>
-                <Label Text="{Binding Coin}"
-                       FontSize="16"
-                       TextColor="White"/>
-            </HorizontalStackLayout>
-        </Border>
+                    <!-- Plant and radial menu area -->
+                    <Grid x:Name="PlantArea"
+                          WidthRequest="240"
+                          HeightRequest="280"
+                          HorizontalOptions="Center"
+                          VerticalOptions="Center">
+                        <!-- Your Diary (top) -->
+                        <VerticalStackLayout x:Name="YourDiaryStack"
+                                             IsVisible="False"
+                                             Opacity="0"
+                                             Scale="0.85"
+                                             TranslationY="12"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Start"
+                                             Spacing="6"
+                                             ZIndex="2">
+                            <Border BackgroundColor="#E6E6E6"
+                                    WidthRequest="96"
+                                    HeightRequest="96"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <Ellipse/>
+                                </Border.StrokeShape>
+                                <Grid>
+                                    <Image Source="history.png"
+                                           WidthRequest="36"
+                                           HeightRequest="36"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                    <Button Command="{Binding GoYourDiaryCommand}"
+                                            BackgroundColor="Transparent"
+                                            BorderColor="Transparent"/>
+                                </Grid>
+                            </Border>
+                            <Label Text="Your Diary"
+                                   FontSize="14"
+                                   HorizontalOptions="Center"
+                                   TextColor="Black"/>
+                        </VerticalStackLayout>
 
-        <!-- Floating logout button at bottom-right -->
-        <Border
-            HorizontalOptions="End"
-            VerticalOptions="End"
-            Margin="24,24,24,36"
-            BackgroundColor="#FF3B30"
-            StrokeThickness="0">
-            <Border.StrokeShape>
-                <Ellipse/>
-            </Border.StrokeShape>
-            <Border.Shadow>
-                <Shadow Opacity="0.35"
-                        Radius="10"/>
-            </Border.Shadow>
-            <Button
-                Text="Logout"
-                Padding="18,10"
-                BackgroundColor="Transparent"
-                TextColor="White"
-                Command="{Binding LogOutCommand}"/>
-        </Border>
+                        <!-- Write a Diary (left) -->
+                        <VerticalStackLayout x:Name="WriteDiaryStack"
+                                             IsVisible="False"
+                                             Opacity="0"
+                                             Scale="0.85"
+                                             TranslationY="12"
+                                             HorizontalOptions="Start"
+                                             VerticalOptions="Center"
+                                             Spacing="6"
+                                             Margin="0,0,0,0"
+                                             ZIndex="2">
+                            <Border BackgroundColor="#E6E6E6"
+                                    WidthRequest="96"
+                                    HeightRequest="96"
+                                    StrokeThickness="0">
+                                <Border.StrokeShape>
+                                    <Ellipse/>
+                                </Border.StrokeShape>
+                                <Grid>
+                                    <Image Source="diary.png"
+                                           WidthRequest="36"
+                                           HeightRequest="36"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                    <Button Command="{Binding GoWriteDiaryCommand}"
+                                            BackgroundColor="Transparent"
+                                            BorderColor="Transparent"/>
+                                </Grid>
+                            </Border>
+                            <Label Text="Write a Diary"
+                                   FontSize="14"
+                                   HorizontalOptions="Center"
+                                   TextColor="Black"/>
+                        </VerticalStackLayout>
+
+                        <!-- Center Plant Button -->
+                        <ImageButton x:Name="PlantButton"
+                                     Source="empty.png"
+                                     BackgroundColor="Transparent"
+                                     Command="{Binding ToggleMenuCommand}"
+                                     WidthRequest="200"
+                                     HeightRequest="200"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="End"
+                                     ZIndex="1"/>
+                    </Grid>
+                </VerticalStackLayout>
+
+
+            </Grid>
+        </Grid>
     </Grid>
 </ContentPage>
