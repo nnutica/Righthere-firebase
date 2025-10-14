@@ -90,16 +90,15 @@
                                 <Border.StrokeShape>
                                     <Ellipse/>
                                 </Border.StrokeShape>
-                                <Grid>
-                                    <Image Source="history.png"
-                                           WidthRequest="36"
-                                           HeightRequest="36"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"/>
-                                    <Button Command="{Binding GoYourDiaryCommand}"
-                                            BackgroundColor="Transparent"
-                                            BorderColor="Transparent"/>
-                                </Grid>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GoYourDiaryCommand}"/>
+                                </Border.GestureRecognizers>
+                                <Image Source="history.png"
+                                       WidthRequest="36"
+                                       HeightRequest="36"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       InputTransparent="True"/>
                             </Border>
                             <Label Text="Your Diary"
                                    FontSize="14"
@@ -125,16 +124,15 @@
                                 <Border.StrokeShape>
                                     <Ellipse/>
                                 </Border.StrokeShape>
-                                <Grid>
-                                    <Image Source="diary.png"
-                                           WidthRequest="36"
-                                           HeightRequest="36"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"/>
-                                    <Button Command="{Binding GoWriteDiaryCommand}"
-                                            BackgroundColor="Transparent"
-                                            BorderColor="Transparent"/>
-                                </Grid>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GoWriteDiaryCommand}"/>
+                                </Border.GestureRecognizers>
+                                <Image Source="diary.png"
+                                       WidthRequest="36"
+                                       HeightRequest="36"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       InputTransparent="True"/>
                             </Border>
                             <Label Text="Write a Diary"
                                    FontSize="14"

@@ -146,8 +146,8 @@ public partial class StarterView : ContentPage
 		WriteDiaryStack.TranslationX = -64; // position like before
 		YourDiaryStack.TranslationY = -48;
 		WriteDiaryStack.TranslationY = 0;
-		// Keep plant button tappable so user can close the menu easily
-		PlantButton.InputTransparent = false;
+		// Let taps reach the menu buttons (avoid plant intercepting touches)
+		PlantButton.InputTransparent = true;
 		_menuOpen = true;
 	}
 

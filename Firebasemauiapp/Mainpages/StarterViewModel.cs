@@ -61,10 +61,10 @@ public partial class StarterViewModel : ObservableObject
     [RelayCommand]
     private async Task GoWriteDiary()
     {
-        // Close menu in VM first for better UX
-        IsMenuOpen = false;
+        Console.WriteLine("🔍 GoWriteDiary called!");
         try
         {
+            Console.WriteLine($"🔍 User: {_authClient.User?.Uid ?? "null"}");
             if (_authClient.User == null)
             {
                 await Shell.Current.DisplayAlert("Login required", "Please sign in again.", "OK");
@@ -72,10 +72,18 @@ public partial class StarterViewModel : ObservableObject
                 return;
             }
             if (Shell.Current != null)
+            {
+                Console.WriteLine("🔍 Navigating to //main/diary");
                 await Shell.Current.GoToAsync("//main/diary");
+                Console.WriteLine("🔍 Navigation complete");
+                // Close menu after navigation to avoid visual issues
+                IsMenuOpen = false;
+            }
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"❌ GoWriteDiary error: {ex.Message}");
+            Console.WriteLine($"Stack: {ex.StackTrace}");
             if (Shell.Current != null)
                 await Shell.Current.DisplayAlert("Navigation error", ex.Message, "OK");
         }
