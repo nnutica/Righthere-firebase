@@ -86,19 +86,23 @@
                             <Border BackgroundColor="#E6E6E6"
                                     WidthRequest="96"
                                     HeightRequest="96"
-                                    StrokeThickness="0">
+                                    StrokeThickness="0"
+                                    InputTransparent="False">
                                 <Border.StrokeShape>
                                     <Ellipse/>
                                 </Border.StrokeShape>
                                 <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding GoYourDiaryCommand}"/>
+                                    <TapGestureRecognizer Command="{Binding GoYourDiaryCommand}"
+                                                          NumberOfTapsRequired="1"/>
                                 </Border.GestureRecognizers>
-                                <Image Source="history.png"
-                                       WidthRequest="36"
-                                       HeightRequest="36"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       InputTransparent="True"/>
+                                <Grid>
+                                    <Image Source="history.png"
+                                           WidthRequest="36"
+                                           HeightRequest="36"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           InputTransparent="True"/>
+                                </Grid>
                             </Border>
                             <Label Text="Your Diary"
                                    FontSize="14"
@@ -120,19 +124,23 @@
                             <Border BackgroundColor="#E6E6E6"
                                     WidthRequest="96"
                                     HeightRequest="96"
-                                    StrokeThickness="0">
+                                    StrokeThickness="0"
+                                    InputTransparent="False">
                                 <Border.StrokeShape>
                                     <Ellipse/>
                                 </Border.StrokeShape>
                                 <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding GoWriteDiaryCommand}"/>
+                                    <TapGestureRecognizer Command="{Binding GoWriteDiaryCommand}"
+                                                          NumberOfTapsRequired="1"/>
                                 </Border.GestureRecognizers>
-                                <Image Source="diary.png"
-                                       WidthRequest="36"
-                                       HeightRequest="36"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"
-                                       InputTransparent="True"/>
+                                <Grid>
+                                    <Image Source="diary.png"
+                                           WidthRequest="36"
+                                           HeightRequest="36"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           InputTransparent="True"/>
+                                </Grid>
                             </Border>
                             <Label Text="Write a Diary"
                                    FontSize="14"
