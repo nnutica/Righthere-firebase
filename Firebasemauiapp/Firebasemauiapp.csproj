@@ -79,5 +79,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Syncfusion.Maui.Charts" Version="31.1.23" />
+		<PackageReference Include="Syncfusion.Maui.Gauges" Version="31.1.23" />
 	</ItemGroup>
 </Project>

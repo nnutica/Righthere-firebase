@@ -21,6 +21,22 @@ public partial class DashboardViewModel : ObservableObject
 	[ObservableProperty]
 	private bool _isLoading;
 
+	[ObservableProperty]
+	private double _averageSentimentScore;
+
+	public string AverageDisplay => $"AVG {AverageSentimentScore:F1}";
+
+	[ObservableProperty]
+	private string _selectedPeriod = "ทั้งหมด";
+
+	public ObservableCollection<string> PeriodOptions { get; } = new()
+	{
+		"3 วันล่าสุด",
+		"5 วันล่าสุด",
+		"สัปดาห์ที่แล้ว",
+		"ทั้งหมด"
+	};
+
 	// For Syncfusion chart
 	public class ChartDataPoint
 	{
@@ -50,6 +66,11 @@ public partial class DashboardViewModel : ObservableObject
 	public IAsyncRelayCommand LoadSentimentScoresCommand { get; }
 	public IAsyncRelayCommand GoToDiaryHistoryCommand { get; }
 
+	partial void OnSelectedPeriodChanged(string value)
+	{
+		_ = LoadSentimentScores();
+	}
+
 	private async Task LoadSentimentScores()
 	{
 		try
@@ -74,11 +95,44 @@ public partial class DashboardViewModel : ObservableObject
 				string day = d.CreatedAtDateTime.ToString("ddd");
 				ChartData.Add(new ChartDataPoint(day, d.SentimentScore));
 			}
+
+			// Calculate average based on selected period
+			CalculateAverageSentiment(diaries);
+			OnPropertyChanged(nameof(AverageDisplay));
 		}
 		finally
 		{
 			IsLoading = false;
 		}
+	}
+
+	private void CalculateAverageSentiment(List<DiaryData> diaries)
+	{
+		if (!diaries.Any())
+		{
+			AverageSentimentScore = 0;
+			return;
+		}
+
+		List<DiaryData> filteredDiaries = SelectedPeriod switch
+		{
+			"3 วันล่าสุด" => diaries.TakeLast(3).ToList(),
+			"5 วันล่าสุด" => diaries.TakeLast(5).ToList(),
+			"สัปดาห์ที่แล้ว" => diaries.TakeLast(7).ToList(),
+			"ทั้งหมด" => diaries,
+			_ => diaries
+		};
+
+		if (filteredDiaries.Any())
+		{
+			AverageSentimentScore = filteredDiaries.Average(d => d.SentimentScore);
+		}
+		else
+		{
+			AverageSentimentScore = 0;
+		}
+
+		OnPropertyChanged(nameof(AverageDisplay));
 	}
 
 	private async Task GoToDiaryHistory()
