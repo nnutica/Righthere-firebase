@@ -8,7 +8,11 @@ obj/
 # Firebase secrets
 .env
 Firebasemauiapp/Resources/Raw/*.json
-Firebasemauiapp/Config/GitHubSettings.cs
+
+
+# Ignore entire Config folder
+Firebasemauiapp/Config/
+
 
 
 # Visual Studio
