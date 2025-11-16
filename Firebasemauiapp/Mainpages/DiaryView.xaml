@@ -6,71 +6,10 @@
     Title="DiaryView"
     BackgroundColor="#FFDEFDBF"
     Shell.NavBarIsVisible="False">
-    <VerticalStackLayout Padding="20">
+    <VerticalStackLayout Padding="20"
+            Spacing="12">
 
-        <!--  Reason Selection  -->
-        <Frame
-            Margin="0,0,0,10"
-            Padding="10"
-            BackgroundColor="#F8FAED"
-            CornerRadius="20"
-            Opacity="30"
-            HasShadow="True"
-            BorderColor="#50A65D"
-            WidthRequest="350">
-            <ScrollView Orientation="Horizontal">
-                <HorizontalStackLayout Spacing="10">
-                    <Label
-                        FontAttributes="Bold"
-                        Text="Reason :"
-                        VerticalOptions="Center"/>
 
-                    <Button
-                        x:Name="FriendButton"
-                        Padding="5,2"
-                        BackgroundColor="{Binding FriendButtonBackground}"
-                        Command="{Binding SelectReasonCommand}"
-                        CommandParameter="friend"
-                        CornerRadius="10"
-                        Text="friend"
-                        TextColor="{Binding FriendButtonText}"
-                        WidthRequest="60"/>
-
-                    <Button
-                        x:Name="WorkButton"
-                        Padding="5,2"
-                        BackgroundColor="{Binding WorkButtonBackground}"
-                        Command="{Binding SelectReasonCommand}"
-                        CommandParameter="work"
-                        CornerRadius="10"
-                        Text="work"
-                        TextColor="{Binding WorkButtonText}"
-                        WidthRequest="60"/>
-
-                    <Button
-                        x:Name="FamilyButton"
-                        Padding="5,2"
-                        BackgroundColor="{Binding FamilyButtonBackground}"
-                        Command="{Binding SelectReasonCommand}"
-                        CommandParameter="family"
-                        CornerRadius="10"
-                        Text="family"
-                        TextColor="{Binding FamilyButtonText}"
-                        WidthRequest="60"/>
-
-                    <Button
-                        x:Name="SchoolButton"
-                        Padding="5,2"
-                        BackgroundColor="{Binding SchoolButtonBackground}"
-                        Command="{Binding SelectReasonCommand}"
-                        CommandParameter="school"
-                        CornerRadius="10"
-                        Text="school"
-                        TextColor="{Binding SchoolButtonText}"
-                        WidthRequest="60"/>
-                </HorizontalStackLayout>
-            </ScrollView>
-        </Frame>
 
         <!--  Entry Field  -->
         <Frame
@@ -93,6 +32,44 @@
                 VerticalTextAlignment="Start"
                 WidthRequest="330"/>
         </Frame>
+
+        <!-- Selected image preview (optional) -->
+        <Image Source="{Binding ImageUrl}"
+               HeightRequest="220"
+               Aspect="AspectFill"
+               IsVisible="True">
+            <Image.Triggers>
+                <DataTrigger TargetType="Image"
+                        Binding="{Binding ImageUrl}"
+                        Value="">
+                    <Setter Property="IsVisible"
+                            Value="False"/>
+                </DataTrigger>
+                <DataTrigger TargetType="Image"
+                        Binding="{Binding ImageUrl}"
+                        Value="{x:Null}">
+                    <Setter Property="IsVisible"
+                            Value="False"/>
+                </DataTrigger>
+            </Image.Triggers>
+        </Image>
+
+        <!-- Upload row: + button and spinner -->
+        <Grid ColumnDefinitions="Auto,Auto,*"
+                VerticalOptions="Start">
+            <Button Text="+"
+                    Command="{Binding UploadImageCommand}"
+                    BackgroundColor="#FEAA3A"
+                    TextColor="White"
+                    WidthRequest="44"
+                    HeightRequest="44"
+                    CornerRadius="12"/>
+            <ActivityIndicator Grid.Column="1"
+                               Margin="12,0,0,0"
+                               Color="#50A65D"
+                               IsRunning="{Binding IsUploadingImage}"
+                               IsVisible="{Binding IsUploadingImage}"/>
+        </Grid>
 
         <!--  ✅ Loading Indicator  -->
         <ActivityIndicator

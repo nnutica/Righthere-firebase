@@ -33,7 +33,8 @@ public partial class SummaryViewModel : ObservableObject
     private string _score = string.Empty;
 
     [ObservableProperty]
-    private string _reason = string.Empty;
+    private string? _imageUrl;
+
 
     [ObservableProperty]
     private ImageSource? _emotionImage;
@@ -50,26 +51,30 @@ public partial class SummaryViewModel : ObservableObject
     public Task InitializeAsync()
     {
         // Load data from static helper
-        if (!string.IsNullOrEmpty(SummaryPageData.Reason))
+        if (!string.IsNullOrEmpty(SummaryPageData.Content))
         {
-            SetData(SummaryPageData.Reason, SummaryPageData.Content!,
-                   SummaryPageData.Mood!, SummaryPageData.Suggestion!,
-                   SummaryPageData.Keywords!, SummaryPageData.Emotion!,
-                   SummaryPageData.Score!);
+            SetData(SummaryPageData.Content!,
+                    SummaryPageData.Mood!,
+                    SummaryPageData.Suggestion!,
+                    SummaryPageData.Keywords!,
+                    SummaryPageData.Emotion!,
+                    SummaryPageData.Score!);
+            ImageUrl = SummaryPageData.ImageUrl;
         }
         return Task.CompletedTask;
     }
 
-    public void SetData(string reason, string content, string mood, string suggestion,
-                       string keywords, string emotion, string score)
+    public void SetData(string content, string mood, string suggestion,
+                        string keywords, string emotion, string score)
     {
-        Reason = reason;
+
         Content = content;
         Mood = mood;
         Suggestion = suggestion;
         Keywords = keywords;
         Emotion = emotion;
         Score = score;
+        ImageUrl = SummaryPageData.ImageUrl;
         SetEmotionImage(mood);
     }
 
@@ -95,12 +100,12 @@ public partial class SummaryViewModel : ObservableObject
                 {
                     UserId = currentUser.Uid,
                     Content = Content,
-                    Reason = Reason,
                     Mood = Mood,
                     SentimentScore = double.TryParse(Score, out var scoreValue) ? scoreValue : 0.0,
                     Suggestion = Suggestion,
                     Keywords = Keywords,
                     EmotionalReflection = Emotion,
+                    ImageUrl = ImageUrl,
                     CreatedAtDateTime = DateTime.Now
                 };
 

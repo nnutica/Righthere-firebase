@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Firebasemauiapp.StorePage.StorePage"
+             BackgroundColor="Green"
+             Title="StorePage">
+    <Grid RowDefinitions="*,32">
+        <Grid Grid.Row="0">
+            <VerticalStackLayout>
+                <Label
+                    Text="Welcome to .NET MAUI!"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Grid>
+        <Border Grid.Row="1"
+                BackgroundColor="White"
+                StrokeThickness="0"
+                TranslationY="8">
+            <Border.Shadow>
+                <Shadow Brush="Black"
+                        Opacity="0.18"
+                        Radius="14"
+                        Offset="0,-2"/>
+            </Border.Shadow>
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="28,28,0,0"/>
+            </Border.StrokeShape>
+        </Border>
+    </Grid>
+</ContentPage>

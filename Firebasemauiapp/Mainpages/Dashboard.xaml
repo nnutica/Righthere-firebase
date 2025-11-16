@@ -6,272 +6,288 @@
              xmlns:sfgauges="clr-namespace:Syncfusion.Maui.Gauges;assembly=Syncfusion.Maui.Gauges"
              x:Class="Firebasemauiapp.Mainpages.Dashboard"
              Title="Dashboard">
-    <!-- ScrollView allows vertical scrolling when content exceeds screen height -->
-    <ScrollView>
-        <!-- Use Grid for structured layout; star row used for gauge central positioning -->
-        <Grid RowDefinitions="Auto,*,Auto,Auto,Auto"
-              Padding="16"
-              RowSpacing="16">
-            <!-- Header -->
-            <Grid Grid.Row="0"
-                  ColumnDefinitions="*,Auto"
-                  Padding="0,0,0,8">
-                <Label Text="Hey !"
-                       FontSize="22"
-                       FontAttributes="Bold"
-                       TextColor="#3A3A3A"/>
-                <Button Text="{Binding TodayString}"
-                        FontSize="14"
-                        BackgroundColor="#F2F2F2"
-                        TextColor="#3A3A3A"
-                        CornerRadius="12"
-                        Padding="5,2"/>
-            </Grid>
-
-
-
-
-            <!-- Mood Card -->
-            <Border Grid.Row="1"
-                    BackgroundColor="#F8FAED"
-                    Stroke="#E0E0E0"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 18"
-                    Padding="0"
-                    Margin="0,0,0,8">
-                <VerticalStackLayout Spacing="0">
-                    <Grid RowDefinitions="Auto,Auto,Auto,Auto"
-                          Padding="0,0,0,0">
-                        <!-- Mood Image -->
-                        <Image Source="sadness.png"
-                               HeightRequest="110"
-                               WidthRequest="110"
-                               HorizontalOptions="Center"
-                               Margin="0,12,0,0"
-                               Grid.Row="0"/>
-                        <!-- Day Selector -->
-                        <HorizontalStackLayout Spacing="10"
-                                               Margin="0,8,0,0"
-                                               HorizontalOptions="Center"
-                                               Grid.Row="1">
-                            <Button Text="Sun"
-                                    FontSize="13"
-                                    BackgroundColor="#50A65D"
-                                    TextColor="White"
-                                    CornerRadius="16"
-                                    WidthRequest="36"
-                                    HeightRequest="36"/>
-                            <Button Text="Mon"
-                                    FontSize="13"
-                                    BackgroundColor="#E0E0E0"
-                                    TextColor="#3A3A3A"
-                                    CornerRadius="16"
-                                    WidthRequest="36"
-                                    HeightRequest="36"/>
-                            <Button Text="Tue"
-                                    FontSize="13"
-                                    BackgroundColor="#E0E0E0"
-                                    TextColor="#3A3A3A"
-                                    CornerRadius="16"
-                                    WidthRequest="36"
-                                    HeightRequest="36"/>
-                            <Button Text="Wed"
-                                    FontSize="13"
-                                    BackgroundColor="#E0E0E0"
-                                    TextColor="#3A3A3A"
-                                    CornerRadius="16"
-                                    WidthRequest="36"
-                                    HeightRequest="36"/>
-                            <Button Text="Thu"
-                                    FontSize="13"
-                                    BackgroundColor="#E0E0E0"
-                                    TextColor="#3A3A3A"
-                                    CornerRadius="16"
-                                    WidthRequest="36"
-                                    HeightRequest="36"/>
-                            <Button Text="Fri"
-                                    FontSize="13"
-                                    BackgroundColor="#E0E0E0"
-                                    TextColor="#3A3A3A"
-                                    CornerRadius="16"
-                                    WidthRequest="36"
-                                    HeightRequest="36"/>
-                            <Button Text="Sat"
-                                    FontSize="13"
-                                    BackgroundColor="#E0E0E0"
-                                    TextColor="#3A3A3A"
-                                    CornerRadius="16"
-                                    WidthRequest="36"
-                                    HeightRequest="36"/>
-                        </HorizontalStackLayout>
-                        <!-- Caption -->
-                        <Label Text="Grow your tree as you grow your mind!"
-                               FontSize="13"
-                               TextColor="#3A3A3A"
-                               HorizontalOptions="Center"
-                               Margin="0,8,0,0"
-                               Grid.Row="1"/>
-                    </Grid>
-                    <!-- More mood tracking history -->
-                    <Button Text="More mood tracking history"
-                            FontSize="14"
-                            BackgroundColor="#E6F4EA"
-                            TextColor="#50A65D"
-                            CornerRadius="10"
-                            Margin="12,8,12,12"
-                            HorizontalOptions="Fill"
-                            Grid.Row="3"
-                            Command="{Binding GoToDiaryHistoryCommand}"/>
-                </VerticalStackLayout>
-            </Border>
-
-            <!-- Average Sentiment Gauge Card centered in star row -->
-
-            <Border Grid.Row="2"
-                    BackgroundColor="White"
-                    Stroke="#E0E0E0"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 18"
-                    Padding="12"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center">
-                <VerticalStackLayout Spacing="8"
-                                     HorizontalOptions="Center">
-                    <Label Text="Average Sentiment Score"
-                           FontSize="16"
+    <!-- Add bottom white rounded strip by wrapping content in a two-row Grid -->
+    <Grid RowDefinitions="*,32">
+        <ScrollView Grid.Row="0">
+            <!-- Use Grid for structured layout; star row used for gauge central positioning -->
+            <Grid RowDefinitions="Auto,*,Auto,Auto,Auto"
+                  Padding="16"
+                  RowSpacing="16">
+                <!-- Header -->
+                <Grid Grid.Row="0"
+                      ColumnDefinitions="*,Auto"
+                      Padding="0,0,0,8">
+                    <Label Text="Hey !"
+                           FontSize="22"
                            FontAttributes="Bold"
-                           TextColor="#50A65D"
-                           HorizontalOptions="Center"/>
-
-                    <!-- Period Picker -->
-                    <Picker ItemsSource="{Binding PeriodOptions}"
-                            SelectedItem="{Binding SelectedPeriod}"
+                           TextColor="#3A3A3A"/>
+                    <Button Text="{Binding TodayString}"
                             FontSize="14"
+                            BackgroundColor="#F2F2F2"
                             TextColor="#3A3A3A"
-                            HorizontalOptions="Center"
-                            WidthRequest="200"/>
+                            CornerRadius="12"
+                            Padding="5,2"/>
+                </Grid>
 
-                    <!-- Gauge -->
-                    <sfgauges:SfRadialGauge HeightRequest="200"
-                                            WidthRequest="200"
-                                            HorizontalOptions="Center">
-                        <sfgauges:SfRadialGauge.Axes>
-                            <sfgauges:RadialAxis Minimum="0"
-                                                 Maximum="10"
-                                                 Interval="1"
-                                                 ShowAxisLine="True">
-                                <sfgauges:RadialAxis.AxisLineStyle>
-                                    <sfgauges:RadialLineStyle Thickness="20"
-                                                              Fill="#E0E0E0"/>
-                                </sfgauges:RadialAxis.AxisLineStyle>
 
-                                <sfgauges:RadialAxis.Ranges>
-                                    <sfgauges:RadialRange StartValue="0"
-                                                          EndValue="{Binding AverageSentimentScore}"
-                                                          StartWidth="20"
-                                                          EndWidth="20">
-                                        <sfgauges:RadialRange.GradientStops>
-                                            <sfgauges:GaugeGradientStop Value="0"
-                                                                        Color="#FF5252"/>
-                                            <sfgauges:GaugeGradientStop Value="2.5"
-                                                                        Color="#FFA726"/>
-                                            <sfgauges:GaugeGradientStop Value="5"
-                                                                        Color="#FFEB3B"/>
-                                            <sfgauges:GaugeGradientStop Value="7.5"
-                                                                        Color="#66BB6A"/>
-                                            <sfgauges:GaugeGradientStop Value="10"
-                                                                        Color="#50A65D"/>
-                                        </sfgauges:RadialRange.GradientStops>
-                                    </sfgauges:RadialRange>
-                                </sfgauges:RadialAxis.Ranges>
 
-                                <sfgauges:RadialAxis.Pointers>
-                                    <sfgauges:ContentPointer Value="{Binding AverageSentimentScore}">
-                                        <sfgauges:ContentPointer.Content>
-                                            <VerticalStackLayout Spacing="0"
-                                                                 HorizontalOptions="Center"
-                                                                 VerticalOptions="Center">
-                                                <Label Text="AVG"
-                                                       FontSize="12"
-                                                       TextColor="#7A7A7A"
-                                                       HorizontalOptions="Center"/>
-                                                <Label Text="{Binding AverageSentimentScore, StringFormat='{0:F1}'}"
-                                                       FontSize="36"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#50A65D"
-                                                       HorizontalOptions="Center"/>
-                                            </VerticalStackLayout>
-                                        </sfgauges:ContentPointer.Content>
-                                    </sfgauges:ContentPointer>
-                                </sfgauges:RadialAxis.Pointers>
-                            </sfgauges:RadialAxis>
-                        </sfgauges:SfRadialGauge.Axes>
-                    </sfgauges:SfRadialGauge>
 
-                    <Label>
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="Average: "
-                                        FontSize="12"
-                                        TextColor="#7A7A7A"/>
-                                <Span Text="{Binding AverageSentimentScore, StringFormat='{0:F1}'}"
-                                        FontSize="12"
-                                        FontAttributes="Bold"
-                                        TextColor="#50A65D"/>
-                                <Span Text=" ("
-                                        FontSize="12"
-                                        TextColor="#7A7A7A"/>
-                                <Span Text="{Binding SelectedPeriod}"
-                                        FontSize="12"
-                                        TextColor="#3A3A3A"/>
-                                <Span Text=")"
-                                        FontSize="12"
-                                        TextColor="#7A7A7A"/>
-                                <Span Text="  •  Out of 10"
-                                        FontSize="12"
-                                        TextColor="#7A7A7A"/>
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                </VerticalStackLayout>
-            </Border>
+                <!-- Mood Card -->
+                <Border Grid.Row="1"
+                        BackgroundColor="#F8FAED"
+                        Stroke="#E0E0E0"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="0"
+                        Margin="0,0,0,8">
+                    <VerticalStackLayout Spacing="0">
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto"
+                              Padding="0,0,0,0">
+                            <!-- Mood Image -->
+                            <Image Source="sadness.png"
+                                   HeightRequest="110"
+                                   WidthRequest="110"
+                                   HorizontalOptions="Center"
+                                   Margin="0,12,0,0"
+                                   Grid.Row="0"/>
+                            <!-- Day Selector -->
+                            <HorizontalStackLayout Spacing="10"
+                                                   Margin="0,8,0,0"
+                                                   HorizontalOptions="Center"
+                                                   Grid.Row="1">
+                                <Button Text="Sun"
+                                        FontSize="13"
+                                        BackgroundColor="#50A65D"
+                                        TextColor="White"
+                                        CornerRadius="16"
+                                        WidthRequest="36"
+                                        HeightRequest="36"/>
+                                <Button Text="Mon"
+                                        FontSize="13"
+                                        BackgroundColor="#E0E0E0"
+                                        TextColor="#3A3A3A"
+                                        CornerRadius="16"
+                                        WidthRequest="36"
+                                        HeightRequest="36"/>
+                                <Button Text="Tue"
+                                        FontSize="13"
+                                        BackgroundColor="#E0E0E0"
+                                        TextColor="#3A3A3A"
+                                        CornerRadius="16"
+                                        WidthRequest="36"
+                                        HeightRequest="36"/>
+                                <Button Text="Wed"
+                                        FontSize="13"
+                                        BackgroundColor="#E0E0E0"
+                                        TextColor="#3A3A3A"
+                                        CornerRadius="16"
+                                        WidthRequest="36"
+                                        HeightRequest="36"/>
+                                <Button Text="Thu"
+                                        FontSize="13"
+                                        BackgroundColor="#E0E0E0"
+                                        TextColor="#3A3A3A"
+                                        CornerRadius="16"
+                                        WidthRequest="36"
+                                        HeightRequest="36"/>
+                                <Button Text="Fri"
+                                        FontSize="13"
+                                        BackgroundColor="#E0E0E0"
+                                        TextColor="#3A3A3A"
+                                        CornerRadius="16"
+                                        WidthRequest="36"
+                                        HeightRequest="36"/>
+                                <Button Text="Sat"
+                                        FontSize="13"
+                                        BackgroundColor="#E0E0E0"
+                                        TextColor="#3A3A3A"
+                                        CornerRadius="16"
+                                        WidthRequest="36"
+                                        HeightRequest="36"/>
+                            </HorizontalStackLayout>
+                            <!-- Caption -->
+                            <Label Text="Grow your tree as you grow your mind!"
+                                   FontSize="13"
+                                   TextColor="#3A3A3A"
+                                   HorizontalOptions="Center"
+                                   Margin="0,8,0,0"
+                                   Grid.Row="1"/>
+                        </Grid>
+                        <!-- More mood tracking history -->
+                        <Button Text="More mood tracking history"
+                                FontSize="14"
+                                BackgroundColor="#E6F4EA"
+                                TextColor="#50A65D"
+                                CornerRadius="10"
+                                Margin="12,8,12,12"
+                                HorizontalOptions="Fill"
+                                Grid.Row="3"
+                                Command="{Binding GoToDiaryHistoryCommand}"/>
+                    </VerticalStackLayout>
+                </Border>
 
-            <!-- Mental Wellness Score Chart -->
-            <Border Grid.Row="4"
-                    BackgroundColor="#E6F4EA"
-                    Stroke="#E0E0E0"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 18"
-                    Padding="0">
-                <VerticalStackLayout Spacing="0"
-                                     Padding="12,8,12,12">
-                    <Label Text="Mental Wellness Score"
-                           FontSize="16"
-                           FontAttributes="Bold"
-                           TextColor="#50A65D"
-                           Margin="0,0,0,8"/>
-                    <!-- Syncfusion Line Chart Centered -->
-                    <Grid VerticalOptions="Center"
-                          HorizontalOptions="Center">
-                        <sfchart:SfCartesianChart HeightRequest="180"
-                                                  WidthRequest="320"
-                                                  VerticalOptions="Center"
-                                                  HorizontalOptions="Center">
-                            <sfchart:SfCartesianChart.XAxes>
-                                <sfchart:CategoryAxis/>
-                            </sfchart:SfCartesianChart.XAxes>
-                            <sfchart:SfCartesianChart.YAxes>
-                                <sfchart:NumericalAxis Maximum="10"
-                                                       Minimum="0"/>
-                            </sfchart:SfCartesianChart.YAxes>
-                            <sfchart:LineSeries
-                                ItemsSource="{Binding ChartData}"
-                                XBindingPath="Day"
-                                YBindingPath="Score"/>
-                        </sfchart:SfCartesianChart>
-                    </Grid>
-                </VerticalStackLayout>
-            </Border>
-        </Grid>
-    </ScrollView>
+                <!-- Average Sentiment Gauge Card centered in star row -->
+
+                <Border Grid.Row="2"
+                        BackgroundColor="White"
+                        Stroke="#E0E0E0"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="12"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center">
+                    <VerticalStackLayout Spacing="8"
+                                         HorizontalOptions="Center">
+                        <Label Text="Average Sentiment Score"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#50A65D"
+                               HorizontalOptions="Center"/>
+
+                        <!-- Period Picker -->
+                        <Picker ItemsSource="{Binding PeriodOptions}"
+                                SelectedItem="{Binding SelectedPeriod}"
+                                FontSize="14"
+                                TextColor="#3A3A3A"
+                                HorizontalOptions="Center"
+                                WidthRequest="200"/>
+
+                        <!-- Gauge -->
+                        <sfgauges:SfRadialGauge HeightRequest="200"
+                                                WidthRequest="200"
+                                                HorizontalOptions="Center">
+                            <sfgauges:SfRadialGauge.Axes>
+                                <sfgauges:RadialAxis Minimum="0"
+                                                     Maximum="10"
+                                                     Interval="1"
+                                                     ShowAxisLine="True">
+                                    <sfgauges:RadialAxis.AxisLineStyle>
+                                        <sfgauges:RadialLineStyle Thickness="20"
+                                                                  Fill="#E0E0E0"/>
+                                    </sfgauges:RadialAxis.AxisLineStyle>
+
+                                    <sfgauges:RadialAxis.Ranges>
+                                        <sfgauges:RadialRange StartValue="0"
+                                                              EndValue="{Binding AverageSentimentScore}"
+                                                              StartWidth="20"
+                                                              EndWidth="20">
+                                            <sfgauges:RadialRange.GradientStops>
+                                                <sfgauges:GaugeGradientStop Value="0"
+                                                                            Color="#FF5252"/>
+                                                <sfgauges:GaugeGradientStop Value="2.5"
+                                                                            Color="#FFA726"/>
+                                                <sfgauges:GaugeGradientStop Value="5"
+                                                                            Color="#FFEB3B"/>
+                                                <sfgauges:GaugeGradientStop Value="7.5"
+                                                                            Color="#66BB6A"/>
+                                                <sfgauges:GaugeGradientStop Value="10"
+                                                                            Color="#50A65D"/>
+                                            </sfgauges:RadialRange.GradientStops>
+                                        </sfgauges:RadialRange>
+                                    </sfgauges:RadialAxis.Ranges>
+
+                                    <sfgauges:RadialAxis.Pointers>
+                                        <sfgauges:ContentPointer Value="{Binding AverageSentimentScore}">
+                                            <sfgauges:ContentPointer.Content>
+                                                <VerticalStackLayout Spacing="0"
+                                                                     HorizontalOptions="Center"
+                                                                     VerticalOptions="Center">
+                                                    <Label Text="AVG"
+                                                           FontSize="12"
+                                                           TextColor="#7A7A7A"
+                                                           HorizontalOptions="Center"/>
+                                                    <Label Text="{Binding AverageSentimentScore, StringFormat='{0:F1}'}"
+                                                           FontSize="36"
+                                                           FontAttributes="Bold"
+                                                           TextColor="#50A65D"
+                                                           HorizontalOptions="Center"/>
+                                                </VerticalStackLayout>
+                                            </sfgauges:ContentPointer.Content>
+                                        </sfgauges:ContentPointer>
+                                    </sfgauges:RadialAxis.Pointers>
+                                </sfgauges:RadialAxis>
+                            </sfgauges:SfRadialGauge.Axes>
+                        </sfgauges:SfRadialGauge>
+
+                        <Label>
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Average: "
+                                          FontSize="12"
+                                          TextColor="#7A7A7A"/>
+                                    <Span Text="{Binding AverageSentimentScore, StringFormat='{0:F1}'}"
+                                          FontSize="12"
+                                          FontAttributes="Bold"
+                                          TextColor="#50A65D"/>
+                                    <Span Text=" ("
+                                          FontSize="12"
+                                          TextColor="#7A7A7A"/>
+                                    <Span Text="{Binding SelectedPeriod}"
+                                          FontSize="12"
+                                          TextColor="#3A3A3A"/>
+                                    <Span Text=")"
+                                          FontSize="12"
+                                          TextColor="#7A7A7A"/>
+                                    <Span Text="  •  Out of 10"
+                                          FontSize="12"
+                                          TextColor="#7A7A7A"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Mental Wellness Score Chart -->
+                <Border Grid.Row="4"
+                        BackgroundColor="#E6F4EA"
+                        Stroke="#E0E0E0"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 18"
+                        Padding="0">
+                    <VerticalStackLayout Spacing="0"
+                                         Padding="12,8,12,12">
+                        <Label Text="Mental Wellness Score"
+                               FontSize="16"
+                               FontAttributes="Bold"
+                               TextColor="#50A65D"
+                               Margin="0,0,0,8"/>
+                        <!-- Syncfusion Line Chart Centered -->
+                        <Grid VerticalOptions="Center"
+                              HorizontalOptions="Center">
+                            <sfchart:SfCartesianChart HeightRequest="180"
+                                                      WidthRequest="320"
+                                                      VerticalOptions="Center"
+                                                      HorizontalOptions="Center">
+                                <sfchart:SfCartesianChart.XAxes>
+                                    <sfchart:CategoryAxis/>
+                                </sfchart:SfCartesianChart.XAxes>
+                                <sfchart:SfCartesianChart.YAxes>
+                                    <sfchart:NumericalAxis Maximum="10"
+                                                           Minimum="0"/>
+                                </sfchart:SfCartesianChart.YAxes>
+                                <sfchart:LineSeries
+                                    ItemsSource="{Binding ChartData}"
+                                    XBindingPath="Day"
+                                    YBindingPath="Score"/>
+                            </sfchart:SfCartesianChart>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+        </ScrollView>
+        <Border Grid.Row="1"
+                BackgroundColor="White"
+                StrokeThickness="0"
+                TranslationY="8">
+            <Border.Shadow>
+                <Shadow Brush="Black"
+                        Opacity="0.18"
+                        Radius="14"
+                        Offset="0,-2"/>
+            </Border.Shadow>
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="28,28,0,0"/>
+            </Border.StrokeShape>
+        </Border>
+    </Grid>
 </ContentPage>

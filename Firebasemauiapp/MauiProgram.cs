@@ -12,6 +12,7 @@ using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
 using Microsoft.Maui.Storage;
 using System.IO;
+using Firebasemauiapp.Config;
 
 namespace Firebasemauiapp;
 
@@ -25,8 +26,10 @@ public static class MauiProgram
 			.UseMauiCommunityToolkit()
 			.ConfigureFonts(fonts =>
 			{
+				fonts.AddFont("LeagueSpartan-ExtraBold.ttf", "AppFont");
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+
 			})
 			.ConfigureSyncfusionCore();
 
@@ -54,34 +57,41 @@ public static class MauiProgram
 		builder.Services.AddSingleton<DiaryDatabase>();
 		builder.Services.AddSingleton<PostDatabase>();
 		builder.Services.AddSingleton<AuthRoutingService>();
+		builder.Services.AddSingleton<GitHubUploadService>();
 
 		// View Models
 		builder.Services.AddTransient<SignInViewModel>();
 		builder.Services.AddTransient<SignUpViewModel>();
 		builder.Services.AddTransient<StarterViewModel>();
 		builder.Services.AddTransient<DiaryViewModel>();
+		builder.Services.AddTransient<MoodViewModel>();
 		builder.Services.AddTransient<SummaryViewModel>();
 		builder.Services.AddTransient<DiaryHistoryViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
 		builder.Services.AddTransient<CommunityViewModel>();
 		builder.Services.AddTransient<QuestViewModel>();
+		builder.Services.AddTransient<LevelMoodViewModel>();
 
 		// Views
 		builder.Services.AddTransient<SignInView>();
 		builder.Services.AddTransient<SignUpView>();
 		builder.Services.AddTransient<StarterView>();
 		builder.Services.AddTransient<DiaryView>();
+		builder.Services.AddTransient<SelectMoodPage>();
 		builder.Services.AddTransient<SummaryView>();
 		builder.Services.AddTransient<DiaryHistory>();
 		builder.Services.AddTransient<Dashboard>();
 		builder.Services.AddTransient<CommunityPage.CommunityPage>();
 		builder.Services.AddTransient<QuestPage.QuestPage>();
+		builder.Services.AddTransient<LevelMoodPage>();
 
 		var app = builder.Build();
 
 
 		// Expose service provider and start auth-driven routing
 		ServiceHelper.Initialize(app.Services);
+		// Apply default GitHub upload settings to Preferences (fill values in Config/GitHubSettings.cs)
+		GitHubSettings.ApplyToPreferences();
 		app.Services.GetRequiredService<AuthRoutingService>().Start();
 
 		// Pre-warm Firestore in background to avoid first-use delay when opening Diary/History

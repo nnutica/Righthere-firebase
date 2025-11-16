@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <ContentPage
     x:Class="Firebasemauiapp.Mainpages.StarterView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -8,13 +8,19 @@
     Shell.FlyoutBehavior="Flyout"
     Shell.NavBarIsVisible="False"
     Shell.BackgroundColor="Transparent">
+
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False"
                             IsEnabled="False"/>
     </Shell.BackButtonBehavior>
-    <Grid>
-        <!-- Custom header row with hamburger menu -->
-        <Grid RowDefinitions="Auto,*">
+
+    <!-- New structure: content on top, rounded white strip under TabBar -->
+    <!-- Increase strip height slightly for smoother curve alignment -->
+    <Grid RowDefinitions="*,32">
+        <!-- Top content area (everything you had before) -->
+        <Grid Grid.Row="0"
+              RowDefinitions="Auto,*">
+            <!-- Header row with hamburger and coin badge -->
             <Grid Grid.Row="0"
                   BackgroundColor="Transparent"
                   Padding="12,8,12,4">
@@ -23,6 +29,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+
                 <Button Grid.Column="0"
                         Command="{Binding OpenFlyoutCommand}"
                         BackgroundColor="#33000000"
@@ -33,7 +40,8 @@
                         Padding="0"
                         FontSize="24"
                         Text="≡"/>
-                <!-- Coin badge in header, aligned to the right -->
+
+                <!-- Coin badge -->
                 <Border Grid.Column="2"
                         BackgroundColor="#66000000"
                         StrokeThickness="0"
@@ -53,15 +61,18 @@
                     </HorizontalStackLayout>
                 </Border>
             </Grid>
+
+            <!-- Main content -->
             <Grid Grid.Row="1">
-                <!-- Main content -->
                 <VerticalStackLayout Padding="30"
                                      Spacing="20"
-                                     VerticalOptions="Center">
+                                     VerticalOptions="Start"
+                                     Margin="0,20,0,40">
                     <Label FontAttributes="Bold"
                            FontSize="32"
                            HorizontalOptions="Center"
                            Text="Welcome!"/>
+
                     <Label FontSize="24"
                            HorizontalOptions="Center"
                            Text="{Binding UserName}"
@@ -69,10 +80,10 @@
 
                     <!-- Plant and radial menu area -->
                     <Grid x:Name="PlantArea"
-                          WidthRequest="240"
-                          HeightRequest="280"
+                          WidthRequest="220"
+                          HeightRequest="220"
                           HorizontalOptions="Center"
-                          VerticalOptions="Center">
+                          VerticalOptions="Start">
                         <!-- Your Diary (top) -->
                         <VerticalStackLayout x:Name="YourDiaryStack"
                                              IsVisible="False"
@@ -160,9 +171,25 @@
                                      ZIndex="1"/>
                     </Grid>
                 </VerticalStackLayout>
-
-
             </Grid>
         </Grid>
+
+        <!-- Bottom white rounded strip under TabBar -->
+        <Border Grid.Row="1"
+                BackgroundColor="White"
+                StrokeThickness="0"
+                Margin="0"
+                TranslationY="8">
+            <Border.Shadow>
+                <Shadow Brush="Black"
+                        Opacity="0.18"
+                        Radius="14"
+                        Offset="0,-2"/>
+            </Border.Shadow>
+            <Border.StrokeShape>
+                <!-- Slightly larger corner radius for a softer top edge -->
+                <RoundRectangle CornerRadius="28,28,0,0"/>
+            </Border.StrokeShape>
+        </Border>
     </Grid>
 </ContentPage>

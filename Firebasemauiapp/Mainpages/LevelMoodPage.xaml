@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Firebasemauiapp.Mainpages.LevelMoodPage"
+             Title="Level of Mood">
+    <Grid RowDefinitions="*,32">
+        <!-- Orange card-like area -->
+        <Grid Grid.Row="0"
+              Padding="20,24"
+              RowDefinitions="Auto,*,Auto"
+              BackgroundColor="#F8A33A">
+            <!-- Back arrow could be added later -->
+            <VerticalStackLayout>
+                <Label FontFamily="AppFont"
+                       FontSize="28"
+                       TextColor="White">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Hey "/>
+                            <Span Text="{Binding Username}"/>
+                            <Span Text=","/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label Text="how do you feeling today?"
+                       FontFamily="AppFont"
+                       FontSize="28"
+                       TextColor="White"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Grid.Row="1"
+                                 Spacing="16"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center">
+                <Label Text="{Binding Mood.Emoji}"
+                       FontSize="96"
+                       HorizontalOptions="Center"/>
+                <Label Text="I'm Feeling {Binding Mood.Name}"
+                       FontSize="18"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+                <!-- Simple score slider for self-assessment -->
+                <Slider Minimum="0"
+                        Maximum="100"
+                        Value="{Binding Score}"
+                        WidthRequest="240"/>
+                <Label Text="Score: {Binding Score}"
+                        TextColor="White"/>
+            </VerticalStackLayout>
+
+            <Button Grid.Row="2"
+                    Text="Set Mood"
+                    BackgroundColor="Black"
+                    TextColor="White"
+                    CornerRadius="12"
+                    HeightRequest="48"
+                    Command="{Binding SetMoodCommand}"/>
+        </Grid>
+
+        <!-- Bottom rounded strip behind TabBar -->
+        <Border Grid.Row="1"
+                BackgroundColor="White"
+                StrokeThickness="0"
+                TranslationY="8">
+            <Border.Shadow>
+                <Shadow Brush="Black"
+                        Opacity="0.18"
+                        Radius="14"
+                        Offset="0,-2"/>
+            </Border.Shadow>
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="28,28,0,0"/>
+            </Border.StrokeShape>
+        </Border>
+    </Grid>
+</ContentPage>

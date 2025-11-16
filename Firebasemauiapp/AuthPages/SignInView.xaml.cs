@@ -8,4 +8,9 @@ public partial class SignInView : ContentPage
 
 		BindingContext = viewModel;
 	}
+
+	private async void OnGoogleSignInClicked(object sender, EventArgs e)
+	{
+		await DisplayAlert("Google Sign-In", "ยังไม่พร้อมใช้งาน", "OK");
+	}
 }

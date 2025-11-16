@@ -1,20 +1,24 @@
 using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
 using Firebasemauiapp.Data;
 using Firebasemauiapp.Services;
 using Firebasemauiapp.Helpers;
+using Firebasemauiapp.Model;
+using Microsoft.Maui.Storage;
+using SkiaSharp;
 
 namespace Firebasemauiapp.Mainpages;
 
+[QueryProperty(nameof(Username), nameof(Username))]
+[QueryProperty(nameof(Mood), nameof(Mood))]
+[QueryProperty(nameof(MoodScore), nameof(MoodScore))]
 public partial class DiaryViewModel : ObservableObject
 {
     private readonly DiaryDatabase _diaryDatabase;
     private readonly FirebaseAuthClient _authClient;
-
-    [ObservableProperty]
-    private string _selectedReason = "friend";
 
     [ObservableProperty]
     private string _diaryContent = string.Empty;
@@ -28,30 +32,20 @@ public partial class DiaryViewModel : ObservableObject
     [ObservableProperty]
     private string _analyzeButtonText = "Next";
 
-    // Button colors for UI
     [ObservableProperty]
-    private Color _friendButtonBackground = Colors.DarkGreen;
+    private string _username = string.Empty;
 
     [ObservableProperty]
-    private Color _workButtonBackground = Colors.LightGray;
+    private MoodOption? _mood;
 
     [ObservableProperty]
-    private Color _familyButtonBackground = Colors.LightGray;
+    private int _moodScore;
 
     [ObservableProperty]
-    private Color _schoolButtonBackground = Colors.LightGray;
+    private string? _imageUrl;
 
     [ObservableProperty]
-    private Color _friendButtonText = Colors.White;
-
-    [ObservableProperty]
-    private Color _workButtonText = Colors.DarkGray;
-
-    [ObservableProperty]
-    private Color _familyButtonText = Colors.DarkGray;
-
-    [ObservableProperty]
-    private Color _schoolButtonText = Colors.DarkGray;
+    private bool _isUploadingImage;
 
     public DiaryViewModel(DiaryDatabase diaryDatabase, FirebaseAuthClient authClient)
     {
@@ -60,45 +54,110 @@ public partial class DiaryViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void SelectReason(string reason)
+    private async Task UploadImage()
     {
-        SelectedReason = reason;
-        UpdateReasonButtonStyles();
+        try
+        {
+            var pick = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Select an image",
+                FileTypes = FilePickerFileType.Images
+            });
+            if (pick == null) return;
+
+            IsUploadingImage = true;
+            using var original = await pick.OpenReadAsync();
+
+            // Ask user for crop ratio
+            string choice = await Shell.Current.DisplayActionSheet(
+                "Crop image",
+                "Cancel",
+                null,
+                "Square 1:1",
+                "4:3",
+                "16:9",
+                "Original");
+
+            Stream toUpload = original;
+            string fileName = pick.FileName;
+            if (!string.IsNullOrEmpty(choice) && choice != "Cancel" && choice != "Original")
+            {
+                var parts = choice.Split(' ');
+                var ratio = parts[1]; // e.g., 1:1
+                var ab = ratio.Split(':');
+                if (ab.Length == 2 && int.TryParse(ab[0], out var a) && int.TryParse(ab[1], out var b) && a > 0 && b > 0)
+                {
+                    toUpload = await CropToAspectAsync(original, a, b);
+                    fileName = System.IO.Path.GetFileNameWithoutExtension(pick.FileName) + "-c" + System.IO.Path.GetExtension(pick.FileName);
+                }
+            }
+
+            var uploader = ServiceHelper.Get<GitHubUploadService>();
+            var url = await uploader.UploadImageAsync(toUpload, fileName);
+            ImageUrl = url;
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Upload Failed", ex.Message, "OK");
+        }
+        finally
+        {
+            IsUploadingImage = false;
+        }
     }
 
-    private void UpdateReasonButtonStyles()
+    private static async Task<Stream> CropToAspectAsync(Stream input, int aspectW, int aspectH)
     {
-        // Reset all buttons
-        FriendButtonBackground = Colors.LightGray;
-        WorkButtonBackground = Colors.LightGray;
-        FamilyButtonBackground = Colors.LightGray;
-        SchoolButtonBackground = Colors.LightGray;
+        // Ensure we can read multiple times
+        using var ms = new MemoryStream();
+        await input.CopyToAsync(ms);
+        ms.Position = 0;
 
-        FriendButtonText = Colors.DarkGray;
-        WorkButtonText = Colors.DarkGray;
-        FamilyButtonText = Colors.DarkGray;
-        SchoolButtonText = Colors.DarkGray;
-
-        // Set selected button
-        switch (SelectedReason)
+        using var bitmap = SKBitmap.Decode(ms);
+        if (bitmap == null)
         {
-            case "friend":
-                FriendButtonBackground = Colors.DarkGreen;
-                FriendButtonText = Colors.White;
-                break;
-            case "work":
-                WorkButtonBackground = Colors.DarkGreen;
-                WorkButtonText = Colors.White;
-                break;
-            case "family":
-                FamilyButtonBackground = Colors.DarkGreen;
-                FamilyButtonText = Colors.White;
-                break;
-            case "school":
-                SchoolButtonBackground = Colors.DarkGreen;
-                SchoolButtonText = Colors.White;
-                break;
+            ms.Position = 0;
+            return ms; // fallback
         }
+
+        // Compute crop rect (center crop to desired aspect)
+        double srcW = bitmap.Width;
+        double srcH = bitmap.Height;
+        double targetRatio = (double)aspectW / aspectH;
+        double srcRatio = srcW / srcH;
+
+        double cropW = srcW;
+        double cropH = srcH;
+        if (srcRatio > targetRatio)
+        {
+            // too wide -> reduce width
+            cropW = srcH * targetRatio;
+        }
+        else if (srcRatio < targetRatio)
+        {
+            // too tall -> reduce height
+            cropH = srcW / targetRatio;
+        }
+
+        var left = (srcW - cropW) / 2.0;
+        var top = (srcH - cropH) / 2.0;
+        var srcRect = new SKRect((float)left, (float)top, (float)(left + cropW), (float)(top + cropH));
+
+        // Draw to a new bitmap with the cropped size
+        using var cropped = new SKBitmap((int)cropW, (int)cropH);
+        using (var canvas = new SKCanvas(cropped))
+        {
+            canvas.Clear(SKColors.Transparent);
+            var dest = new SKRect(0, 0, cropped.Width, cropped.Height);
+            canvas.DrawBitmap(bitmap, srcRect, dest);
+        }
+
+        using var image = SKImage.FromBitmap(cropped);
+        using var data = image.Encode(SKEncodedImageFormat.Jpeg, 90);
+        var outStream = new MemoryStream();
+        data.SaveTo(outStream);
+        outStream.Position = 0;
+        return outStream;
     }
 
     [RelayCommand]
@@ -110,7 +169,6 @@ public partial class DiaryViewModel : ObservableObject
             return;
         }
 
-        // Check user authentication
         var currentUser = _authClient.User;
         if (currentUser == null)
         {
@@ -119,7 +177,6 @@ public partial class DiaryViewModel : ObservableObject
             return;
         }
 
-        // Start loading
         IsAnalyzing = true;
         IsLoadingVisible = true;
         AnalyzeButtonText = "Analyzing...";
@@ -141,10 +198,8 @@ public partial class DiaryViewModel : ObservableObject
                 return;
             }
 
-            // Store data in static class for transfer
-            SummaryPageData.SetData(SelectedReason, DiaryContent, mood, suggestion, keyword, emotion, score.ToString());
+            SummaryPageData.SetData(DiaryContent, mood, suggestion, keyword, emotion, score.ToString(), ImageUrl);
 
-            // Navigate to Summary
             await Shell.Current.GoToAsync("//summary");
         }
         catch (Exception ex)
@@ -154,7 +209,6 @@ public partial class DiaryViewModel : ObservableObject
         }
         finally
         {
-            // Stop loading
             IsAnalyzing = false;
             IsLoadingVisible = false;
             AnalyzeButtonText = "Next ➤";
@@ -175,10 +229,9 @@ public partial class DiaryViewModel : ObservableObject
     public void ResetDiaryForm()
     {
         DiaryContent = string.Empty;
-        SelectedReason = "friend";
         IsAnalyzing = false;
         IsLoadingVisible = false;
         AnalyzeButtonText = "Next";
-        UpdateReasonButtonStyles();
+        ImageUrl = null;
     }
 }

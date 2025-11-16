@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Firebasemauiapp.Mainpages.SelectMoodPage"
+             Title="Select Mood">
+    <Grid RowDefinitions="*,32"
+          Padding="20,24,20,0">
+        <!-- Main content -->
+        <Grid Grid.Row="0"
+              RowDefinitions="Auto,Auto,*,Auto"
+              RowSpacing="16">
+            <!-- Header -->
+            <VerticalStackLayout Spacing="0">
+                <Label FontFamily="AppFont"
+                       FontSize="28"
+                       TextColor="#2F6535">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Hey "/>
+                            <Span Text="{Binding Username}"/>
+                            <Span Text=","/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <Label Text="how do you feeling today?"
+                       FontFamily="AppFont"
+                       FontSize="28"
+                       TextColor="#2F6535"/>
+            </VerticalStackLayout>
+
+            <!-- Spacer for small gap -->
+            <BoxView Grid.Row="1"
+                     HeightRequest="8"
+                     Opacity="0"/>
+
+            <!-- Mood grid -->
+            <CollectionView Grid.Row="2"
+                            ItemsSource="{Binding Moods}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedMood}"
+                            Margin="0,4,0,0">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical"
+                                     Span="2"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="8">
+                            <Border BackgroundColor="White"
+                                    StrokeThickness="0"
+                                    Padding="16"
+                                    HeightRequest="120"
+                                    Grid.RowSpan="1">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16"/>
+                                </Border.StrokeShape>
+                                <Grid RowDefinitions="*,Auto"
+                                      ColumnDefinitions="*"
+                                      RowSpacing="8"
+                                      VerticalOptions="Center">
+                                    <!-- Icon placeholder; swap to Image when assets arrive -->
+                                    <Label Text="{Binding Emoji}"
+                                           FontSize="40"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                    <Label Grid.Row="1"
+                                           Text="{Binding Name}"
+                                           FontSize="14"
+                                           TextColor="#2F6535"
+                                           HorizontalOptions="Center"/>
+                                </Grid>
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroupList>
+                                        <VisualStateGroup x:Name="CommonStates">
+                                            <VisualState x:Name="Normal"/>
+                                            <VisualState x:Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter Property="BackgroundColor"
+                                                            Value="#FFF3E1"/>
+                                                    <Setter Property="Shadow">
+                                                        <Shadow Brush="Black"
+                                                                Opacity="0.12"
+                                                                Radius="12"
+                                                                Offset="0,2"/>
+                                                    </Setter>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateGroupList>
+                                </VisualStateManager.VisualStateGroups>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- Next button -->
+            <Button Grid.Row="3"
+                    Text="Next"
+                    Command="{Binding NextCommand}"
+                    BackgroundColor="#FEAA3A"
+                    TextColor="White"
+                    CornerRadius="12"
+                    HeightRequest="48"
+                    FontAttributes="Bold"
+                    IsEnabled="{Binding IsNextEnabled}"
+                    Margin="0,8,0,0"/>
+        </Grid>
+
+        <!-- Bottom rounded strip behind TabBar -->
+        <Border Grid.Row="1"
+                BackgroundColor="White"
+                StrokeThickness="0"
+                TranslationY="8">
+            <Border.Shadow>
+                <Shadow Brush="Black"
+                        Opacity="0.18"
+                        Radius="14"
+                        Offset="0,-2"/>
+            </Border.Shadow>
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="28,28,0,0"/>
+            </Border.StrokeShape>
+        </Border>
+    </Grid>
+</ContentPage>

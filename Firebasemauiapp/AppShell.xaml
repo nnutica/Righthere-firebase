@@ -7,6 +7,7 @@
     xmlns:main="clr-namespace:Firebasemauiapp.Mainpages"
     xmlns:quest="clr-namespace:Firebasemauiapp.QuestPage"
     xmlns:community="clr-namespace:Firebasemauiapp.CommunityPage"
+    xmlns:store="clr-namespace:Firebasemauiapp.StorePage"
     Title="Firebasemauiapp"
     FlyoutBehavior="Disabled">
 
@@ -30,28 +31,7 @@
     <TabBar Route="main"
             CurrentItem="{x:Reference homeTab}">
 
-        <Tab Title="Quests"
-             Icon="quest.png">
-            <ShellContent
-                Title="Quests"
-                ContentTemplate="{DataTemplate quest:QuestPage}"
-                Route="quests"/>
-        </Tab>
-
-        <Tab Title="Diary"
-             Icon="diary.png">
-            <ShellContent
-                Title="Diary"
-                ContentTemplate="{DataTemplate main:DiaryView}"
-                Route="diary"/>
-            <ShellContent
-                Title="History"
-                ContentTemplate="{DataTemplate main:DiaryHistory}"
-                Route="history"/>
-        </Tab>
-
-
-
+        <!-- Home -->
         <Tab x:Name="homeTab"
              Route="home"
              Title="Home"
@@ -59,18 +39,38 @@
             <ShellContent
                 Title="Home"
                 ContentTemplate="{DataTemplate main:StarterView}"
-                Route="starter"
-                Shell.FlyoutBehavior="Flyout"/>
+                Route="starter"/>
         </Tab>
 
-        <Tab Title="Community"
-             Icon="community_icon.png">
+        <!-- Diary: route to SelectMoodPage instead of DiaryView -->
+        <Tab Title="Diary"
+             Icon="diary.png">
             <ShellContent
-                Title="Community"
+                Title="Diary"
+                ContentTemplate="{DataTemplate main:SelectMoodPage}"
+                Route="diary"/>
+
+        </Tab>
+
+        <!-- Mind Pot (Community) -->
+        <Tab Title="Mind Pot"
+             Icon="mindpot.png">
+            <ShellContent
+                Title="Mind Pot"
                 ContentTemplate="{DataTemplate community:CommunityPage}"
                 Route="community"/>
         </Tab>
 
+        <!-- Store -->
+        <Tab Title="Store"
+             Icon="store.png">
+            <ShellContent
+                Title="Store"
+                ContentTemplate="{DataTemplate store:StorePage}"
+                Route="store"/>
+        </Tab>
+
+        <!-- Dashboard -->
         <Tab Title="Dashboard"
              Icon="dashboard.png">
             <ShellContent
@@ -78,8 +78,6 @@
                 ContentTemplate="{DataTemplate main:Dashboard}"
                 Route="dashboard"/>
         </Tab>
-
-
 
     </TabBar>
 

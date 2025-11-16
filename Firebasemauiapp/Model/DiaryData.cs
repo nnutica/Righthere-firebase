@@ -13,8 +13,7 @@ namespace Firebasemauiapp.Model
         [FirestoreProperty("userId")]
         public string UserId { get; set; } = string.Empty;
 
-        [FirestoreProperty("reason")]
-        public string Reason { get; set; } = string.Empty;
+
 
         [FirestoreProperty("content")]
         public string Content { get; set; } = string.Empty;
@@ -33,6 +32,9 @@ namespace Firebasemauiapp.Model
 
         [FirestoreProperty("emotionalReflection")]
         public string EmotionalReflection { get; set; } = string.Empty;
+
+        [FirestoreProperty("imageUrl")]
+        public string? ImageUrl { get; set; }
 
         [FirestoreProperty("createdAt")]
         public Timestamp CreatedAt { get; set; }

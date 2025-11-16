@@ -6,130 +6,166 @@
     Title="SignInView"
     Shell.NavBarIsVisible="False">
 
+    <!-- Gradient background with top area reserved for illustration -->
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0"
-                EndPoint="2,2">
-            <GradientStop Offset="0.1"
-                    Color="#FFFFFF"/>
+                             EndPoint="0,1">
+            <GradientStop Offset="0"
+                          Color="#E4F3E8"/>
+            <GradientStop Offset="0.6"
+                          Color="#E4F3E8"/>
+            <GradientStop Offset="0.6"
+                          Color="#FFFFFF"/>
             <GradientStop Offset="1"
-                    Color="#50A65D"/>
-            <GradientStop Offset="1.5"
-                    Color="#FFFFFF"/>
-            <GradientStop Offset="2"
-                    Color="#50A65D"/>
+                          Color="#FFFFFF"/>
         </LinearGradientBrush>
     </ContentPage.Background>
-    <Grid Padding="20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        <!--  Header Section  -->
-        <StackLayout
-            Grid.Row="1"
-            VerticalOptions="Center">
-            <Label
-                Margin="0,20,0,10"
-                FontAttributes="Bold"
-                FontSize="24"
-                HorizontalOptions="Center"
-                Text="Welcome Back!"
-                TextColor="#50A65D"/>
-            <Label
-                Margin="0,20,0,10"
-                FontSize="14"
-                HorizontalOptions="Center"
-                HorizontalTextAlignment="Center"
-                Text="Access your safe space for thoughts and memories"
-                TextColor="Black"/>
-        </StackLayout>
+    <Grid RowDefinitions="2*,3*"
+          Padding="0">
+        <!-- Top illustration placeholder -->
+        <Grid Grid.Row="0"
+              Padding="20"
+              VerticalOptions="FillAndExpand">
+            <Border BackgroundColor="Transparent"
+                    StrokeThickness="0"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Center">
+                <!-- เอารูปมาใส่ตรงนี้ -->
+            </Border>
+        </Grid>
 
-        <!--  Email Input  -->
-        <Border
-            Grid.Row="2"
-            Margin="15,20,15,20"
-            Padding="0"
-            BackgroundColor="White"
-            HeightRequest="50"
-            Stroke="#50A65D"
-            StrokeShape="RoundRectangle 10">
-            <Entry Placeholder="Email"
-                    Text="{Binding Email}"/>
-        </Border>
+        <!-- Bottom card -->
+        <Grid Grid.Row="1"
+              Padding="0,0,0,10">
+            <Border BackgroundColor="White"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 40,40,0,0"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+                <ScrollView>
+                    <VerticalStackLayout Padding="24,32,24,16"
+                                         Spacing="16">
+                        <!-- Title -->
+                        <Label Text="Sign In"
+                               FontAttributes="Bold"
+                               FontSize="24"
+                               TextColor="#4A5F52"/>
 
-        <!--  Password Input  -->
-        <Border
-            Grid.Row="3"
-            Margin="15,20,15,20"
-            Padding="0"
-            BackgroundColor="White"
-            HeightRequest="50"
-            Stroke="#50A65D"
-            StrokeShape="RoundRectangle 10">
-            <Entry
-                IsPassword="True"
-                Placeholder="Password"
-                Text="{Binding Password}"/>
-        </Border>
+                        <!-- Username -->
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Username"
+                                   FontSize="12"
+                                   TextColor="#8A8A8A"/>
+                            <Border BackgroundColor="#F8F8F8"
+                                    Stroke="#E0E0E0"
+                                    StrokeShape="RoundRectangle 12"
+                                    HeightRequest="48">
+                                <Entry Placeholder="Enter your username"
+                                       Text="{Binding Email}"
+                                       FontSize="14"
+                                       TextColor="#333333"
+                                       BackgroundColor="Transparent"
+                                       Margin="12,0"/>
+                            </Border>
+                        </VerticalStackLayout>
 
-        <!--  Error Message  -->
-        <Label
-            Grid.Row="4"
-            Margin="15,0,15,20"
-            FontSize="12"
-            HorizontalOptions="Start"
-            IsVisible="{Binding HasError}"
-            Text="{Binding ErrorMessage}"
-            TextColor="Red"/>
+                        <!-- Password -->
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Password"
+                                   FontSize="12"
+                                   TextColor="#8A8A8A"/>
+                            <Border BackgroundColor="#F8F8F8"
+                                    Stroke="#E0E0E0"
+                                    StrokeShape="RoundRectangle 12"
+                                    HeightRequest="48">
+                                <Entry Placeholder="Enter your password"
+                                       IsPassword="True"
+                                       Text="{Binding Password}"
+                                       FontSize="14"
+                                       TextColor="#333333"
+                                       BackgroundColor="Transparent"
+                                       Margin="12,0"/>
+                            </Border>
+                            <Label Text="Forgot password?"
+                                   FontSize="11"
+                                   TextColor="#8A8A8A"
+                                   HorizontalOptions="End"
+                                   Margin="0,4,4,0"/>
+                        </VerticalStackLayout>
 
-        <!--  Sign In Button  -->
-        <Button
-            Grid.Row="5"
-            Margin="15,20,15,10"
-            BackgroundColor="#50A65D"
-            Command="{Binding SignInCommand}"
-            FontSize="16"
-            HeightRequest="50"
-            Text="Sign In"
-            TextColor="White"/>
+                        <!-- Error Message -->
+                        <Label FontSize="12"
+                               TextColor="Red"
+                               IsVisible="{Binding HasError}"
+                               Text="{Binding ErrorMessage}"/>
 
-        <!--  Registration Link  -->
-        <HorizontalStackLayout
-            Grid.Row="6"
-            Margin="0,20,0,0"
-            HorizontalOptions="Center">
-            <Label
-                FontSize="14"
-                HorizontalOptions="Center"
-                Text="Don't have an account?  "
-                TextColor="Gray"/>
-            <Label
-                FontSize="14"
-                HorizontalOptions="Center"
-                Text="Registration"
-                TextColor="#50A65D"
-                TextDecorations="Underline">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding NavigateSignUpCommand}"/>
-                </Label.GestureRecognizers>
-            </Label>
-        </HorizontalStackLayout>
+                        <!-- Primary Sign In Button -->
+                        <Button Text="Sign In"
+                                Command="{Binding SignInCommand}"
+                                HeightRequest="48"
+                                CornerRadius="24"
+                                BackgroundColor="#FFB74D"
+                                TextColor="White"
+                                FontAttributes="Bold"/>
 
-        <!--  Username Display  -->
-        <Label
-            Grid.Row="7"
-            Margin="0,20,0,0"
-            HorizontalOptions="Center"
-            Text="{Binding Username}"
-            TextColor="#50A65D"/>
+                        <!-- Or separator -->
+                        <Grid ColumnDefinitions="*,Auto,*"
+                              Margin="0,8,0,0">
+                            <BoxView HeightRequest="1"
+                                     Color="#E0E0E0"
+                                     VerticalOptions="Center"/>
+                            <Label Grid.Column="1"
+                                   Text="or"
+                                   FontSize="12"
+                                   TextColor="#8A8A8A"
+                                   Margin="8,0"/>
+                            <BoxView Grid.Column="2"
+                                     HeightRequest="1"
+                                     Color="#E0E0E0"
+                                     VerticalOptions="Center"/>
+                        </Grid>
 
+                        <!-- Google Sign In Button (placeholder) -->
+                        <Border BackgroundColor="#FFFFFF"
+                                Stroke="#E0E0E0"
+                                StrokeShape="RoundRectangle 24"
+                                HeightRequest="48">
+                            <Grid Padding="16,0"
+                                  ColumnDefinitions="Auto,*">
+                                <!-- Icon placeholder circle (simple rounded box instead of Circle shape) -->
+                                <Border WidthRequest="24"
+                                        HeightRequest="24"
+                                        Stroke="#E0E0E0"
+                                        BackgroundColor="Transparent"
+                                        StrokeShape="RoundRectangle 12"/>
+                                <Button Grid.Column="1"
+                                        Text="Sign in with Google"
+                                        BackgroundColor="Transparent"
+                                        TextColor="#5F6368"
+                                        FontSize="14"
+                                        Clicked="OnGoogleSignInClicked"/>
+                            </Grid>
+                        </Border>
+
+                        <!-- Bottom Sign Up link -->
+                        <HorizontalStackLayout HorizontalOptions="Center"
+                                               Margin="0,8,0,0">
+                            <Label Text="Don't have an account? "
+                                   FontSize="13"
+                                   TextColor="#8A8A8A"/>
+                            <Label Text="Sign Up"
+                                   FontSize="13"
+                                   TextColor="#50A65D"
+                                   TextDecorations="Underline">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding NavigateSignUpCommand}"/>
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </ScrollView>
+            </Border>
+        </Grid>
     </Grid>
 </ContentPage>

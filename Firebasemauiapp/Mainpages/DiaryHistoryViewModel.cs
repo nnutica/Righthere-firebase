@@ -126,7 +126,6 @@ public partial class DiaryHistoryViewModel : ObservableObject
             // Navigate to diary detail or summary view
             var summaryViewModel = new SummaryViewModel(_diaryDatabase, _authClient);
             summaryViewModel.SetData(
-                diary.Reason ?? "Unknown",
                 diary.Content ?? "",
                 diary.Mood ?? "Unknown",
                 diary.Suggestion ?? "",
