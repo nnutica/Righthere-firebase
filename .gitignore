@@ -8,6 +8,8 @@ obj/
 # Firebase secrets
 .env
 Firebasemauiapp/Resources/Raw/*.json
+Firebasemauiapp/Config/GitHubSettings.cs
+
 
 # Visual Studio
 .vs/
@@ -32,3 +34,4 @@ ehthumbs.db
 
 # Firebase (Android) config – do not commit secrets
 Firebasemauiapp/Platforms/Android/google-services.json
+
