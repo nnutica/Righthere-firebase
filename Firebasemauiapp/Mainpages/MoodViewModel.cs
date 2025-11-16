@@ -63,9 +63,9 @@ public partial class MoodViewModel : ObservableObject
         Moods = new ObservableCollection<MoodOption>
         {
             new("Happiness", "😊"),
-            new("So-So", "😐"),
+            new("Love", "🥰"),
             new("Angry", "😡"),
-            new("Disgust", "🤢"),
+            new("Surprise", "🫨"),
             new("Sadness", "😔"),
             new("Fear", "😱")
         };
@@ -79,7 +79,8 @@ public partial class MoodViewModel : ObservableObject
 
         var navParams = new Dictionary<string, object>
         {
-            ["Mood"] = SelectedMood
+            ["Mood"] = SelectedMood,
+            ["Username"] = Username
         };
         await Shell.Current.GoToAsync("//main/levelmood", true, navParams);
     }

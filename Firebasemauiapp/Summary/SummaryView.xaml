@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Firebasemauiapp.Mainpages.SummaryView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="SummaryView"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="#FEAA3A">
+
+    <Grid RowDefinitions="*,Auto"
+            Padding="20"
+            RowSpacing="10">
+        <!-- Page 1: Key Themes -->
+        <Grid x:Name="KeyThemesPage"
+                IsVisible="False">
+            <Grid.Triggers>
+                <DataTrigger TargetType="Grid"
+                        Binding="{Binding PageIndex}"
+                        Value="0">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
+                </DataTrigger>
+            </Grid.Triggers>
+            <VerticalStackLayout Spacing="12">
+                <Label Text="Key Themes"
+                        FontFamily="AppFont"
+                        FontSize="28"
+                        TextColor="White"/>
+                <FlexLayout Wrap="Wrap"
+                        Direction="Row"
+                        AlignItems="Start"
+                        AlignContent="Start"
+                        JustifyContent="Start"
+                        BindableLayout.ItemsSource="{Binding KeywordsList}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Border BackgroundColor="#F8FAED"
+                                    StrokeThickness="1"
+                                    Stroke="#50A65D"
+                                    Padding="10"
+                                    Margin="0,8,8,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="14"/>
+                                </Border.StrokeShape>
+                                <Label Text="{Binding .}"
+                                        TextColor="Black"
+                                        FontAttributes="Bold"/>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Page 2: Reflection + Score -->
+        <Grid x:Name="ReflectionPage"
+                IsVisible="False">
+            <Grid.Triggers>
+                <DataTrigger TargetType="Grid"
+                        Binding="{Binding PageIndex}"
+                        Value="1">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
+                </DataTrigger>
+            </Grid.Triggers>
+            <VerticalStackLayout Spacing="14">
+                <Label Text="What You Shared Today"
+                        FontFamily="AppFont"
+                        FontSize="28"
+                        TextColor="White"/>
+                <Border BackgroundColor="#F8FAED"
+                        StrokeThickness="1"
+                        Stroke="#50A65D"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18"/>
+                    </Border.StrokeShape>
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto"
+                            ColumnDefinitions="Auto,*">
+                        <Image Grid.RowSpan="2"
+                                Source="{Binding EmotionImage}"
+                                WidthRequest="64"
+                                HeightRequest="64"
+                                Margin="0,0,12,0"/>
+                        <Label Grid.Column="1"
+                                Text="Wellness Score"
+                                TextColor="#6b7a6a"/>
+                        <HorizontalStackLayout Grid.Row="1"
+                                Grid.Column="1"
+                                Spacing="4"
+                                VerticalOptions="Center">
+                            <Label Text="{Binding Score}"
+                                    TextColor="#50A65D"
+                                    FontSize="28"
+                                    FontAttributes="Bold"/>
+                            <Label Text="/10"
+                                    TextColor="#50A65D"
+                                    FontSize="18"
+                                    VerticalOptions="End"/>
+                        </HorizontalStackLayout>
+                        <Label Grid.Row="2"
+                                Grid.ColumnSpan="2"
+                                Text="Reflection Summary"
+                                TextColor="#FEAA3A"
+                                FontAttributes="Bold"/>
+                        <Label Grid.Row="3"
+                                Grid.ColumnSpan="2"
+                                Text="{Binding Content}"
+                                TextColor="#333"/>
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Page 3: Suggestion -->
+        <Grid x:Name="SuggestionPage"
+                IsVisible="False">
+            <Grid.Triggers>
+                <DataTrigger TargetType="Grid"
+                        Binding="{Binding PageIndex}"
+                        Value="2">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
+                </DataTrigger>
+            </Grid.Triggers>
+            <VerticalStackLayout Spacing="14">
+                <Label Text="What You Shared Today"
+                        FontFamily="AppFont"
+                        FontSize="28"
+                        TextColor="White"/>
+                <Border BackgroundColor="#F8FAED"
+                        StrokeThickness="1"
+                        Stroke="#50A65D"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="18"/>
+                    </Border.StrokeShape>
+                    <VerticalStackLayout>
+                        <Label Text="A Little Encouragement"
+                                TextColor="#FEAA3A"
+                                FontAttributes="Bold"/>
+                        <Label Text="{Binding Suggestion}"
+                                TextColor="#333"/>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Bottom controls -->
+        <Grid Grid.Row="1"
+                ColumnDefinitions="Auto,*,Auto"
+                Padding="0,8,0,16">
+            <Button Grid.Column="0"
+                    Text="◀"
+                    BackgroundColor="White"
+                    TextColor="#FEAA3A"
+                    CornerRadius="16"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    IsVisible="{Binding IsFirstPage, Converter={StaticResource InvertedBoolConverter}}"
+                    Command="{Binding PrevPageCommand}">
+                <Button.Shadow>
+                    <Shadow Brush="#40000000"
+                            Radius="12"
+                            Offset="0,4"
+                            Opacity="0.35"/>
+                </Button.Shadow>
+            </Button>
+
+            <Button Grid.Column="2"
+                    Text="{Binding NextButtonText}"
+                    BackgroundColor="White"
+                    TextColor="#FEAA3A"
+                    CornerRadius="28"
+                    HeightRequest="56"
+                    Padding="24,0"
+                    Command="{Binding NextPageCommand}">
+                <Button.Shadow>
+                    <Shadow Brush="#40000000"
+                            Radius="16"
+                            Offset="0,4"
+                            Opacity="0.35"/>
+                </Button.Shadow>
+            </Button>
+        </Grid>
+    </Grid>
+</ContentPage>

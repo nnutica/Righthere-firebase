@@ -3,6 +3,8 @@
     x:Class="Firebasemauiapp.Mainpages.StarterView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:Firebasemauiapp.Converters"
+    x:Name="Root"
     Title="StarterView"
     BackgroundImageSource="main_bg.png"
     Shell.FlyoutBehavior="Flyout"
@@ -159,17 +161,188 @@
                                    TextColor="Black"/>
                         </VerticalStackLayout>
 
-                        <!-- Center Plant Button -->
-                        <ImageButton x:Name="PlantButton"
-                                     Source="empty.png"
-                                     BackgroundColor="Transparent"
-                                     Command="{Binding ToggleMenuCommand}"
-                                     WidthRequest="200"
-                                     HeightRequest="200"
-                                     HorizontalOptions="Center"
-                                     VerticalOptions="End"
-                                     ZIndex="1"/>
+                        <!-- Plant visual composed from separate objects: Plant + Pot -->
+                        <Grid x:Name="PlantVisual"
+                              WidthRequest="220"
+                              HeightRequest="220"
+                              HorizontalOptions="Center"
+                              VerticalOptions="End"
+                              ZIndex="1">
+                            <!-- Plant (back layer) -->
+                            <Image x:Name="PlantImageView"
+                                   Source="{Binding PlantImage}"
+                                   WidthRequest="220"
+                                   HeightRequest="160"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Start"
+                                   ZIndex="1"/>
+
+                            <!-- Pot (front layer) -->
+                            <Image x:Name="PotImageView"
+                                   Source="{Binding PotImage}"
+                                   WidthRequest="200"
+                                   HeightRequest="120"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="End"
+                                   ZIndex="2"/>
+
+                            <!-- Invisible tappable area to toggle the radial menu -->
+                            <ImageButton x:Name="PlantButton"
+                                         Source="empty.png"
+                                         BackgroundColor="Transparent"
+                                         Command="{Binding ToggleMenuCommand}"
+                                         HorizontalOptions="Fill"
+                                         VerticalOptions="Fill"
+                                         Opacity="0.02"/>
+                        </Grid>
                     </Grid>
+
+                    <!-- Quests Section -->
+                    <ContentView>
+                        <ContentView.Resources>
+                            <converters:ProgressToDoubleConverter x:Key="ProgressToDoubleConverter"/>
+                        </ContentView.Resources>
+                        <VerticalStackLayout Spacing="16">
+                            <!-- Daily Check-in Card (simple) -->
+                            <Border BackgroundColor="#FFFFFF"
+                                    StrokeThickness="0"
+                                    Padding="12">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Grid ColumnDefinitions="*,Auto"
+                                      RowDefinitions="Auto,Auto">
+                                    <Label Grid.Row="0"
+                                           Grid.Column="0"
+                                           Text="Daily Check In"
+                                           FontAttributes="Bold"/>
+                                    <Label Grid.Row="0"
+                                           Grid.Column="1"
+                                           Text="Today"
+                                           FontSize="12"
+                                           TextColor="#666"/>
+                                    <HorizontalStackLayout Grid.Row="1"
+                                                           Grid.ColumnSpan="2"
+                                                           Spacing="8"
+                                                           Margin="0,8,0,0">
+                                        <Border Padding="8"
+                                                BackgroundColor="#E8F5E9"
+                                                StrokeThickness="1">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="8"/>
+                                            </Border.StrokeShape>
+                                            <Label Text="Day"
+                                                   FontSize="12"/>
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                </Grid>
+                            </Border>
+
+                            <!-- Quests list -->
+                            <CollectionView ItemsSource="{Binding Quests}">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border BackgroundColor="#4DACE889"
+                                                StrokeThickness="0"
+                                                Padding="12"
+                                                Margin="0,0,0,8">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="16"/>
+                                            </Border.StrokeShape>
+                                            <Grid ColumnDefinitions="Auto,*,Auto"
+                                                  RowDefinitions="Auto,Auto,Auto">
+                                                <!-- Icon -->
+                                                <Image Grid.Row="0"
+                                                       Grid.RowSpan="3"
+                                                       Grid.Column="0"
+                                                       Source="diary.png"
+                                                       WidthRequest="32"
+                                                       HeightRequest="32"
+                                                       Margin="0,0,12,0"
+                                                       VerticalOptions="Center"/>
+                                                <!-- Title -->
+                                                <Label Grid.Row="0"
+                                                       Grid.Column="1"
+                                                       Text="{Binding Title}"
+                                                       FontAttributes="Bold"/>
+                                                <!-- Reward badge -->
+                                                <Border Grid.Row="0"
+                                                        Grid.Column="2"
+                                                        BackgroundColor="#FFF3E0"
+                                                        Padding="8,4"
+                                                        StrokeThickness="0">
+                                                    <Border.StrokeShape>
+                                                        <RoundRectangle CornerRadius="12"/>
+                                                    </Border.StrokeShape>
+                                                    <HorizontalStackLayout Spacing="4">
+                                                        <Label Text="{Binding Reward}"/>
+                                                        <Label Text="🪙"/>
+                                                    </HorizontalStackLayout>
+                                                </Border>
+                                                <!-- Type -->
+                                                <Label Grid.Row="1"
+                                                       Grid.Column="1"
+                                                       Grid.ColumnSpan="2"
+                                                       Text="{Binding Type}"
+                                                       FontSize="12"
+                                                       TextColor="#666"/>
+                                                <!-- Progress + Claim -->
+                                                <Grid Grid.Row="2"
+                                                      Grid.Column="1"
+                                                      Grid.ColumnSpan="2"
+                                                      ColumnDefinitions="*,Auto"
+                                                      VerticalOptions="Center">
+                                                    <ProgressBar Grid.Column="0"
+                                                                 HeightRequest="8"
+                                                                 Progress="{Binding Progress, Converter={StaticResource ProgressToDoubleConverter}}"/>
+                                                    <Button Grid.Column="1"
+                                                            Text="Claim"
+                                                            Margin="8,0,0,0"
+                                                            Padding="14,8"
+                                                            CornerRadius="18"
+                                                            IsEnabled="{Binding CanClaim}"
+                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.ClaimCommand}"
+                                                            CommandParameter="{Binding .}">
+                                                        <Button.Triggers>
+                                                            <!-- Claimed state overrides others -->
+                                                            <DataTrigger TargetType="Button"
+                                                                    Binding="{Binding IsClaimed}"
+                                                                    Value="True">
+                                                                <Setter Property="Text"
+                                                                        Value="Claimed"/>
+                                                                <Setter Property="BackgroundColor"
+                                                                        Value="#D9D9D9"/>
+                                                                <Setter Property="TextColor"
+                                                                        Value="#666666"/>
+                                                            </DataTrigger>
+                                                            <!-- Claimable (active) -->
+                                                            <DataTrigger TargetType="Button"
+                                                                    Binding="{Binding CanClaim}"
+                                                                    Value="True">
+                                                                <Setter Property="BackgroundColor"
+                                                                        Value="#4CAF50"/>
+                                                                <Setter Property="TextColor"
+                                                                        Value="White"/>
+                                                            </DataTrigger>
+                                                            <!-- Not claimable yet (pending) -->
+                                                            <DataTrigger TargetType="Button"
+                                                                    Binding="{Binding CanClaim}"
+                                                                    Value="False">
+                                                                <Setter Property="BackgroundColor"
+                                                                        Value="#B0B0B0"/>
+                                                                <Setter Property="TextColor"
+                                                                        Value="#666666"/>
+                                                            </DataTrigger>
+                                                        </Button.Triggers>
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </ContentView>
                 </VerticalStackLayout>
             </Grid>
         </Grid>

@@ -74,6 +74,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Remove="QuestPage\QuestViewModel.cs" />
+		<Compile Remove="QuestPage\QuestPage.xaml.cs" />
+		<MauiXaml Remove="QuestPage\QuestPage.xaml" />
+		<None Remove="QuestPage\QuestPage.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <Folder Include="res\" />
 	  <Folder Include="res\xml\" />
 	</ItemGroup>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Firebasemauiapp.Mainpages.SummaryView"
+             x:Class="Firebasemauiapp.Mainpages.SummaryView_Old"
              Title="SummaryView"
              Shell.NavBarIsVisible="False"
              BackgroundColor="#edf6e4">
@@ -81,7 +81,7 @@
                         <!-- Mood -->
                         <Frame
                             Padding="15"
-                            BackgroundColor="#F8FAED"                            
+                            BackgroundColor="#F8FAED"
                             CornerRadius="15"
                             HasShadow="True"
                             BorderColor="#50A65D"
@@ -124,7 +124,6 @@
                         Margin="0,20,0,20"
                         Padding="10"
                         FontSize="14"
-                        
                         HorizontalTextAlignment="Center"
                         Text="{Binding Suggestion}"
                         TextColor="Black"/>

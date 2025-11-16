@@ -8,7 +8,7 @@ using Firebasemauiapp.Services;
 using Firebasemauiapp.Helpers;
 using Firebasemauiapp.Model;
 using Microsoft.Maui.Storage;
-using SkiaSharp;
+// Crop removed per request
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -67,33 +67,8 @@ public partial class DiaryViewModel : ObservableObject
 
             IsUploadingImage = true;
             using var original = await pick.OpenReadAsync();
-
-            // Ask user for crop ratio
-            string choice = await Shell.Current.DisplayActionSheet(
-                "Crop image",
-                "Cancel",
-                null,
-                "Square 1:1",
-                "4:3",
-                "16:9",
-                "Original");
-
-            Stream toUpload = original;
-            string fileName = pick.FileName;
-            if (!string.IsNullOrEmpty(choice) && choice != "Cancel" && choice != "Original")
-            {
-                var parts = choice.Split(' ');
-                var ratio = parts[1]; // e.g., 1:1
-                var ab = ratio.Split(':');
-                if (ab.Length == 2 && int.TryParse(ab[0], out var a) && int.TryParse(ab[1], out var b) && a > 0 && b > 0)
-                {
-                    toUpload = await CropToAspectAsync(original, a, b);
-                    fileName = System.IO.Path.GetFileNameWithoutExtension(pick.FileName) + "-c" + System.IO.Path.GetExtension(pick.FileName);
-                }
-            }
-
             var uploader = ServiceHelper.Get<GitHubUploadService>();
-            var url = await uploader.UploadImageAsync(toUpload, fileName);
+            var url = await uploader.UploadImageAsync(original, pick.FileName);
             ImageUrl = url;
         }
         catch (Exception ex)
@@ -106,59 +81,7 @@ public partial class DiaryViewModel : ObservableObject
         }
     }
 
-    private static async Task<Stream> CropToAspectAsync(Stream input, int aspectW, int aspectH)
-    {
-        // Ensure we can read multiple times
-        using var ms = new MemoryStream();
-        await input.CopyToAsync(ms);
-        ms.Position = 0;
-
-        using var bitmap = SKBitmap.Decode(ms);
-        if (bitmap == null)
-        {
-            ms.Position = 0;
-            return ms; // fallback
-        }
-
-        // Compute crop rect (center crop to desired aspect)
-        double srcW = bitmap.Width;
-        double srcH = bitmap.Height;
-        double targetRatio = (double)aspectW / aspectH;
-        double srcRatio = srcW / srcH;
-
-        double cropW = srcW;
-        double cropH = srcH;
-        if (srcRatio > targetRatio)
-        {
-            // too wide -> reduce width
-            cropW = srcH * targetRatio;
-        }
-        else if (srcRatio < targetRatio)
-        {
-            // too tall -> reduce height
-            cropH = srcW / targetRatio;
-        }
-
-        var left = (srcW - cropW) / 2.0;
-        var top = (srcH - cropH) / 2.0;
-        var srcRect = new SKRect((float)left, (float)top, (float)(left + cropW), (float)(top + cropH));
-
-        // Draw to a new bitmap with the cropped size
-        using var cropped = new SKBitmap((int)cropW, (int)cropH);
-        using (var canvas = new SKCanvas(cropped))
-        {
-            canvas.Clear(SKColors.Transparent);
-            var dest = new SKRect(0, 0, cropped.Width, cropped.Height);
-            canvas.DrawBitmap(bitmap, srcRect, dest);
-        }
-
-        using var image = SKImage.FromBitmap(cropped);
-        using var data = image.Encode(SKEncodedImageFormat.Jpeg, 90);
-        var outStream = new MemoryStream();
-        data.SaveTo(outStream);
-        outStream.Position = 0;
-        return outStream;
-    }
+    // Crop function removed
 
     [RelayCommand]
     private async Task AnalyzeContent()

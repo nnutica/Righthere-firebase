@@ -6,6 +6,8 @@ using Firebasemauiapp.Data;
 using Firebasemauiapp.Model;
 using Firebasemauiapp.Helpers;
 using System.Windows.Input;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -38,6 +40,17 @@ public partial class SummaryViewModel : ObservableObject
 
     [ObservableProperty]
     private ImageSource? _emotionImage;
+
+    // Paging state for 3-step summary
+    [ObservableProperty]
+    private int _pageIndex = 0; // 0: KeyThemes, 1: Reflection, 2: Suggestion
+
+    public bool IsFirstPage => PageIndex == 0;
+    public bool IsLastPage => PageIndex == 2;
+    public string NextButtonText => IsLastPage ? "Save" : "Next";
+
+    [ObservableProperty]
+    private ObservableCollection<string> _keywordsList = new();
 
     public ICommand GoToStarterCommand { get; }
 
@@ -76,6 +89,25 @@ public partial class SummaryViewModel : ObservableObject
         Score = score;
         ImageUrl = SummaryPageData.ImageUrl;
         SetEmotionImage(mood);
+
+        BuildKeywordsList(keywords);
+        OnPropertyChanged(nameof(NextButtonText));
+    }
+
+    private void BuildKeywordsList(string keywords)
+    {
+        try
+        {
+            var parts = (keywords ?? string.Empty)
+                .Split(new[] { ',', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+            KeywordsList = new ObservableCollection<string>();
+            foreach (var p in parts)
+            {
+                var t = p.Trim();
+                if (!string.IsNullOrWhiteSpace(t)) KeywordsList.Add(t);
+            }
+        }
+        catch { KeywordsList = new ObservableCollection<string>(); }
     }
 
     [RelayCommand]
@@ -106,6 +138,7 @@ public partial class SummaryViewModel : ObservableObject
                     Keywords = Keywords,
                     EmotionalReflection = Emotion,
                     ImageUrl = ImageUrl,
+                    ImageUrls = string.IsNullOrWhiteSpace(ImageUrl) ? null : new List<string> { ImageUrl },
                     CreatedAtDateTime = DateTime.Now
                 };
 
@@ -115,7 +148,7 @@ public partial class SummaryViewModel : ObservableObject
                 // เครียร์ข้อมูลใน SummaryPageData หลังจากเซฟแล้ว
                 SummaryPageData.Clear();
 
-                // ไปหน้า Starter ทั้งหน้าและ Tab พร้อมเครียร์สถานะ Diary
+                // ไปหน้า Starter ทั้งหน้าและ Tab พร้อมรีเซ็ตแท็บ Diary
                 await ResetDiaryAndGoToStarter();
             }
             catch (Exception ex)
@@ -127,7 +160,33 @@ public partial class SummaryViewModel : ObservableObject
         else
         {
             // ถ้าไม่เซฟ ก็กลับไปหน้า Starter แต่ไม่เครียร์ข้อมูล
-            await Shell.Current.GoToAsync("//main/starter");
+            await Shell.Current.GoToAsync("//main/home/starter");
+        }
+    }
+
+    [RelayCommand]
+    private async Task NextPage()
+    {
+        if (IsLastPage)
+        {
+            await SaveAndGoBack();
+            return;
+        }
+        PageIndex = Math.Min(PageIndex + 1, 2);
+        OnPropertyChanged(nameof(IsFirstPage));
+        OnPropertyChanged(nameof(IsLastPage));
+        OnPropertyChanged(nameof(NextButtonText));
+    }
+
+    [RelayCommand]
+    private void PrevPage()
+    {
+        if (PageIndex > 0)
+        {
+            PageIndex--;
+            OnPropertyChanged(nameof(IsFirstPage));
+            OnPropertyChanged(nameof(IsLastPage));
+            OnPropertyChanged(nameof(NextButtonText));
         }
     }
 
@@ -135,19 +194,21 @@ public partial class SummaryViewModel : ObservableObject
     {
         try
         {
-            // ไปหน้า Starter ทั้งหน้าและ Tab
-            await Shell.Current.GoToAsync("//main/starter");
+            // รีเซ็ตแท็บ Diary ให้กลับไปที่ SelectMood (root ของแท็บ)
+            await Shell.Current.GoToAsync("//main/diary", false);
+            // แล้วกลับไปหน้า Starter บนแท็บ Home
+            await Shell.Current.GoToAsync("//main/home/starter", false);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error navigating to starter: {ex.Message}");
-            await Shell.Current.GoToAsync("//main/starter");
+            await Shell.Current.GoToAsync("//main/home/starter");
         }
     }
 
     private async void GoToStarter()
     {
-        await Shell.Current.GoToAsync("//main/starter");
+        await Shell.Current.GoToAsync("//main/home/starter");
     }
 
     private void SetEmotionImage(string mood)

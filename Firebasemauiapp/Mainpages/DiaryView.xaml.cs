@@ -33,6 +33,15 @@ public partial class DiaryView : ContentPage
 				{
 					_viewModel.ResetDiaryForm();
 				}
+
+				// Update current date label
+				try
+				{
+					var now = DateTime.Now;
+					// Format like "16 Nov, 11:23"
+					DateLabel.Text = now.ToString("dd MMM, HH:mm", System.Globalization.CultureInfo.InvariantCulture);
+				}
+				catch { }
 			}
 			catch (Exception ex)
 			{
@@ -40,5 +49,17 @@ public partial class DiaryView : ContentPage
 				Console.WriteLine($"Stack trace: {ex.StackTrace}");
 			}
 		});
+	}
+
+	private async void OnBackClicked(object? sender, EventArgs e)
+	{
+		try
+		{
+			if (Shell.Current?.Navigation?.NavigationStack?.Count > 0)
+				await Shell.Current.GoToAsync("..", true);
+			else if (Navigation.NavigationStack.Count > 0)
+				await Navigation.PopAsync();
+		}
+		catch { }
 	}
 }

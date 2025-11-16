@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Firebasemauiapp.Mainpages.SelectMoodPage"
+             Shell.NavBarIsVisible="False"
              Title="Select Mood">
     <Grid RowDefinitions="*,32"
           Padding="20,24,20,0">

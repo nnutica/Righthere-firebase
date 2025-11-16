@@ -4,7 +4,6 @@ using Firebase.Auth.Repository;
 using Firebasemauiapp.Pages;
 using Firebasemauiapp.Mainpages;
 using Firebasemauiapp.CommunityPage;
-using Firebasemauiapp.QuestPage;
 using Firebasemauiapp.Data;
 using Firebasemauiapp.Services;
 using Microsoft.Extensions.Logging;
@@ -69,7 +68,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<DiaryHistoryViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
 		builder.Services.AddTransient<CommunityViewModel>();
-		builder.Services.AddTransient<QuestViewModel>();
+		// Removed QuestViewModel (quests now live in StarterViewModel)
 		builder.Services.AddTransient<LevelMoodViewModel>();
 
 		// Views
@@ -82,7 +81,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<DiaryHistory>();
 		builder.Services.AddTransient<Dashboard>();
 		builder.Services.AddTransient<CommunityPage.CommunityPage>();
-		builder.Services.AddTransient<QuestPage.QuestPage>();
+		// Removed QuestPage view registration
 		builder.Services.AddTransient<LevelMoodPage>();
 
 		var app = builder.Build();

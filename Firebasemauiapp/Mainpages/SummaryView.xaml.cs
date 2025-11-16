@@ -1,8 +1,8 @@
 namespace Firebasemauiapp.Mainpages;
 
-public partial class SummaryView : ContentPage
+public partial class SummaryView_Old : ContentPage
 {
-	public SummaryView(SummaryViewModel viewModel)
+	public SummaryView_Old(SummaryViewModel viewModel)
 	{
 		InitializeComponent();
 		NavigationPage.SetHasNavigationBar(this, false);

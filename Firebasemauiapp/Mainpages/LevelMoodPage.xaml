@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:Firebasemauiapp.Controls"
              x:Class="Firebasemauiapp.Mainpages.LevelMoodPage"
              Title="Level of Mood">
     <Grid RowDefinitions="*,32">
@@ -29,23 +30,31 @@
             </VerticalStackLayout>
 
             <VerticalStackLayout Grid.Row="1"
-                                 Spacing="16"
+                                 Spacing="20"
                                  HorizontalOptions="Center"
                                  VerticalOptions="Center">
                 <Label Text="{Binding Mood.Emoji}"
                        FontSize="96"
                        HorizontalOptions="Center"/>
-                <Label Text="I'm Feeling {Binding Mood.Name}"
-                       FontSize="18"
+                <Label FontSize="20"
+                       TextColor="White"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="I'm Feeling "/>
+                            <Span Text="{Binding Mood.Name}"/>
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <!-- Semicircle mood arc slider -->
+                <controls:MoodArcSlider WidthRequest="340"
+                                        HeightRequest="180"
+                                        Value="{Binding Score}"/>
+                <Label Text="{Binding Score, StringFormat='Score: {0}/10'}"
+                       FontSize="16"
                        TextColor="White"
                        HorizontalOptions="Center"/>
-                <!-- Simple score slider for self-assessment -->
-                <Slider Minimum="0"
-                        Maximum="100"
-                        Value="{Binding Score}"
-                        WidthRequest="240"/>
-                <Label Text="Score: {Binding Score}"
-                        TextColor="White"/>
             </VerticalStackLayout>
 
             <Button Grid.Row="2"

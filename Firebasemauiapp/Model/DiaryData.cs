@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Google.Cloud.Firestore;
 
@@ -33,8 +34,13 @@ namespace Firebasemauiapp.Model
         [FirestoreProperty("emotionalReflection")]
         public string EmotionalReflection { get; set; } = string.Empty;
 
+        // Backward-compatible single image field
         [FirestoreProperty("imageUrl")]
         public string? ImageUrl { get; set; }
+
+        // New: multiple images support
+        [FirestoreProperty("imageUrls")]
+        public List<string>? ImageUrls { get; set; }
 
         [FirestoreProperty("createdAt")]
         public Timestamp CreatedAt { get; set; }
