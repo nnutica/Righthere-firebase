@@ -242,6 +242,11 @@ public partial class StarterViewModel : ObservableObject
             Progress = 100
         };
         loginQuest.IsClaimed = await IsQuestClaimedAsync(user.Uid, loginQuest.QuestID);
+        // Auto claim if completed but not yet claimed
+        if (loginQuest.IsCompleted && !loginQuest.IsClaimed)
+        {
+            await ClaimInternallyIfNeededAsync(user.Uid, loginQuest);
+        }
         Quests.Add(loginQuest);
 
         // Daily Write Diary quest: check if user has any diary created today
@@ -266,6 +271,10 @@ public partial class StarterViewModel : ObservableObject
                 Progress = hasToday ? 100 : 0
             };
             diaryQuest.IsClaimed = await IsQuestClaimedAsync(user.Uid, diaryQuest.QuestID);
+            if (diaryQuest.IsCompleted && !diaryQuest.IsClaimed)
+            {
+                await ClaimInternallyIfNeededAsync(user.Uid, diaryQuest);
+            }
             Quests.Add(diaryQuest);
         }
         catch
@@ -284,52 +293,47 @@ public partial class StarterViewModel : ObservableObject
             diaryQuest.IsClaimed = await IsQuestClaimedAsync(user.Uid, diaryQuest.QuestID);
             Quests.Add(diaryQuest);
         }
-
+        // Refresh coin in case any auto-claim happened
+        await RefreshCoinAsync();
         IsBusy = false;
     }
 
-    [RelayCommand]
-    private async Task ClaimAsync(QuestDatabase? quest)
+    // Automatically claim a quest in Firestore if it's completed but not yet claimed.
+    private async Task ClaimInternallyIfNeededAsync(string uid, QuestDatabase quest)
     {
-        if (quest == null || !quest.CanClaim) return;
-
-        var user = _authClient.User;
-        if (user == null) return;
-
         try
         {
-            IsBusy = true;
             var db = await _firestoreService.GetDatabaseAsync();
-
-            // Update user's coin atomically and write quest claim marker
-            var userRef = db.Collection("users").Document(user.Uid);
+            var userRef = db.Collection("users").Document(uid);
             var claimRef = userRef.Collection("questClaims").Document(quest.QuestID);
 
             await db.RunTransactionAsync(async tx =>
             {
+                // If already claimed, do nothing
+                var claimSnap = await tx.GetSnapshotAsync(claimRef);
+                if (claimSnap.Exists) return;
+
+                // Get current coin
                 var userSnap = await tx.GetSnapshotAsync(userRef);
                 int currentCoin = 0;
                 if (userSnap.Exists && userSnap.TryGetValue("coin", out int c)) currentCoin = c;
 
-                // if already claimed, no-op
-                var claimSnap = await tx.GetSnapshotAsync(claimRef);
-                if (claimSnap.Exists) return;
-
-                // write claim doc
+                // Mark claim
                 tx.Set(claimRef, new { questId = quest.QuestID, claimedAt = Timestamp.FromDateTime(DateTime.UtcNow) });
 
-                // update coin
+                // Update coin
                 tx.Update(userRef, new Dictionary<string, object> { ["coin"] = currentCoin + quest.Reward });
             });
 
             quest.IsClaimed = true;
-            await RefreshCoinAsync();
         }
-        finally
+        catch
         {
-            IsBusy = false;
+            // Swallow errors to avoid blocking UI; will retry in next refresh
         }
     }
+
+    // ClaimAsync removed: quests are auto-claimed when completed in LoadDailyQuestsAsync.
 
     private async Task<bool> IsQuestClaimedAsync(string uid, string questId)
     {

@@ -3,7 +3,7 @@
     x:Class="Firebasemauiapp.Mainpages.StarterView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:converters="clr-namespace:Firebasemauiapp.Converters"
+    xmlns:converters="clr-namespace:Firebasemauiapp.Converters;assembly=Firebasemauiapp"
     x:Name="Root"
     Title="StarterView"
     BackgroundImageSource="main_bg.png"
@@ -201,6 +201,9 @@
                     <ContentView>
                         <ContentView.Resources>
                             <converters:ProgressToDoubleConverter x:Key="ProgressToDoubleConverter"/>
+                            <converters:BoolToColorConverter x:Key="BoolToColorConverter"
+                                                             TrueColor="#4CAF50"
+                                                             FalseColor="Transparent"/>
                         </ContentView.Resources>
                         <VerticalStackLayout Spacing="16">
                             <!-- Daily Check-in Card (simple) -->
@@ -286,7 +289,7 @@
                                                        Text="{Binding Type}"
                                                        FontSize="12"
                                                        TextColor="#666"/>
-                                                <!-- Progress + Claim -->
+                                                <!-- Progress + Auto-complete indicator -->
                                                 <Grid Grid.Row="2"
                                                       Grid.Column="1"
                                                       Grid.ColumnSpan="2"
@@ -295,46 +298,26 @@
                                                     <ProgressBar Grid.Column="0"
                                                                  HeightRequest="8"
                                                                  Progress="{Binding Progress, Converter={StaticResource ProgressToDoubleConverter}}"/>
-                                                    <Button Grid.Column="1"
-                                                            Text="Claim"
-                                                            Margin="8,0,0,0"
-                                                            Padding="14,8"
-                                                            CornerRadius="18"
-                                                            IsEnabled="{Binding CanClaim}"
-                                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.ClaimCommand}"
-                                                            CommandParameter="{Binding .}">
-                                                        <Button.Triggers>
-                                                            <!-- Claimed state overrides others -->
-                                                            <DataTrigger TargetType="Button"
-                                                                    Binding="{Binding IsClaimed}"
-                                                                    Value="True">
-                                                                <Setter Property="Text"
-                                                                        Value="Claimed"/>
-                                                                <Setter Property="BackgroundColor"
-                                                                        Value="#D9D9D9"/>
-                                                                <Setter Property="TextColor"
-                                                                        Value="#666666"/>
-                                                            </DataTrigger>
-                                                            <!-- Claimable (active) -->
-                                                            <DataTrigger TargetType="Button"
-                                                                    Binding="{Binding CanClaim}"
-                                                                    Value="True">
-                                                                <Setter Property="BackgroundColor"
-                                                                        Value="#4CAF50"/>
-                                                                <Setter Property="TextColor"
-                                                                        Value="White"/>
-                                                            </DataTrigger>
-                                                            <!-- Not claimable yet (pending) -->
-                                                            <DataTrigger TargetType="Button"
-                                                                    Binding="{Binding CanClaim}"
-                                                                    Value="False">
-                                                                <Setter Property="BackgroundColor"
-                                                                        Value="#B0B0B0"/>
-                                                                <Setter Property="TextColor"
-                                                                        Value="#666666"/>
-                                                            </DataTrigger>
-                                                        </Button.Triggers>
-                                                    </Button>
+                                                    <HorizontalStackLayout Grid.Column="1"
+                                                                           Margin="8,0,0,0"
+                                                                           Spacing="6"
+                                                                           VerticalOptions="Center">
+                                                        <Border WidthRequest="24"
+                                                                HeightRequest="24"
+                                                                StrokeThickness="2"
+                                                                Stroke="#4CAF50"
+                                                                BackgroundColor="{Binding IsClaimed, Converter={StaticResource BoolToColorConverter}}">
+                                                            <Border.StrokeShape>
+                                                                <Ellipse/>
+                                                            </Border.StrokeShape>
+                                                            <Image Source="check_white.png"
+                                                                   WidthRequest="14"
+                                                                   HeightRequest="14"
+                                                                   HorizontalOptions="Center"
+                                                                   VerticalOptions="Center"
+                                                                   IsVisible="{Binding IsClaimed}"/>
+                                                        </Border>
+                                                    </HorizontalStackLayout>
                                                 </Grid>
                                             </Grid>
                                         </Border>

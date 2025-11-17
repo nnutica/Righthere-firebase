@@ -38,8 +38,6 @@ namespace Firebasemauiapp.Model
         [ObservableProperty]
         private bool isClaimed; // UI-only: whether reward claimed
 
-        public bool CanClaim => string.Equals(Status, "completed", StringComparison.OrdinalIgnoreCase) && !IsClaimed;
-
         public bool IsCompleted => string.Equals(Status, "completed", StringComparison.OrdinalIgnoreCase);
     }
 }
