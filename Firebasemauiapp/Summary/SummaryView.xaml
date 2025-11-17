@@ -7,60 +7,81 @@
     Shell.NavBarIsVisible="False"
     BackgroundColor="#FEAA3A">
 
-    <Grid RowDefinitions="*,Auto"
-            Padding="20"
-            RowSpacing="10">
-        <!-- Page 1: Key Themes -->
-        <Grid x:Name="KeyThemesPage"
-                IsVisible="False">
+    <Grid RowDefinitions="Auto,*,Auto"
+            Padding="0"
+            RowSpacing="0">
+        <!-- Row 0: Key Themes title visible only on page 0 -->
+     <Label Grid.Row="0"
+               Text="Key Themes"
+               FontSize="32"
+               FontAttributes="Bold"
+         Margin="20,30,0,16"
+               VerticalOptions="Center"
+               TextColor="White">
+            <Label.Triggers>
+                <DataTrigger TargetType="Label" Binding="{Binding PageIndex}" Value="0">
+                    <Setter Property="IsVisible" Value="True"/>
+                </DataTrigger>
+                <DataTrigger TargetType="Label" Binding="{Binding PageIndex}" Value="1">
+                    <Setter Property="IsVisible" Value="False"/>
+                </DataTrigger>
+                <DataTrigger TargetType="Label" Binding="{Binding PageIndex}" Value="2">
+                    <Setter Property="IsVisible" Value="False"/>
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+
+        <!-- Row 1: Content area switches by page index -->
+        <!-- Page 1: Key Themes cards (visible when PageIndex==0) -->
+        <Grid Grid.Row="1" x:Name="KeyThemesArea" IsVisible="False">
             <Grid.Triggers>
-                <DataTrigger TargetType="Grid"
-                        Binding="{Binding PageIndex}"
-                        Value="0">
-                    <Setter Property="IsVisible"
-                            Value="True"/>
+                <DataTrigger TargetType="Grid" Binding="{Binding PageIndex}" Value="0">
+                    <Setter Property="IsVisible" Value="True"/>
                 </DataTrigger>
             </Grid.Triggers>
-            <VerticalStackLayout Spacing="12">
-                <Label Text="Key Themes"
-                        FontFamily="AppFont"
-                        FontSize="28"
-                        TextColor="White"/>
-                <FlexLayout Wrap="Wrap"
-                        Direction="Row"
-                        AlignItems="Start"
-                        AlignContent="Start"
-                        JustifyContent="Start"
-                        BindableLayout.ItemsSource="{Binding KeywordsList}">
-                    <BindableLayout.ItemTemplate>
-                        <DataTemplate>
-                            <Border BackgroundColor="#F8FAED"
-                                    StrokeThickness="1"
-                                    Stroke="#50A65D"
-                                    Padding="10"
-                                    Margin="0,8,8,0">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="14"/>
-                                </Border.StrokeShape>
-                                <Label Text="{Binding .}"
-                                        TextColor="Black"
-                                        FontAttributes="Bold"/>
-                            </Border>
-                        </DataTemplate>
-                    </BindableLayout.ItemTemplate>
-                </FlexLayout>
-            </VerticalStackLayout>
+
+            <!-- Centered container that mimics the mock layout -->
+        <Grid VerticalOptions="Start"
+                  HorizontalOptions="Center"
+                 Margin="0,30,0,10">
+
+                <Grid x:Name="CardArea"
+                      WidthRequest="760"
+                      HeightRequest="800"
+                      VerticalOptions="Start"
+                      HorizontalOptions="Center">
+
+                    <AbsoluteLayout x:Name="CardContainer"
+                                    VerticalOptions="Fill"
+                                    HorizontalOptions="Fill"
+                                    BindableLayout.ItemsSource="{Binding KeywordCards}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Border 
+                                    AbsoluteLayout.LayoutBounds="{Binding Bounds}"
+                                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                                    BackgroundColor="{Binding Color}"
+                                    Padding="12">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="20"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="{Binding Text}"
+                                           FontSize="18"
+                                           FontAttributes="Bold"
+                                           TextColor="#0E6B5D"/>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </AbsoluteLayout>
+                </Grid>
+            </Grid>
         </Grid>
 
-        <!-- Page 2: Reflection + Score -->
-        <Grid x:Name="ReflectionPage"
-                IsVisible="False">
+        <!-- Page 2: Reflection + Score, placed in Row 1 when PageIndex==1 -->
+        <Grid Grid.Row="1" x:Name="ReflectionPage" IsVisible="False">
             <Grid.Triggers>
-                <DataTrigger TargetType="Grid"
-                        Binding="{Binding PageIndex}"
-                        Value="1">
-                    <Setter Property="IsVisible"
-                            Value="True"/>
+                <DataTrigger TargetType="Grid" Binding="{Binding PageIndex}" Value="1">
+                    <Setter Property="IsVisible" Value="True"/>
                 </DataTrigger>
             </Grid.Triggers>
             <VerticalStackLayout Spacing="14">
@@ -112,15 +133,11 @@
             </VerticalStackLayout>
         </Grid>
 
-        <!-- Page 3: Suggestion -->
-        <Grid x:Name="SuggestionPage"
-                IsVisible="False">
+        <!-- Page 3: Suggestion, placed in Row 1 when PageIndex==2 -->
+        <Grid Grid.Row="1" x:Name="SuggestionPage" IsVisible="False">
             <Grid.Triggers>
-                <DataTrigger TargetType="Grid"
-                        Binding="{Binding PageIndex}"
-                        Value="2">
-                    <Setter Property="IsVisible"
-                            Value="True"/>
+                <DataTrigger TargetType="Grid" Binding="{Binding PageIndex}" Value="2">
+                    <Setter Property="IsVisible" Value="True"/>
                 </DataTrigger>
             </Grid.Triggers>
             <VerticalStackLayout Spacing="14">
@@ -143,13 +160,15 @@
                                 TextColor="#333"/>
                     </VerticalStackLayout>
                 </Border>
-            </VerticalStackLayout>
+        
+        </VerticalStackLayout>
         </Grid>
 
-        <!-- Bottom controls -->
-        <Grid Grid.Row="1"
-                ColumnDefinitions="Auto,*,Auto"
-                Padding="0,8,0,16">
+        <!-- Row 2: Bottom controls fixed at bottom -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="Auto,*,Auto"
+              Padding="20"
+              VerticalOptions="End">
             <Button Grid.Column="0"
                     Text="◀"
                     BackgroundColor="White"
@@ -183,5 +202,6 @@
                 </Button.Shadow>
             </Button>
         </Grid>
+
     </Grid>
 </ContentPage>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Firebasemauiapp.Mainpages.SummaryMockView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Summary Mock"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="#FEAA3A">
+
+    <!-- Fullscreen cards: fill entire page, no title, no buttons -->
+    <Grid RowDefinitions="Auto,*,*"
+          >
+
+    <!-- Header -->
+    <Label Grid.Row="0"
+           Text="Key Themes"
+           FontSize="32"
+           FontAttributes="Bold"
+           TextColor="White"
+           Margin="20,30,0,10"/>
+
+    <!-- ⭐ important: container that can center children ⭐ -->
+    <Grid Grid.Row="1"
+          VerticalOptions="Start"
+          HorizontalOptions="Center"
+          Margin="0,30,0,0">
+
+        <!-- limit card display area -->
+        <Grid x:Name="CardArea"
+              WidthRequest="760"
+              HeightRequest="800"
+              VerticalOptions="Start"
+              HorizontalOptions="Center">
+
+            <AbsoluteLayout x:Name="CardContainer"
+                            VerticalOptions="Fill"
+                            HorizontalOptions="Fill"
+                            BindableLayout.ItemsSource="{Binding KeywordCards}">
+
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Border 
+                            AbsoluteLayout.LayoutBounds="{Binding Bounds}"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+                            BackgroundColor="{Binding Color}"
+                            Padding="12">
+
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="20"/>
+                            </Border.StrokeShape>
+
+                            <Label Text="{Binding Text}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="#0E6B5D"/>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </AbsoluteLayout>
+        </Grid>
+    </Grid>
+    <Grid Grid.Row="2"
+                ColumnDefinitions="Auto,*,Auto"
+                Padding="0,30,0,20"
+                VerticalOptions='End'>
+            <Button Grid.Column="0"
+                    Text="◀"
+                    BackgroundColor="White"
+                    TextColor="#FEAA3A"
+                    CornerRadius="16"
+                    WidthRequest="40"
+                    HeightRequest="40"
+                    IsVisible="{Binding IsFirstPage, Converter={StaticResource InvertedBoolConverter}}"
+                    Command="{Binding PrevPageCommand}">
+                <Button.Shadow>
+                    <Shadow Brush="#40000000"
+                            Radius="12"
+                            Offset="0,4"
+                            Opacity="0.35"/>
+                </Button.Shadow>
+            </Button>
+
+            <Button Grid.Column="2"
+                    Text="{Binding NextButtonText}"
+                    BackgroundColor="White"
+                    TextColor="#FEAA3A"
+                    CornerRadius="28"
+                    HeightRequest="56"
+                    Padding="24,0"
+                    Command="{Binding NextPageCommand}">
+                <Button.Shadow>
+                    <Shadow Brush="#40000000"
+                            Radius="16"
+                            Offset="0,4"
+                            Opacity="0.35"/>
+                </Button.Shadow>
+            </Button>
+        </Grid>
+</Grid>
+
+
+</ContentPage>

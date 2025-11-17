@@ -4,55 +4,42 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="SignUpView"
-    Shell.NavBarIsVisible="False">
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="#D9F8CF">
 
-    <!-- Match Sign In background style -->
-    <ContentPage.Background>
-        <LinearGradientBrush StartPoint="0,0"
-                EndPoint="0,1">
-            <GradientStop Offset="0"
-                    Color="#E4F3E8"/>
-            <GradientStop Offset="0.6"
-                    Color="#E4F3E8"/>
-            <GradientStop Offset="0.6"
-                    Color="#FFFFFF"/>
-            <GradientStop Offset="1"
-                    Color="#FFFFFF"/>
-        </LinearGradientBrush>
-    </ContentPage.Background>
+  
 
-    <Grid RowDefinitions="2*,3*"
-            Padding="0">
-        <!-- Top illustration placeholder -->
-        <Grid Grid.Row="0"
-              Padding="20"
-              VerticalOptions="FillAndExpand">
-            <Border BackgroundColor="Transparent"
-                    StrokeThickness="0"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Center">
-                <!-- Empty: image placeholder for later -->
-            </Border>
-        </Grid>
+    <Grid RowDefinitions="3*,7*"
+                    Padding="0">
+                <!-- Top illustration matches Sign In: full-bleed image -->
+                <Grid Grid.Row="0"
+                            Padding="0"
+                            VerticalOptions="Fill">
+                        <Image Source="openbadge.jpg"
+                                     Aspect="AspectFill"
+                                     HorizontalOptions="Fill"
+                                     VerticalOptions="Fill"/>
+                </Grid>
 
         <!-- Bottom card -->
-        <Grid Grid.Row="1"
-                Padding="0,0,0,10">
+                <Grid Grid.Row="1"
+                            Padding="0,0,0,10">
             <Border BackgroundColor="White"
                     StrokeThickness="0"
                     StrokeShape="RoundRectangle 40,40,0,0"
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill">
-                <ScrollView>
-                    <VerticalStackLayout Padding="24,32,24,16"
-                            Spacing="16">
+                                <VerticalStackLayout Padding="20,24,20,12"
+                                  Spacing="12"
+                                  VerticalOptions="Fill">
                         <Label Text="Sign Up"
                                FontAttributes="Bold"
-                               FontSize="24"
+                               FontSize="22"
                                TextColor="#4A5F52"/>
 
                         <Label Text="Create an account to unlock a safe space for your feelings and memories"
-                               FontSize="14"
+                                 FontSize="12"
+                                 LineBreakMode="WordWrap"
                                TextColor="#555555"/>
 
                         <!-- Email -->
@@ -63,10 +50,10 @@
                             <Border BackgroundColor="#F8F8F8"
                                     Stroke="#E0E0E0"
                                     StrokeShape="RoundRectangle 12"
-                                    HeightRequest="48">
+                                    HeightRequest="44">
                                 <Entry Placeholder="Enter your email"
                                        Text="{Binding Email}"
-                                       FontSize="14"
+                                       FontSize="13"
                                        TextColor="#333333"
                                        BackgroundColor="Transparent"
                                        Margin="12,0"/>
@@ -81,10 +68,10 @@
                             <Border BackgroundColor="#F8F8F8"
                                     Stroke="#E0E0E0"
                                     StrokeShape="RoundRectangle 12"
-                                    HeightRequest="48">
+                                    HeightRequest="44">
                                 <Entry Placeholder="Choose a username"
                                        Text="{Binding Username}"
-                                       FontSize="14"
+                                       FontSize="13"
                                        TextColor="#333333"
                                        BackgroundColor="Transparent"
                                        Margin="12,0"/>
@@ -99,21 +86,61 @@
                             <Border BackgroundColor="#F8F8F8"
                                     Stroke="#E0E0E0"
                                     StrokeShape="RoundRectangle 12"
-                                    HeightRequest="48">
+                                    HeightRequest="44">
                                 <Entry Placeholder="Create a password"
                                        IsPassword="True"
                                        Text="{Binding Password}"
-                                       FontSize="14"
+                                       FontSize="13"
                                        TextColor="#333333"
                                        BackgroundColor="Transparent"
                                        Margin="12,0"/>
                             </Border>
                         </VerticalStackLayout>
 
+                        <!-- Confirm Password -->
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Confirm Password"
+                                   FontSize="12"
+                                   TextColor="#8A8A8A"/>
+                            <Border BackgroundColor="#F8F8F8"
+                                    Stroke="#E0E0E0"
+                                    StrokeShape="RoundRectangle 12"
+                                    HeightRequest="44">
+                                <Entry Placeholder="Confirm your password"
+                                       IsPassword="True"
+                                       Text="{Binding ConfirmPassword}"
+                                       FontSize="13"
+                                       TextColor="#333333"
+                                       BackgroundColor="Transparent"
+                                       Margin="12,0"/>
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <!-- Terms & Privacy -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" VerticalOptions="Center">
+                            <CheckBox Grid.Column="0"
+                                      IsChecked="{Binding IsTermsAccepted}"
+                                      VerticalOptions="Center"/>
+                            <Label Grid.Column="1"
+                                   FontSize="11"
+                                   TextColor="#4A5F52"
+                                   LineBreakMode="WordWrap"
+                                   VerticalOptions="Center">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="I agree to the "/>
+                                        <Span Text="Terms &amp; Conditions" TextDecorations="Underline"/>
+                                        <Span Text=" and "/>
+                                        <Span Text="Privacy Policy" TextDecorations="Underline"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </Grid>
+
                         <!-- Sign Up Button -->
                         <Button Text="Sign Up"
                                 Command="{Binding SignUpCommand}"
-                                HeightRequest="48"
+                                HeightRequest="44"
                                 CornerRadius="24"
                                 BackgroundColor="#FFB74D"
                                 TextColor="White"
@@ -135,7 +162,6 @@
                             </Label>
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
-                </ScrollView>
             </Border>
         </Grid>
     </Grid>

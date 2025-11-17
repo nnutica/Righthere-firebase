@@ -78,6 +78,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<DiaryView>();
 		builder.Services.AddTransient<SelectMoodPage>();
 		builder.Services.AddTransient<SummaryView>();
+		builder.Services.AddTransient<SummaryMockView>();
 		builder.Services.AddTransient<DiaryHistory>();
 		builder.Services.AddTransient<Dashboard>();
 		builder.Services.AddTransient<CommunityPage.CommunityPage>();

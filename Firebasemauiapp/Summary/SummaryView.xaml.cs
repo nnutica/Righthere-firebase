@@ -1,3 +1,4 @@
+using Firebasemauiapp.Mainpages;
 namespace Firebasemauiapp.Mainpages;
 
 public partial class SummaryView : ContentPage

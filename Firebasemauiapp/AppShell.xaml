@@ -25,6 +25,12 @@
         ContentTemplate="{DataTemplate main:SummaryView}"
         Route="summary"/>
 
+    <!-- Mock page for Summary layout -->
+    <ShellContent
+        Title="Summary Mock"
+        ContentTemplate="{DataTemplate main:SummaryMockView}"
+        Route="summarymock"/>
+
 
     <!-- Main App with TabBar -->
     <TabBar Route="main"

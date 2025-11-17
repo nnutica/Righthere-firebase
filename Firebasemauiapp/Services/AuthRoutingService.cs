@@ -39,10 +39,15 @@ namespace Firebasemauiapp.Services
                 for (int i = 0; i < 40 && Shell.Current == null; i++)
                     await Task.Delay(50);
 
-                var route = _auth.User != null ? "//main/starter" : "//signin";
-
                 if (Shell.Current != null)
                 {
+                    var current = Shell.Current.CurrentState?.Location?.ToString() ?? string.Empty;
+
+                    // Avoid jumping to Starter while user is on SignUp page
+                    if (_auth.User != null && current.Contains("signup", StringComparison.OrdinalIgnoreCase))
+                        return;
+
+                    var route = _auth.User != null ? "//main/starter" : "//signin";
                     await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync(route));
                 }
             }

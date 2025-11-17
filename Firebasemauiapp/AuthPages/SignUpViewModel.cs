@@ -22,6 +22,12 @@ public partial class SignUpViewModel : ObservableObject
     [ObservableProperty]
     private string _password = string.Empty;
 
+    [ObservableProperty]
+    private string _confirmPassword = string.Empty;
+
+    [ObservableProperty]
+    private bool _isTermsAccepted;
+
     public SignUpViewModel(FirebaseAuthClient authClient, FirestoreService firestoreService)
     {
         _authClient = authClient;
@@ -33,10 +39,31 @@ public partial class SignUpViewModel : ObservableObject
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Username))
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(ConfirmPassword))
             {
                 if (Shell.Current != null)
                     await Shell.Current.DisplayAlert("Error", "Please fill in all fields.", "OK");
+                return;
+            }
+
+            if (!string.Equals(Password, ConfirmPassword))
+            {
+                if (Shell.Current != null)
+                    await Shell.Current.DisplayAlert("Error", "Passwords do not match.", "OK");
+                return;
+            }
+
+            if (!IsTermsAccepted)
+            {
+                if (Shell.Current != null)
+                    await Shell.Current.DisplayAlert("Terms", "Please agree to the Terms & Privacy Policy.", "OK");
+                return;
+            }
+
+            if (Password.Length < 6)
+            {
+                if (Shell.Current != null)
+                    await Shell.Current.DisplayAlert("Weak password", "Password should be at least 6 characters.", "OK");
                 return;
             }
 
@@ -44,6 +71,10 @@ public partial class SignUpViewModel : ObservableObject
 
             var user = credential?.User;
             var uid = user?.Uid;
+
+            // Immediately sign out to avoid auth router jumping to Starter
+            _authClient.SignOut();
+
             if (!string.IsNullOrWhiteSpace(uid))
             {
                 var db = await _firestoreService.GetDatabaseAsync();
@@ -59,10 +90,13 @@ public partial class SignUpViewModel : ObservableObject
                 };
                 await userDoc.SetAsync(payload, SetOptions.Overwrite);
             }
-            
-            // Navigate to sign in page after successful registration
+
+            // Success message then navigate to Sign In
             if (Shell.Current != null)
+            {
+                await Shell.Current.DisplayAlert("Success", "Your account has been created. Please sign in.", "OK");
                 await Shell.Current.GoToAsync("//signin");
+            }
         }
         catch (Exception ex)
         {
