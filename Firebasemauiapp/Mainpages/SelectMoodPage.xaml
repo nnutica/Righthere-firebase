@@ -13,20 +13,29 @@
             <!-- Header -->
             <VerticalStackLayout Spacing="0">
                 <Label FontFamily="AppFont"
-                       FontSize="28"
-                       TextColor="#2F6535">
+                       FontSize="44"
+                       TextColor="#2F6535"
+                       LineHeight="1.0">
+                    <Label.Resources>
+                        <Style TargetType="Span">
+                            <Setter Property="FontFamily"
+                                    Value="AppFont"/>
+                            <Setter Property="FontSize"
+                                    Value="44"/>
+                            <Setter Property="TextColor"
+                                    Value="#2F6535"/>
+                        </Style>
+                    </Label.Resources>
                     <Label.FormattedText>
                         <FormattedString>
                             <Span Text="Hey "/>
                             <Span Text="{Binding Username}"/>
                             <Span Text=","/>
+                            <Span Text="&#10;"/>
+                            <Span Text="how do you &#10;feeling today?"/>
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                <Label Text="how do you feeling today?"
-                       FontFamily="AppFont"
-                       FontSize="28"
-                       TextColor="#2F6535"/>
             </VerticalStackLayout>
 
             <!-- Spacer for small gap -->
@@ -50,24 +59,34 @@
                             <Border BackgroundColor="White"
                                     StrokeThickness="0"
                                     Padding="16"
-                                    HeightRequest="120"
+                                    HeightRequest="150"
                                     Grid.RowSpan="1">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="16"/>
                                 </Border.StrokeShape>
+                                <Border.Shadow>
+                                    <Shadow Brush="Black"
+                                            Opacity="0.12"
+                                            Radius="10"
+                                            Offset="0,4"/>
+                                </Border.Shadow>
                                 <Grid RowDefinitions="*,Auto"
                                       ColumnDefinitions="*"
                                       RowSpacing="8"
                                       VerticalOptions="Center">
-                                    <!-- Icon placeholder; swap to Image when assets arrive -->
-                                    <Label Text="{Binding Emoji}"
-                                           FontSize="40"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"/>
+                                    <!-- Mood image button -->
+                                    <ImageButton Source="{Binding Icon}"
+                                                 BackgroundColor="Transparent"
+                                                 Aspect="AspectFit"
+                                                 HeightRequest="120"
+                                                 WidthRequest="120"
+                                                 InputTransparent="True"
+                                                 HorizontalOptions="Center"
+                                                 VerticalOptions="Center"/>
                                     <Label Grid.Row="1"
                                            Text="{Binding Name}"
-                                           FontSize="14"
-                                           TextColor="#2F6535"
+                                           FontSize="20"
+                                           TextColor="#8FB78F"
                                            HorizontalOptions="Center"/>
                                 </Grid>
                                 <VisualStateManager.VisualStateGroups>
@@ -78,11 +97,15 @@
                                                 <VisualState.Setters>
                                                     <Setter Property="BackgroundColor"
                                                             Value="#FFF3E1"/>
+                                                    <Setter Property="Stroke"
+                                                            Value="#4DA3FF"/>
+                                                    <Setter Property="StrokeThickness"
+                                                            Value="2"/>
                                                     <Setter Property="Shadow">
                                                         <Shadow Brush="Black"
-                                                                Opacity="0.12"
-                                                                Radius="12"
-                                                                Offset="0,2"/>
+                                                                Opacity="0.22"
+                                                                Radius="14"
+                                                                Offset="0,4"/>
                                                     </Setter>
                                                 </VisualState.Setters>
                                             </VisualState>

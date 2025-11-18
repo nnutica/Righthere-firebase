@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Firebasemauiapp.CommunityPage.CommunityPage"
-             Title="CommunityPage">
+             Title="CommunityPage"
+             BackgroundImageSource="commubg.png">
     <!-- Add bottom white rounded strip under TabBar -->
     <Grid RowDefinitions="*,32">
         <!-- Original content in top row -->

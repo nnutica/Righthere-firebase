@@ -22,7 +22,7 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
     private MoodOption? _mood;
 
     [ObservableProperty]
-    private int _score = 10;
+    private int _score = 0;
 
     public LevelMoodViewModel(FirebaseAuthClient authClient)
     {

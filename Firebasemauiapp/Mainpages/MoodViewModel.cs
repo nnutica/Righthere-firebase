@@ -59,15 +59,15 @@ public partial class MoodViewModel : ObservableObject
 
     private void LoadMoods()
     {
-        // Placeholder emoji icons; replace `Icon` with asset paths later
+        // Supply image asset filenames via the Icon property (Resources/Images)
         Moods = new ObservableCollection<MoodOption>
         {
-            new("Happiness", "😊"),
-            new("Love", "🥰"),
-            new("Angry", "😡"),
-            new("Surprise", "🫨"),
-            new("Sadness", "😔"),
-            new("Fear", "😱")
+            new(name: "Happiness", emoji: string.Empty, icon: "happiness.png"),
+            new(name: "Love",      emoji: string.Empty, icon: "love.png"),
+            new(name: "Angry",     emoji: string.Empty, icon: "anger.png"),
+            new(name: "Surprise",  emoji: string.Empty, icon: "surprise.png"),
+            new(name: "Sadness",   emoji: string.Empty, icon: "sadness.png"),
+            new(name: "Fear",      emoji: string.Empty, icon: "fear.png")
         };
     }
 

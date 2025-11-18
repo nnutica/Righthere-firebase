@@ -12,11 +12,11 @@ namespace Firebasemauiapp.Controls
     public class MoodArcSlider : ContentView
     {
         public static readonly BindableProperty ValueProperty = BindableProperty.Create(
-            nameof(Value), typeof(int), typeof(MoodArcSlider), 5, BindingMode.TwoWay, propertyChanged: OnValueChanged);
+            nameof(Value), typeof(int?), typeof(MoodArcSlider), null, BindingMode.TwoWay, propertyChanged: OnValueChanged);
 
-        public int Value
+        public int? Value
         {
-            get => (int)GetValue(ValueProperty);
+            get => (int?)GetValue(ValueProperty);
             set => SetValue(ValueProperty, value);
         }
 
@@ -29,8 +29,9 @@ namespace Firebasemauiapp.Controls
         private double _centerX;
         private double _centerY;
         private Point _dragStart;
-        private const double StartDeg = 200.0;
-        private const double EndDeg = 340.0;
+        // Downward arc (smile): left -> right; use lower half of the circle
+        private const double StartDeg = 160.0; // left
+        private const double EndDeg = 20.0;    // right
 
         public MoodArcSlider()
         {
@@ -53,19 +54,20 @@ namespace Firebasemauiapp.Controls
             // Use available width, set arc radius.
             double radius = Math.Min(Width, Height * 2) / 2.0; // ensure fits vertically as half circle
             double centerX = Width / 2.0;
-            double centerY = radius; // center above arc (arc is lower half of circle)
+            // Place circle center at top so the visible arc is the lower half (curving down)
+            double centerY = 0;
 
             _radius = radius;
             _centerX = centerX;
             _centerY = centerY;
 
-            // Angles for smile arc (200° to 340°) degrees converted to radians
-            // Angles for smile arc (200° to 340°)
+            // Angles for smile arc (left 160° to right 20°)
             double startDeg = StartDeg;
             double endDeg = EndDeg;
             for (int i = 0; i < DotCount; i++)
             {
                 double t = i / (double)(DotCount - 1);
+                // Lerp even if end < start (wrap not crossing 0 here)
                 double deg = startDeg + (endDeg - startDeg) * t;
                 double rad = deg * Math.PI / 180.0;
                 // Larger, responsive dots with bigger tap area
@@ -74,7 +76,7 @@ namespace Firebasemauiapp.Controls
                 double y = centerY + radius * Math.Sin(rad);
 
                 // Create a larger invisible tap zone for easier selection
-                double tapSize = dotRadius * 2.6; // generous target
+                double tapSize = dotRadius * 2.2; // generous target, avoid overlap
                 var tapZone = new Grid { WidthRequest = tapSize, HeightRequest = tapSize, BackgroundColor = Colors.Transparent };
 
                 // Visual dot inside the tap zone
@@ -82,7 +84,7 @@ namespace Firebasemauiapp.Controls
                 {
                     WidthRequest = dotRadius * 2,
                     HeightRequest = dotRadius * 2,
-                    BackgroundColor = InterpolateColor(i),
+                    BackgroundColor = Colors.Black,
                     Stroke = Colors.White,
                     StrokeThickness = 1,
                     StrokeShape = new RoundRectangle { CornerRadius = (float)dotRadius },
@@ -95,7 +97,7 @@ namespace Firebasemauiapp.Controls
                 int idx = i;
                 tap.Tapped += (_, __) =>
                 {
-                    Value = idx + 1; // map to 1..10
+                    Value = idx + 1; // map to 1..10 (0 means none)
                 };
                 tapZone.GestureRecognizers.Add(tap);
 
@@ -127,28 +129,51 @@ namespace Firebasemauiapp.Controls
 
         private void UpdateValueFromPoint(Point pt)
         {
-            // Convert point to angle around the circle center
+            // Convert point to angle around the circle center (0..360)
             double ang = Math.Atan2(pt.Y - _centerY, pt.X - _centerX) * 180.0 / Math.PI;
-            if (ang < 0) ang += 360; // normalize to 0..360
+            if (ang < 0) ang += 360;
 
-            // Clamp to arc range
-            double clamped = Math.Max(StartDeg, Math.Min(EndDeg, ang));
-            double t = (clamped - StartDeg) / (EndDeg - StartDeg);
-            int newVal = (int)Math.Round(t * 9) + 1; // 1..10
-            if (newVal != Value)
+            // Map along the SHORTEST path from StartDeg (left) to EndDeg (right)
+            static double SignedDelta(double from, double to)
+            {
+                double d = (to - from + 540) % 360 - 180; // -180..180
+                return d;
+            }
+
+            double start = StartDeg;
+            double end = EndDeg;
+            double diff = SignedDelta(start, end); // negative (~-140) for smile arc
+            double d = SignedDelta(start, ang);
+
+            // Clamp d to the arc range [min(diff,0) .. max(diff,0)]
+            if (diff < 0)
+                d = Math.Max(diff, Math.Min(0, d));
+            else
+                d = Math.Min(diff, Math.Max(0, d));
+
+            // Progress 0..1 from left(0) to right(1)
+            double t = diff == 0 ? 0 : Math.Abs(d / diff);
+
+            // Map to discrete 0..10
+            int newVal = (int)Math.Round(t * DotCount);
+            newVal = Math.Max(0, Math.Min(DotCount, newVal));
+            if (Value == null || newVal != Value.Value)
                 Value = newVal;
         }
 
         private void UpdateDotStyles()
         {
             if (_dots.Count == 0) return;
-            int activeIndex = Math.Clamp(Value - 1, 0, DotCount - 1);
+            int v = Value ?? 0;
+            v = Math.Max(0, Math.Min(DotCount, v));
+            int activeIndex = Math.Clamp(v - 1, -1, DotCount - 1);
             for (int i = 0; i < _dots.Count; i++)
             {
                 if (_dots[i] is Border f)
                 {
-                    bool isActive = i == activeIndex;
-                    f.BackgroundColor = InterpolateColor(i);
+                    bool isFilled = i < v;                // fill from left up to Value
+                    bool isActive = i == activeIndex;      // last filled dot
+                    f.BackgroundColor = isFilled ? Colors.White : Colors.Black;
                     f.Scale = isActive ? 1.25 : 1.0;
                     f.Stroke = Colors.White;
                     f.StrokeThickness = isActive ? 3 : 1;
@@ -165,19 +190,10 @@ namespace Firebasemauiapp.Controls
             }
         }
 
-        // Simple gradient: first half lighten (white), move to orange (#D18B2A) on right half
+        // Default color for non-selected dots (black)
         private Color InterpolateColor(int index)
         {
-            // White to #D18B2A gradient
-            Color start = Colors.White;
-            Color end = Color.FromArgb("#D18B2A");
-            double t = index / (double)(DotCount - 1);
-            // Slight bias: keep first 2 dots pure white
-            if (index <= 1) return start;
-            byte r = (byte)(start.Red * 255 + (end.Red * 255 - start.Red * 255) * t);
-            byte g = (byte)(start.Green * 255 + (end.Green * 255 - start.Green * 255) * t);
-            byte b = (byte)(start.Blue * 255 + (end.Blue * 255 - start.Blue * 255) * t);
-            return Color.FromRgb(r, g, b);
+            return Colors.Black;
         }
     }
 }

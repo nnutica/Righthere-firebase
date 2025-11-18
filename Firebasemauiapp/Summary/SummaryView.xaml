@@ -3,59 +3,162 @@
     x:Class="Firebasemauiapp.Mainpages.SummaryView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     Title="SummaryView"
     Shell.NavBarIsVisible="False"
-    BackgroundColor="#FEAA3A"
-    >
+    BackgroundColor="#FEAA3A">
 
     <!-- Layered root: background image (transparent PNG) over orange, then content -->
     <Grid RowDefinitions="Auto,*,Auto">
-         <Image Source="summarybg.png"
-             Grid.RowSpan="3"
-             Aspect="AspectFill"
-             InputTransparent="True"/>
-     
+        <Image Source="summarybg.png"
+               Grid.RowSpan="3"
+               Aspect="AspectFill"
+               InputTransparent="True"/>
+
         <!-- Row 0: Key Themes title visible only on page 0 -->
-    <VerticalStackLayout Grid.Row="0"
-                         Spacing="-6"
-                         Margin="40,30,0,10"
-                         VerticalOptions="Start">
-        <VerticalStackLayout.Triggers>
-            <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding PageIndex}" Value="0">
-                <Setter Property="IsVisible" Value="True"/>
-            </DataTrigger>
-            <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding PageIndex}" Value="1">
-                <Setter Property="IsVisible" Value="False"/>
-            </DataTrigger>
-            <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding PageIndex}" Value="2">
-                <Setter Property="IsVisible" Value="False"/>
-            </DataTrigger>
-        </VerticalStackLayout.Triggers>
-        <Label Text="Key"
+        <VerticalStackLayout Grid.Row="0"
+                             Spacing="-6"
+                             Margin="40,30,0,10"
+                             VerticalOptions="Start">
+            <VerticalStackLayout.Triggers>
+                <DataTrigger TargetType="VerticalStackLayout"
+                             Binding="{Binding PageIndex}"
+                             Value="0">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
+                </DataTrigger>
+                <DataTrigger TargetType="VerticalStackLayout"
+                             Binding="{Binding PageIndex}"
+                             Value="1">
+                    <Setter Property="IsVisible"
+                            Value="False"/>
+                </DataTrigger>
+                <DataTrigger TargetType="VerticalStackLayout"
+                             Binding="{Binding PageIndex}"
+                             Value="2">
+                    <Setter Property="IsVisible"
+                            Value="False"/>
+                </DataTrigger>
+            </VerticalStackLayout.Triggers>
+            <Label Text="Key"
+                   FontFamily="AppFont"
+                   FontSize="44"
+                   FontAttributes="Bold"
+                   TextColor="White"/>
+            <Label Text="Themes"
+                   FontFamily="AppFont"
+                   FontSize="44"
+                   FontAttributes="Bold"
+                   TextColor="White"/>
+        </VerticalStackLayout>
+
+        <!-- Row 0: Page 3 header (visible when PageIndex==2) -->
+        <Label Grid.Row="0"
+               Text="What&#10;You&#10;Shared&#10;Today"
                FontFamily="AppFont"
                FontSize="44"
                FontAttributes="Bold"
-               TextColor="White"/>
-        <Label Text="Themes"
-               FontFamily="AppFont"
-               FontSize="44"
-               FontAttributes="Bold"
-               TextColor="White"/>
-    </VerticalStackLayout>
+               TextColor="White"
+               Margin="30,20,0,0"
+               HeightRequest="200"
+               IsVisible="False">
+            <Label.Triggers>
+                <DataTrigger TargetType="Label"
+                             Binding="{Binding PageIndex}"
+                             Value="2">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+
+        <!-- Row 0: Date chip (visible when PageIndex==2) -->
+        <Border Grid.Row="0"
+                HorizontalOptions="End"
+                VerticalOptions="Start"
+                HeightRequest="150"
+                WidthRequest="80"
+                Margin="0,70,0,10"
+                BackgroundColor="#FFFFFFFF"
+                Opacity="0.75"
+                IsVisible="False">
+            <Border.Triggers>
+                <DataTrigger TargetType="Border"
+                             Binding="{Binding PageIndex}"
+                             Value="2">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
+                </DataTrigger>
+            </Border.Triggers>
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="18,0,18,0"/>
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="#40000000"
+                        Radius="16"
+                        Offset="0,6"
+                        Opacity="0.35"/>
+            </Border.Shadow>
+            <VerticalStackLayout Spacing="2"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center">
+                <Label FontFamily="contextfont"
+                       FontSize="28"
+                       TextColor="#FEAA3A"
+                       HorizontalTextAlignment="Center"
+                       Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:MMM}'}"/>
+                <Label FontFamily="contextfont"
+                       FontSize="28"
+                       TextColor="#FEAA3A"
+                       HorizontalTextAlignment="Center"
+                       Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dd}'}"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Row 0: Page 2 header (visible when PageIndex==1) -->
+        <VerticalStackLayout Grid.Row="0"
+                             Spacing="-6"
+                             Margin="20,30,0,10"
+                             VerticalOptions="Start"
+                             IsVisible="False">
+            <VerticalStackLayout.Triggers>
+                <DataTrigger TargetType="VerticalStackLayout"
+                             Binding="{Binding PageIndex}"
+                             Value="1">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
+                </DataTrigger>
+            </VerticalStackLayout.Triggers>
+            <Label Text="What You"
+                   FontFamily="AppFont"
+                   FontSize="44"
+                   FontAttributes="Bold"
+                   TextColor="White"/>
+            <Label Text="Shared Today"
+                   FontFamily="AppFont"
+                   FontSize="44"
+                   FontAttributes="Bold"
+                   TextColor="White"/>
+        </VerticalStackLayout>
 
         <!-- Row 1: Content area switches by page index -->
         <!-- Page 1: Key Themes cards (visible when PageIndex==0) -->
-        <Grid Grid.Row="1" x:Name="KeyThemesArea" IsVisible="False">
+        <Grid Grid.Row="1"
+              x:Name="KeyThemesArea"
+              IsVisible="False">
             <Grid.Triggers>
-                <DataTrigger TargetType="Grid" Binding="{Binding PageIndex}" Value="0">
-                    <Setter Property="IsVisible" Value="True"/>
+                <DataTrigger TargetType="Grid"
+                             Binding="{Binding PageIndex}"
+                             Value="0">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
                 </DataTrigger>
             </Grid.Triggers>
 
             <!-- Centered container that mimics the mock layout -->
-        <Grid VerticalOptions="Center"
-              HorizontalOptions="Center"
-             Margin="0,70,0,10">
+            <Grid VerticalOptions="Center"
+                  HorizontalOptions="Center"
+                  Margin="0,70,0,10">
 
                 <Grid x:Name="CardArea"
                       WidthRequest="600"
@@ -69,7 +172,7 @@
                                     BindableLayout.ItemsSource="{Binding KeywordCards}">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
-                                <Border 
+                                <Border
                                     AbsoluteLayout.LayoutBounds="{Binding Bounds}"
                                     AbsoluteLayout.LayoutFlags="PositionProportional"
                                     BackgroundColor="{Binding Color}"
@@ -90,116 +193,214 @@
         </Grid>
 
         <!-- Page 2: Reflection + Score, placed in Row 1 when PageIndex==1 -->
-        <Grid Grid.Row="1" x:Name="ReflectionPage" IsVisible="False">
+        <Grid Grid.Row="1"
+              x:Name="ReflectionPage"
+              IsVisible="False">
             <Grid.Triggers>
-                <DataTrigger TargetType="Grid" Binding="{Binding PageIndex}" Value="1">
-                    <Setter Property="IsVisible" Value="True"/>
+                <DataTrigger TargetType="Grid"
+                             Binding="{Binding PageIndex}"
+                             Value="1">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
                 </DataTrigger>
             </Grid.Triggers>
             <VerticalStackLayout Spacing="14">
-                <Label Text="What You Shared Today"
-                        FontFamily="AppFont"
-                        FontSize="28"
-                        TextColor="White"/>
                 <Border BackgroundColor="#F8FAED"
-                        StrokeThickness="1"
-                        Stroke="#50A65D"
-                        Padding="16">
+                        HeightRequest="500"
+                        Padding="24"
+                        Margin="20,40,20,0">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="18"/>
                     </Border.StrokeShape>
-                    <Grid RowDefinitions="Auto,Auto,Auto,Auto"
-                            ColumnDefinitions="Auto,*">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                          ColumnDefinitions="Auto,*"
+                          RowSpacing="2">
                         <Image Grid.RowSpan="2"
-                                Source="{Binding EmotionImage}"
-                                WidthRequest="64"
-                                HeightRequest="64"
-                                Margin="0,0,12,0"/>
+                               Source="{Binding EmotionImage}"
+                               WidthRequest="120"
+                               HeightRequest="120"
+                               Margin="0,0,20,0"/>
                         <Label Grid.Column="1"
-                                Text="Wellness Score"
-                                TextColor="#6b7a6a"/>
+                               Text="Wellness Score"
+                               TextColor="#50A65D"
+                               FontSize="32"/>
                         <HorizontalStackLayout Grid.Row="1"
-                                Grid.Column="1"
-                                Spacing="4"
-                                VerticalOptions="Center">
+                                               Grid.Column="1"
+                                               Spacing="4"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center"
+                                               Margin="0,4,0,0">
                             <Label Text="{Binding Score}"
-                                    TextColor="#50A65D"
-                                    FontSize="28"
-                                    FontAttributes="Bold"/>
+                                   TextColor="#50A65D"
+                                   FontSize="44"
+                                   FontFamily="AppFont"
+                                   FontAttributes="Bold"/>
                             <Label Text="/10"
-                                    TextColor="#50A65D"
-                                    FontSize="18"
-                                    VerticalOptions="End"/>
+                                   TextColor="#50A65D"
+                                   FontSize="20"
+                                   VerticalOptions="End"/>
                         </HorizontalStackLayout>
-                        <Label Grid.Row="2"
-                                Grid.ColumnSpan="2"
-                                Text="Reflection Summary"
-                                TextColor="#FEAA3A"
-                                FontAttributes="Bold"/>
+                        <BoxView Grid.Row="2"
+                                 Grid.ColumnSpan="2"
+                                 HeightRequest="1"
+                                 BackgroundColor="#3350A65D"
+                                 Margin="0,10"/>
                         <Label Grid.Row="3"
-                                Grid.ColumnSpan="2"
-                                Text="{Binding Content}"
-                                TextColor="#333"/>
+                               Grid.ColumnSpan="2"
+                               Text="Reflection&#10;Summary"
+                               TextColor="#FEAA3A"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               LineHeight="0.95"
+                               Margin="0,2,0,0"/>
+                        <Label Grid.Row="4"
+                               Grid.ColumnSpan="2"
+                               Text="{Binding Content}"
+                               TextColor="#8FB78F"
+                               FontSize="14"
+                               FontFamily="contextfont"/>
                     </Grid>
                 </Border>
             </VerticalStackLayout>
         </Grid>
 
         <!-- Page 3: Suggestion, placed in Row 1 when PageIndex==2 -->
-        <Grid Grid.Row="1" x:Name="SuggestionPage" IsVisible="False">
+        <Grid Grid.Row="1"
+              x:Name="SuggestionPage"
+              IsVisible="False">
             <Grid.Triggers>
-                <DataTrigger TargetType="Grid" Binding="{Binding PageIndex}" Value="2">
-                    <Setter Property="IsVisible" Value="True"/>
+                <DataTrigger TargetType="Grid"
+                             Binding="{Binding PageIndex}"
+                             Value="2">
+                    <Setter Property="IsVisible"
+                            Value="True"/>
                 </DataTrigger>
             </Grid.Triggers>
-            <VerticalStackLayout Spacing="14">
-                <Label Text="What You Shared Today"
-                        FontFamily="AppFont"
-                        FontSize="28"
-                        TextColor="White"/>
-                <Border BackgroundColor="#F8FAED"
-                        StrokeThickness="1"
-                        Stroke="#50A65D"
-                        Padding="16">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="18"/>
-                    </Border.StrokeShape>
-                    <VerticalStackLayout>
-                        <Label Text="A Little Encouragement"
-                                TextColor="#FEAA3A"
-                                FontAttributes="Bold"/>
-                        <Label Text="{Binding Suggestion}"
-                                TextColor="#333"/>
-                    </VerticalStackLayout>
-                </Border>
-        
-        </VerticalStackLayout>
+            <!-- New Suggestion layout: right illustration + translucent card -->
+            <Grid>
+                <!-- Illustration on the right -->
+                <Image Grid.Row="0"
+                       Source="womenhug.png"
+                       Aspect="AspectFill"
+                       HorizontalOptions="End"
+                       VerticalOptions="Center"
+                       WidthRequest="300"
+                       TranslationY="-40"
+                       InputTransparent="True"/>
+
+                <!-- Suggestion card left -->
+                <Grid Margin="0,0,0,0"
+                      HorizontalOptions="Start"
+                      VerticalOptions="Start">
+                    <Border BackgroundColor="#CCFFFFFF"
+                            HeightRequest="390"
+                            HorizontalOptions="Start"
+                            VerticalOptions="Center"
+                            WidthRequest="270"
+                            Padding="20"
+                            TranslationY="50">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="0,18,0,18"/>
+                        </Border.StrokeShape>
+                        <Border.Shadow>
+                            <Shadow Brush="#40000000"
+                                    Radius="16"
+                                    Offset="0,6"
+                                    Opacity="0.7"/>
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="A Little Encouragement"
+                                   FontFamily="AppFont"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="#FEAA3A"/>
+                            <Label Text="{Binding Suggestion}"
+                                   FontFamily="contextfont"
+                                   FontSize="14"
+                                   TextColor="#8FB78F"
+                                   LineHeight="1.2"/>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+            </Grid>
         </Grid>
 
         <!-- Row 2: Bottom controls fixed at bottom -->
-          <Grid Grid.Row="2"
+        <Grid Grid.Row="2"
               ColumnDefinitions="Auto,*,Auto"
               Padding="20"
               Margin="0,0,0,12"
               VerticalOptions="End">
-            <Button Grid.Column="0"
-                    Text="◀"
-                    BackgroundColor="White"
-                    TextColor="#FEAA3A"
-                    CornerRadius="16"
-                    WidthRequest="40"
-                    HeightRequest="40"
-                    IsVisible="{Binding IsFirstPage, Converter={StaticResource InvertedBoolConverter}}"
-                    Command="{Binding PrevPageCommand}">
-                <Button.Shadow>
-                    <Shadow Brush="#40000000"
-                            Radius="12"
-                            Offset="0,4"
-                            Opacity="0.35"/>
-                </Button.Shadow>
-            </Button>
 
+            <!-- Left: Page indicator dots -->
+            <HorizontalStackLayout Grid.Column="0"
+                                   Spacing="8"
+                                   VerticalOptions="Center">
+                <!-- Dot for page 0 -->
+                <Border WidthRequest="8"
+                        HeightRequest="8"
+                        BackgroundColor="#FFFFFF55">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="999"/>
+                    </Border.StrokeShape>
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border"
+                                Binding="{Binding PageIndex}"
+                                Value="0">
+                            <Setter Property="BackgroundColor"
+                                    Value="#FFFFFFFF"/>
+                            <Setter Property="WidthRequest"
+                                    Value="12"/>
+                            <Setter Property="HeightRequest"
+                                    Value="12"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                </Border>
+                <!-- Dot for page 1 -->
+                <Border WidthRequest="8"
+                        HeightRequest="8"
+                        BackgroundColor="#FFFFFF55">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="999"/>
+                    </Border.StrokeShape>
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border"
+                                Binding="{Binding PageIndex}"
+                                Value="1">
+                            <Setter Property="BackgroundColor"
+                                    Value="#FFFFFFFF"/>
+                            <Setter Property="WidthRequest"
+                                    Value="12"/>
+                            <Setter Property="HeightRequest"
+                                    Value="12"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                </Border>
+                <!-- Dot for page 2 -->
+                <Border WidthRequest="8"
+                        HeightRequest="8"
+                        BackgroundColor="#FFFFFF55">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="999"/>
+                    </Border.StrokeShape>
+                    <Border.Triggers>
+                        <DataTrigger TargetType="Border"
+                                Binding="{Binding PageIndex}"
+                                Value="2">
+                            <Setter Property="BackgroundColor"
+                                    Value="#FFFFFFFF"/>
+                            <Setter Property="WidthRequest"
+                                    Value="12"/>
+                            <Setter Property="HeightRequest"
+                                    Value="12"/>
+                        </DataTrigger>
+                    </Border.Triggers>
+                </Border>
+            </HorizontalStackLayout>
+
+            <!-- Right: Next button on first page -->
             <Button Grid.Column="2"
+                    IsVisible="False"
                     Text="{Binding NextButtonText}"
                     BackgroundColor="White"
                     TextColor="#FEAA3A"
@@ -207,6 +408,14 @@
                     HeightRequest="56"
                     Padding="24,0"
                     Command="{Binding NextPageCommand}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                            Binding="{Binding PageIndex}"
+                            Value="0">
+                        <Setter Property="IsVisible"
+                                Value="True"/>
+                    </DataTrigger>
+                </Button.Triggers>
                 <Button.Shadow>
                     <Shadow Brush="#40000000"
                             Radius="16"
@@ -214,6 +423,55 @@
                             Opacity="0.35"/>
                 </Button.Shadow>
             </Button>
+
+            <!-- Right: Arrow controls on pages 2-3 -->
+            <HorizontalStackLayout Grid.Column="2"
+                                   Spacing="8"
+                                   IsVisible="False"
+                                   VerticalOptions="Center">
+                <HorizontalStackLayout.Triggers>
+                    <DataTrigger TargetType="HorizontalStackLayout"
+                            Binding="{Binding PageIndex}"
+                            Value="1">
+                        <Setter Property="IsVisible"
+                                Value="True"/>
+                    </DataTrigger>
+                    <DataTrigger TargetType="HorizontalStackLayout"
+                            Binding="{Binding PageIndex}"
+                            Value="2">
+                        <Setter Property="IsVisible"
+                                Value="True"/>
+                    </DataTrigger>
+                </HorizontalStackLayout.Triggers>
+                <Button Text="◀"
+                        BackgroundColor="White"
+                        TextColor="#FEAA3A"
+                        CornerRadius="16"
+                        WidthRequest="40"
+                        HeightRequest="40"
+                        Command="{Binding PrevPageCommand}">
+                    <Button.Shadow>
+                        <Shadow Brush="#40000000"
+                                Radius="12"
+                                Offset="0,4"
+                                Opacity="0.35"/>
+                    </Button.Shadow>
+                </Button>
+                <Button Text="▶"
+                        BackgroundColor="White"
+                        TextColor="#FEAA3A"
+                        CornerRadius="16"
+                        WidthRequest="40"
+                        HeightRequest="40"
+                        Command="{Binding NextPageCommand}">
+                    <Button.Shadow>
+                        <Shadow Brush="#40000000"
+                                Radius="12"
+                                Offset="0,4"
+                                Opacity="0.35"/>
+                    </Button.Shadow>
+                </Button>
+            </HorizontalStackLayout>
         </Grid>
-        </Grid>
-    </ContentPage>
+    </Grid>
+</ContentPage>

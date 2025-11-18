@@ -3,73 +3,120 @@
     x:Class="Firebasemauiapp.Mainpages.SummaryMockView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     Title="Summary Mock"
     Shell.NavBarIsVisible="False"
     BackgroundColor="#FEAA3A">
 
     <!-- Fullscreen cards: fill entire page, no title, no buttons -->
-    <Grid RowDefinitions="*,*,*" >
+    <Grid RowDefinitions="Auto,*,Auto">
 
-    <!-- Header -->
-    <Label Grid.Row="0"
-           Text="Key Themes"
-           FontSize="32"
-           FontAttributes="Bold"
-           TextColor="White"
-           Margin="20,30,0,100"
-           HeightRequest="150"/>
+        <Image Source="summarybg.png"
+               Grid.RowSpan="3"
+               Aspect="AspectFill"
+               InputTransparent="True"/>
 
-    <!-- ⭐ important: container that can center children ⭐ -->
-    <Grid Grid.Row="1"
-          VerticalOptions="Center"
-          HorizontalOptions="Center"
-          Margin="0,150,0,0">
+        <!-- Header -->
+        <Label Grid.Row="0"
+               Text="What&#10;You&#10;Shared&#10;Today"
+               TextColor="White"
+               FontSize="44"
+               FontAttributes="Bold"
+               LineHeight="0.95"
+               Margin="30,20,0,0"
+               HeightRequest="200"/>
 
-        <!-- limit card display area -->
-        <Grid x:Name="CardArea"
-              WidthRequest="600"
-              HeightRequest="650"
-              VerticalOptions="Center"
-              HorizontalOptions="Center">
 
-            <AbsoluteLayout x:Name="CardContainer"
-                            VerticalOptions="Fill"
-                            HorizontalOptions="Fill"
-                            BindableLayout.ItemsSource="{Binding KeywordCards}">
+        <!-- Date chip (top-right) -->
+        <Border Grid.Row="0"
+                HorizontalOptions="End"
+                VerticalOptions="Start"
+                HeightRequest="150"
+                WidthRequest="80"
+                Margin="0,70,0,10"
+                BackgroundColor="#FFFFFFFF"
+                Opacity="0.75">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="18,0,18,0"/>
+            </Border.StrokeShape>
+            <Border.Shadow>
+                <Shadow Brush="#40000000"
+                        Radius="16"
+                        Offset="0,6"
+                        Opacity="0.35"/>
+            </Border.Shadow>
+            <VerticalStackLayout Spacing="2"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center">
+                <Label FontFamily="contextfont"
+                       FontSize="28"
+                       TextColor="#FEAA3A"
+                       HorizontalTextAlignment="Center"
+                       Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:MMM}'}"/>
+                <Label FontFamily="contextfont"
+                       FontSize="28"
+                       TextColor="#FEAA3A"
+                       HorizontalTextAlignment="Center"
+                       Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dd}'}"/>
+            </VerticalStackLayout>
+        </Border>
 
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate>
-                        <Border 
-                            AbsoluteLayout.LayoutBounds="{Binding Bounds}"
-                            AbsoluteLayout.LayoutFlags="PositionProportional"
-                            BackgroundColor="{Binding Color}"
-                            Padding="12">
+        <!-- Illustration on the right -->
+        <Image Grid.Row="1"
+               Source="womenhug.png"
+               Aspect="AspectFill"
+               HorizontalOptions="End"
+               VerticalOptions="Center"
+               WidthRequest="300"
+               Margin="0,0,0,0"
+               TranslationY="-40"
+               InputTransparent="True"/>
 
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="20"/>
-                            </Border.StrokeShape>
-
-                            <Label Text="{Binding Text}"
-                                   FontSize="18"
-                                   FontAttributes="Bold"
-                                   TextColor="#0E6B5D"/>
-                        </Border>
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </AbsoluteLayout>
+        <!-- Suggestion (translucent card with shadow) -->
+        <Grid Grid.Row="1"
+              Margin="0,0,0,0"
+              HorizontalOptions="Start"
+              VerticalOptions="Start">
+            <Border BackgroundColor="#CCFFFFFF"
+                    HeightRequest="390"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    WidthRequest="270"
+                    Padding="20"
+                    TranslationY="50">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="0,18,0,18"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="#40000000"
+                            Radius="16"
+                            Offset="0,6"
+                            Opacity="0.7"/>
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="A Little Encouragement"
+                           FontFamily="AppFont"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="#FEAA3A"/>
+                    <Label Text="{Binding Suggestion}"
+                           FontFamily="contextfont"
+                           FontSize="14"
+                           TextColor="#8FB78F"
+                           LineHeight="1.2"/>
+                </VerticalStackLayout>
+            </Border>
         </Grid>
-    </Grid>
-    <Grid Grid.Row="2"
-                ColumnDefinitions="Auto,*,Auto"
-                Padding="0,30,0,20"
-                VerticalOptions='Center'>
-            <Button Grid.Column="0"
-                    Text="◀"
+        <HorizontalStackLayout Grid.Row="2"
+                               Spacing="12"
+                               HorizontalOptions="Center"
+                               Padding="0,0,0,20">
+            <Button Text="◀"
                     BackgroundColor="White"
                     TextColor="#FEAA3A"
-                    CornerRadius="16"
-                    WidthRequest="40"
-                    HeightRequest="40"
+                    CornerRadius="24"
+                    WidthRequest="48"
+                    HeightRequest="48"
                     IsVisible="{Binding IsFirstPage, Converter={StaticResource InvertedBoolConverter}}"
                     Command="{Binding PrevPageCommand}">
                 <Button.Shadow>
@@ -80,13 +127,12 @@
                 </Button.Shadow>
             </Button>
 
-            <Button Grid.Column="2"
-                    Text="{Binding NextButtonText}"
+            <Button Text="▶"
                     BackgroundColor="White"
                     TextColor="#FEAA3A"
-                    CornerRadius="28"
-                    HeightRequest="56"
-                    Padding="24,0"
+                    CornerRadius="24"
+                    WidthRequest="48"
+                    HeightRequest="48"
                     Command="{Binding NextPageCommand}">
                 <Button.Shadow>
                     <Shadow Brush="#40000000"
@@ -95,8 +141,8 @@
                             Opacity="0.35"/>
                 </Button.Shadow>
             </Button>
-        </Grid>
-</Grid>
+        </HorizontalStackLayout>
+    </Grid>
 
 
 </ContentPage>

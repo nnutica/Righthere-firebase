@@ -11,39 +11,55 @@
               RowDefinitions="Auto,*,Auto"
               BackgroundColor="#F8A33A">
             <!-- Back arrow could be added later -->
-            <VerticalStackLayout>
+            <VerticalStackLayout Spacing="0">
                 <Label FontFamily="AppFont"
-                       FontSize="28"
-                       TextColor="White">
+                       FontSize="44"
+                       TextColor="#2F6535"
+                       LineHeight="1.0">
+                    <Label.Resources>
+                        <Style TargetType="Span">
+                            <Setter Property="FontFamily"
+                                    Value="AppFont"/>
+                            <Setter Property="FontSize"
+                                    Value="44"/>
+                            <Setter Property="TextColor"
+                                    Value="White"/>
+                        </Style>
+                    </Label.Resources>
                     <Label.FormattedText>
                         <FormattedString>
                             <Span Text="Hey "/>
                             <Span Text="{Binding Username}"/>
                             <Span Text=","/>
+                            <Span Text="&#10;"/>
+                            <Span Text="how do you &#10;feeling today?"/>
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                <Label Text="how do you feeling today?"
-                       FontFamily="AppFont"
-                       FontSize="28"
-                       TextColor="White"/>
             </VerticalStackLayout>
-
             <VerticalStackLayout Grid.Row="1"
                                  Spacing="20"
                                  HorizontalOptions="Center"
                                  VerticalOptions="Center">
-                <Label Text="{Binding Mood.Emoji}"
-                       FontSize="96"
+                <Image Source="{Binding Mood.Icon}"
+                       HeightRequest="200"
+                       WidthRequest="200"
+                       Aspect="AspectFit"
                        HorizontalOptions="Center"/>
-                <Label FontSize="20"
+                <Label FontSize="24"
                        TextColor="White"
                        FontAttributes="Bold"
                        HorizontalOptions="Center">
                     <Label.FormattedText>
                         <FormattedString>
-                            <Span Text="I'm Feeling "/>
-                            <Span Text="{Binding Mood.Name}"/>
+                            <Span Text="I'm Feeling "
+                                  TextColor="White"
+                                  FontFamily="contextfont"
+                                  FontSize="24"/>
+                            <Span Text="{Binding Mood.Name}"
+                                  TextColor="White"
+                                  FontFamily="contextfont"
+                                  FontSize="24"/>
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
@@ -58,12 +74,23 @@
             </VerticalStackLayout>
 
             <Button Grid.Row="2"
-                    Text="Set Mood"
-                    BackgroundColor="Black"
+                    Text="Let’s Express Your Mood!"
+                    BackgroundColor="#8FB78F"
                     TextColor="White"
                     CornerRadius="12"
                     HeightRequest="48"
-                    Command="{Binding SetMoodCommand}"/>
+                    Command="{Binding SetMoodCommand}">
+                <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding Score}"
+                                 Value="0">
+                        <Setter Property="IsEnabled"
+                                Value="False"/>
+                        <Setter Property="BackgroundColor"
+                                Value="#D3D3D3"/>
+                    </DataTrigger>
+                </Button.Triggers>
+            </Button>
         </Grid>
 
         <!-- Bottom rounded strip behind TabBar -->
