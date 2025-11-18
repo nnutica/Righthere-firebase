@@ -128,11 +128,11 @@ public partial class SummaryViewModel : ObservableObject
         var rects = new List<Rect>
         {
             // Reference-style overlapping layout
-            new Rect(0.62, 0.04, 320,300), 
-            new Rect(0.38, 0.18, 270,310), 
-            new Rect(0.62, 0.31, 320,300), 
-            new Rect(0.35, 0.48, 300,300), 
-            new Rect(0.65, 0.63, 300,150) // Card 5 (bottom-right small top layer)
+            new Rect(0.62, 0.04, 240,240), 
+            new Rect(0.38, 0.18, 240,270), 
+            new Rect(0.62, 0.31, 240,240), 
+            new Rect(0.35, 0.48, 240,240), 
+            new Rect(0.65, 0.63, 240,100) // Card 5 (bottom-right small top layer)
         };
 
         // If fewer than 5, use first N rects.

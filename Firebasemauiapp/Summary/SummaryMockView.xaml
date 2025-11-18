@@ -8,8 +8,7 @@
     BackgroundColor="#FEAA3A">
 
     <!-- Fullscreen cards: fill entire page, no title, no buttons -->
-    <Grid RowDefinitions="Auto,*,*"
-          >
+    <Grid RowDefinitions="*,*,*" >
 
     <!-- Header -->
     <Label Grid.Row="0"
@@ -17,19 +16,20 @@
            FontSize="32"
            FontAttributes="Bold"
            TextColor="White"
-           Margin="20,30,0,10"/>
+           Margin="20,30,0,100"
+           HeightRequest="150"/>
 
     <!-- ⭐ important: container that can center children ⭐ -->
     <Grid Grid.Row="1"
-          VerticalOptions="Start"
+          VerticalOptions="Center"
           HorizontalOptions="Center"
-          Margin="0,30,0,0">
+          Margin="0,150,0,0">
 
         <!-- limit card display area -->
         <Grid x:Name="CardArea"
-              WidthRequest="760"
-              HeightRequest="800"
-              VerticalOptions="Start"
+              WidthRequest="600"
+              HeightRequest="650"
+              VerticalOptions="Center"
               HorizontalOptions="Center">
 
             <AbsoluteLayout x:Name="CardContainer"
@@ -62,7 +62,7 @@
     <Grid Grid.Row="2"
                 ColumnDefinitions="Auto,*,Auto"
                 Padding="0,30,0,20"
-                VerticalOptions='End'>
+                VerticalOptions='Center'>
             <Button Grid.Column="0"
                     Text="◀"
                     BackgroundColor="White"
