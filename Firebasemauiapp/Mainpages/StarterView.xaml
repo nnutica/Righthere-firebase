@@ -83,7 +83,7 @@
                     <!-- Plant and radial menu area -->
                     <Grid x:Name="PlantArea"
                           WidthRequest="220"
-                          HeightRequest="220"
+                          HeightRequest="260"
                           HorizontalOptions="Center"
                           VerticalOptions="Start">
                         <!-- Your Diary (top) -->
@@ -164,17 +164,18 @@
                         <!-- Plant visual composed from separate objects: Plant + Pot -->
                         <Grid x:Name="PlantVisual"
                               WidthRequest="220"
-                              HeightRequest="220"
+                              HeightRequest="260"
                               HorizontalOptions="Center"
                               VerticalOptions="End"
                               ZIndex="1">
-                            <!-- Plant (back layer) -->
+                            <!-- Plant (back layer) now just an image, anchored to bottom to touch the pot -->
                             <Image x:Name="PlantImageView"
                                    Source="{Binding PlantImage}"
                                    WidthRequest="220"
                                    HeightRequest="160"
                                    HorizontalOptions="Center"
-                                   VerticalOptions="Start"
+                                   VerticalOptions="Center"
+                                   TranslationY="-18"
                                    ZIndex="1"/>
 
                             <!-- Pot (front layer) -->
@@ -184,16 +185,10 @@
                                    HeightRequest="120"
                                    HorizontalOptions="Center"
                                    VerticalOptions="End"
+                                   TranslationY="10"
                                    ZIndex="2"/>
 
-                            <!-- Invisible tappable area to toggle the radial menu -->
-                            <ImageButton x:Name="PlantButton"
-                                         Source="empty.png"
-                                         BackgroundColor="Transparent"
-                                         Command="{Binding ToggleMenuCommand}"
-                                         HorizontalOptions="Fill"
-                                         VerticalOptions="Fill"
-                                         Opacity="0.02"/>
+                            <!-- Removed tap button: plant is no longer interactive -->
                         </Grid>
                     </Grid>
 
