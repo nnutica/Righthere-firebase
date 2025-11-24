@@ -6,6 +6,7 @@ using Google.Cloud.Firestore;
 using Firebasemauiapp.Model;
 using Firebasemauiapp.Services;
 using Google.Api.Gax;
+using System.Threading;
 
 namespace Firebasemauiapp.Data;
 
@@ -144,6 +145,40 @@ public class PostDatabase
             Console.WriteLine($"TryIncrementLikesAsync: Successfully incremented via fallback query for {postId}");
             return true;
         }
+    }
+
+    // CHECK if a user has liked a post (stored in subcollection posts/{postId}/likes/{userId})
+    public async Task<bool> HasUserLikedAsync(string postId, string userId)
+    {
+        var db = await GetDatabaseAsync();
+        var likeRef = db.Collection(_collectionName).Document(postId).Collection("likes").Document(userId);
+        var snap = await likeRef.GetSnapshotAsync();
+        return snap.Exists;
+    }
+
+    // Try to register a like once per user. Returns true if newly registered and increment applied.
+    public async Task<bool> TryLikeOnceAsync(string postId, string userId)
+    {
+        var db = await GetDatabaseAsync();
+        var postRef = db.Collection(_collectionName).Document(postId);
+        var likeRef = postRef.Collection("likes").Document(userId);
+
+        // If already liked, do nothing
+        var existing = await likeRef.GetSnapshotAsync();
+        if (existing.Exists)
+            return false;
+
+        // Register like marker for this user
+        var payload = new Dictionary<string, object>
+        {
+            { "userId", userId },
+            { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) }
+        };
+        await likeRef.SetAsync(payload, SetOptions.Overwrite);
+
+        // Increment like counter with existing resilient method
+        var success = await TryIncrementLikesAsync(postId, 1);
+        return success;
     }
 
     // DELETE

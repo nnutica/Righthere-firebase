@@ -1,156 +1,72 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-               x:Class="Firebasemauiapp.CommunityPage.CommunityPost"
-               x:Name="RootPopup">
-
-    <Border BackgroundColor="White"
-            Stroke="#50A65D"
-            StrokeThickness="2"
-            Padding="16"
-            WidthRequest="380"
-            HeightRequest="560">
-        <Border.StrokeShape>
-            <RoundRectangle CornerRadius="18"/>
-        </Border.StrokeShape>
-
-        <Grid RowDefinitions="Auto,Auto,*,Auto"
-              RowSpacing="12">
-            <!-- Header -->
-            <Grid Grid.Row="0"
-                  ColumnDefinitions="*,Auto">
-                <Label Grid.Column="0"
-                       Text="Community Post"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       TextColor="#2E7D32"/>
-                <Button Grid.Column="1"
-                        Text="✕"
-                        FontSize="16"
-                        BackgroundColor="Transparent"
-                        TextColor="#777"
-                        Clicked="OnCloseClicked"
-                        WidthRequest="34"
-                        HeightRequest="34"/>
-            </Grid>
-
-            <!-- Subheader: user + Refresh Button -->
-            <Grid Grid.Row="1"
-                  ColumnDefinitions="*,Auto"
-                  ColumnSpacing="10">
-                <Label x:Name="UserLabel"
-                       Grid.Column="0"
-                       Text="Viewing as: Guest"
-                       FontSize="13"
-                       TextColor="#2E7D32"
-                       VerticalOptions="Center"/>
-                <Button Grid.Column="1"
-                        Text="🔄 Refresh"
-                        Padding="12,6"
-                        BackgroundColor="#2E7D32"
-                        TextColor="White"
-                        CornerRadius="10"
-                        Clicked="OnRefreshClicked"/>
-            </Grid>
-
-            <!-- Random Post Display -->
-            <Grid Grid.Row="2">
-                <ActivityIndicator IsRunning="{Binding IsLoading}"
-                                   IsVisible="{Binding IsLoading}"
-                                   Color="#2E7D32"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="Center"/>
-
-                <ContentView IsVisible="{Binding NoPost}">
-                    <VerticalStackLayout Spacing="6"
-                                         Padding="20"
-                                         HorizontalOptions="Center"
-                                         VerticalOptions="Center">
-                        <Label Text="No posts available"
-                               FontSize="16"
-                               TextColor="#777"
-                               HorizontalOptions="Center"/>
-                        <Label Text="Be the first to share something with the community."
-                               FontSize="13"
-                               TextColor="#999"
-                               HorizontalOptions="Center"/>
-                    </VerticalStackLayout>
-                </ContentView>
-
-                <ScrollView IsVisible="{Binding HasPost}">
-                    <Border Margin="0,6"
-                            Padding="16"
-                            BackgroundColor="White"
-                            Stroke="#E0E0E0"
-                            StrokeThickness="1">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="12"/>
-                        </Border.StrokeShape>
-                        <Grid RowDefinitions="Auto,Auto,Auto,Auto"
-                              ColumnDefinitions="*,Auto"
-                              ColumnSpacing="10"
-                              RowSpacing="8">
-                            <!-- Author -->
-                            <Label Grid.Row="0"
-                                   Grid.Column="0"
-                                   Text="{Binding RandomPost.Author}"
-                                   FontAttributes="Bold"
-                                   FontSize="16"
-                                   TextColor="#2E7D32"/>
-                            <!-- Time -->
-                            <Label Grid.Row="0"
-                                   Grid.Column="1"
-                                   HorizontalTextAlignment="End"
-                                   Text="{Binding RandomPost.CreatedAt, StringFormat='{}{0:dd MMM yyyy HH:mm}'}"
-                                   FontSize="12"
-                                   TextColor="#888"/>
-
-                            <!-- Content -->
-                            <Label Grid.Row="1"
-                                   Grid.ColumnSpan="2"
-                                   Text="{Binding RandomPost.Content}"
-                                   FontSize="14"
-                                   TextColor="#333"
-                                   Margin="0,8"/>
-
-                            <!-- Separator -->
-                            <BoxView Grid.Row="2"
-                                     Grid.ColumnSpan="2"
-                                     HeightRequest="1"
-                                     BackgroundColor="#E0E0E0"
-                                     Margin="0,8"/>
-
-                            <!-- Like section -->
-                            <Grid Grid.Row="3"
-                                  Grid.ColumnSpan="2"
-                                  ColumnDefinitions="Auto,Auto,*"
-                                  ColumnSpacing="8">
-                                <Button Grid.Column="0"
-                                        Text="❤"
-                                        Padding="12,6"
-                                        BackgroundColor="#FFEBEE"
-                                        TextColor="#D32F2F"
-                                        CornerRadius="16"
-                                        FontSize="16"
-                                        Clicked="OnLikeClicked"/>
-                                <Label Grid.Column="1"
-                                       Text="{Binding RandomPost.Likes}"
-                                       VerticalOptions="Center"
-                                       FontSize="14"
-                                       FontAttributes="Bold"
-                                       TextColor="#D32F2F"/>
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </ScrollView>
-            </Grid>
-
-            <!-- Footer: small note -->
-            <Label Grid.Row="3"
-                   Text="Community guidelines: Be kind and respectful."
-                   FontSize="11"
-                   TextColor="#9E9E9E"/>
+     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+     x:Class="Firebasemauiapp.CommunityPage.CommunityPost"
+     x:Name="RootPopup"
+     CanBeDismissedByTappingOutsideOfPopup="True"
+     BackgroundColor="Transparent"
+     Padding="0">
+    <!-- AbsoluteLayout to avoid Grid measurement artifacts that showed white lines -->
+        <Grid HorizontalOptions="Center"
+         VerticalOptions="Center"
+         Padding="0"
+         BackgroundColor="Transparent">
+       <!-- Background image fills intrinsic size -->
+       <Image Source="Commupost"
+         Aspect="Fill"
+         HorizontalOptions="Center"
+         VerticalOptions="Center" />
+   
+       <!-- Overlay layer -->
+       <Grid Padding="20"
+        BackgroundColor="Transparent">
+           <!-- Close button top-right -->
+           <Button Text="✕"
+              HorizontalOptions="End"
+              VerticalOptions="Start"
+              BackgroundColor="Transparent"
+              TextColor="Black"
+              FontSize="24"
+              Padding="0"
+              Clicked="OnCloseClicked" />
+   
+           <!-- Content -->
+           <ScrollView IsVisible="{Binding HasPost}"
+             HorizontalOptions="Center"
+             VerticalOptions="Center"
+             Margin="0,50,0,60">
+          <Label Text="{Binding RandomPost.Content}"
+            FontSize="14"
+            TextColor="#222"
+            HorizontalTextAlignment="Center" />
+           </ScrollView>
+           <ContentView IsVisible="{Binding NoPost}"
+              HorizontalOptions="Center"
+              VerticalOptions="Center"
+              Margin="0,50,0,60">
+          <Label Text="ไม่มีโพสต์ในขณะนี้"
+            FontSize="14"
+            TextColor="#555"
+            HorizontalTextAlignment="Center" />
+           </ContentView>
+   
+           <!-- Like section bottom-right -->
+           <Grid ColumnDefinitions="Auto,Auto"
+            ColumnSpacing="4"
+            HorizontalOptions="End"
+            VerticalOptions="End">
+          <Label Text="{Binding RandomPost.Likes}"
+            VerticalOptions="Center"
+            FontSize="14"
+            FontAttributes="Bold"
+            TextColor="#222" />
+          <Button Text="👍"
+             BackgroundColor="Transparent"
+             FontSize="28"
+             Padding="0"
+             Clicked="OnLikeClicked" />
+           </Grid>
+       </Grid>
         </Grid>
-    </Border>
 </toolkit:Popup>

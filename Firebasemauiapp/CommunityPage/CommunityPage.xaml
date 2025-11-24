@@ -1,83 +1,185 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Firebasemauiapp.CommunityPage"
              x:Class="Firebasemauiapp.CommunityPage.CommunityPage"
              Title="CommunityPage">
     <!-- Background image layer + content -->
-    <Grid RowDefinitions="*">
-        <Image Source="commubg.png"
-               Aspect="AspectFill"
-               Opacity="1"
-               AutomationId="CommunityBackground"/>
-        <!-- Foreground content -->
-        <Grid>
-            <!-- Add bottom white rounded strip under TabBar -->
-            <Grid RowDefinitions="*,32">
-                <!-- Original content in top row -->
-                <Grid Grid.Row="0">
-                    <VerticalStackLayout>
-                        <Grid RowDefinitions="Auto,*"
-                              Padding="16">
-                            <!-- Header -->
-                            <Grid Grid.Row="0"
-                                  ColumnDefinitions="*,Auto"
-                                  Padding="0,0,0,8">
-                                <Label Text="Community"
-                                       FontSize="22"
-                                       FontAttributes="Bold"
-                                       TextColor="#3A3A3A"/>
-                            </Grid>
-                            <Image
-                                Grid.Row="1"
-                                Source="commuboard.png"
-                                BackgroundColor="Transparent"
-                                WidthRequest="240"
-                                HeightRequest="240"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Start"
-                                Margin="0,390,0,0">
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnOpenCommunityPopupTapped"/>
-                                </Image.GestureRecognizers>
-                            </Image>
-                        </Grid>
+  <Grid RowDefinitions="*">
+    <Image Source="commubg.png"
+            Aspect="AspectFill"
+            Opacity="1" />
+    
+    <AbsoluteLayout>
+          <Grid AbsoluteLayout.LayoutBounds="0,0,1,1" 
+              AbsoluteLayout.LayoutFlags="All" 
+              RowDefinitions="*">
+            
+            <Grid Grid.Row="0">
+                <VerticalStackLayout>
                     </VerticalStackLayout>
-
-                    <!-- Floating Action Button for Create Post (ImageButton) -->
-                    <ImageButton Source="addpost.png"
-                                 BackgroundColor="Transparent"
-                                 WidthRequest="60"
-                                 HeightRequest="60"
-                                 Aspect="AspectFit"
-                                 HorizontalOptions="End"
-                                 VerticalOptions="End"
-                                 Margin="20,20,20,80"
-                                 Clicked="OnCreatePostTapped">
-                        <ImageButton.Shadow>
-                            <Shadow Brush="Black"
-                                    Offset="2,2"
-                                    Radius="8"
-                                    Opacity="0.3"/>
-                        </ImageButton.Shadow>
+                
+                <ImageButton Source="addpost.png"
+                             WidthRequest="60"
+                             HeightRequest="60"
+                             HorizontalOptions="End"
+                             VerticalOptions="End"
+                             Margin="20,20,20,80" 
+                             Command="{Binding ShowCreatePostOverlayCommand}" 
+                             ZIndex="10">
                     </ImageButton>
-                </Grid>
+            </Grid>
 
-                <!-- Bottom white rounded strip -->
-                <Border Grid.Row="1"
-                        BackgroundColor="White"
-                        StrokeThickness="0"
-                        TranslationY="8">
-                    <Border.Shadow>
-                        <Shadow Brush="Black"
-                                Opacity="0.18"
-                                Radius="14"
-                                Offset="0,-2"/>
-                    </Border.Shadow>
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="28,28,0,0"/>
-                    </Border.StrokeShape>
-                </Border>
+        </Grid>
+        
+        <Image Source="commuboard.png"
+               WidthRequest="240" 
+               HeightRequest="240"
+               BackgroundColor="Transparent"
+               ZIndex="5"
+               AbsoluteLayout.LayoutBounds="0.5, 0.75, 240, 240"
+               AbsoluteLayout.LayoutFlags="PositionProportional">
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding ShowPostOverlayCommand}"/>
+            </Image.GestureRecognizers>
+        </Image>
+
+        <!-- Overlay replacing popup -->
+        <Grid AbsoluteLayout.LayoutBounds="0,0,1,1"
+              AbsoluteLayout.LayoutFlags="All"
+              IsVisible="{Binding IsPostOverlayVisible}"
+              ZIndex="20"
+              BackgroundColor="#66000000"
+              Padding="0">
+            <Grid HorizontalOptions="Center"
+                  VerticalOptions="Center"
+                  Padding="0"
+                  BackgroundColor="Transparent">
+                <Image Source="Commupost"
+                       Aspect="Fill"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+                <Grid Padding="20" BackgroundColor="Transparent">
+                    <Button Text="✕"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"
+                            Margin="0,10,50,0"
+                            BackgroundColor="Transparent"
+                            TextColor="Black"
+                            FontSize="24"
+                            Padding="0"
+                            Command="{Binding ClosePostOverlayCommand}"/>
+                    <ScrollView IsVisible="{Binding HasPost}"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Margin="0,50,0,60">
+                        <Label Text="{Binding RandomPost.Content}"
+                               FontSize="14"
+                               TextColor="#222"
+                               HorizontalTextAlignment="Center" 
+                               WidthRequest="260" /> 
+                    </ScrollView>
+                    <ContentView IsVisible="{Binding NoPost}"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center"
+                                 Margin="0,50,0,60">
+                    </ContentView>
+                    <Grid ColumnDefinitions="Auto,Auto"
+                          ColumnSpacing="4"
+                          HorizontalOptions="End"
+                          VerticalOptions="End"
+                          Margin="0,0,40,25">
+                        <Label Text="{Binding RandomPost.Likes}"
+                               VerticalOptions="Center"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="#222" />
+                        <Button Text="👍"
+                                BackgroundColor="Transparent"
+                                FontSize="28"
+                                Padding="0"
+                                Command="{Binding LikeCommand}" />
+                    </Grid>
+                </Grid>
             </Grid>
         </Grid>
-    </Grid>
+
+        <!-- Create Post Overlay -->
+        <Grid AbsoluteLayout.LayoutBounds="0,0,1,1"
+              AbsoluteLayout.LayoutFlags="All"
+              IsVisible="{Binding IsCreatePostOverlayVisible}"
+              ZIndex="30"
+              BackgroundColor="#66000000"
+              Padding="0">
+            <Grid HorizontalOptions="Center"
+                  VerticalOptions="Center"
+                  WidthRequest="360"
+                  HeightRequest="420"
+                  BackgroundColor="Transparent">
+                <!-- Paper background -->
+                <Image Source="Commupost"
+                       Aspect="Fill"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Fill" />
+                
+                <Grid BackgroundColor="Transparent" Padding="30">
+                    <!-- Close button -->
+                    <Button Text="✕"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"
+                            Margin="0,5,0,0"
+                            BackgroundColor="Transparent"
+                            TextColor="Black"
+                            FontSize="24"
+                            Padding="0"
+                            Command="{Binding CloseCreatePostOverlayCommand}"/>
+                    
+                    <!-- Content area with white box -->
+                    <VerticalStackLayout HorizontalOptions="Center"
+                                         VerticalOptions="Center"
+                                         Spacing="12"
+                                         Margin="0,-15,0,0">
+                        
+                        <!-- White box with pencil at bottom-right corner -->
+                        <Grid WidthRequest="260" HeightRequest="220">
+                            <Border BackgroundColor="White"
+                                    StrokeThickness="1"
+                                    Stroke="#DDD"
+                                    Padding="12">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Editor Text="{Binding NewPostContent}"
+                                        Placeholder="Share your thoughts..."
+                                        BackgroundColor="White"
+                                        TextColor="Black"
+                                        VerticalOptions="Fill"
+                                        HorizontalOptions="Fill"/>
+                            </Border>
+                            
+                            <!-- Pencil at bottom-right corner of white box -->
+                            <Image Source="pencil.png"
+                                   WidthRequest="45"
+                                   HeightRequest="45"
+                                   HorizontalOptions="End"
+                                   VerticalOptions="End"
+                                   Margin="0,0,-8,-8"/>
+                        </Grid>
+                        
+                        <!-- Post button inside paper -->
+                        <Button Text="Post"
+                                BackgroundColor="#D9D9D9"
+                                TextColor="Black"
+                                FontSize="14"
+                                Padding="24,10"
+                                CornerRadius="8"
+                                HorizontalOptions="End"
+                                Margin="0,8,20,0"
+                                Command="{Binding CreatePostCommand}"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </Grid>
+        </Grid>
+    </AbsoluteLayout>
+</Grid>
 </ContentPage>

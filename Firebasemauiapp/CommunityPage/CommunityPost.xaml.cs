@@ -5,6 +5,7 @@ using CommunityToolkit.Maui.Views;
 using Firebase.Auth;
 using Firebasemauiapp.Data;
 using Firebasemauiapp.Model;
+using Microsoft.Maui.Storage;
 
 namespace Firebasemauiapp.CommunityPage;
 
@@ -44,12 +45,48 @@ public partial class CommunityPost : Popup
 		_auth = services?.GetService(typeof(FirebaseAuthClient)) as FirebaseAuthClient ?? throw new InvalidOperationException("FirebaseAuthClient service not available");
 
 		_userName = _auth.User?.Info?.DisplayName ?? _auth.User?.Info?.Email ?? "Guest";
-		UserLabel.Text = $"Viewing as: {_userName}";
+		
 
 		LikeCommand = new Command<PostData>(async (post) => await LikeAsync(post));
 		RefreshCommand = new Command(async () => await LoadRandomPostAsync());
 
 		_ = LoadRandomPostAsync();
+	}
+
+	protected override void OnHandlerChanged()
+	{
+		base.OnHandlerChanged();
+#if ANDROID
+		try
+		{
+			var nativeView = Handler?.PlatformView as Android.Views.View;
+			if (nativeView != null)
+			{
+				// Remove any default background drawable that may render a border
+				nativeView.Background = null;
+				nativeView.SetBackgroundColor(Android.Graphics.Color.Transparent);
+				if (nativeView is Android.Views.ViewGroup vg)
+				{
+					for (int i = 0; i < vg.ChildCount; i++)
+					{
+						var child = vg.GetChildAt(i);
+						child?.SetBackgroundColor(Android.Graphics.Color.Transparent);
+					}
+				}
+				// Walk up a few parents to clear possible container backgrounds
+				var parent = nativeView.Parent as Android.Views.View;
+				int depth = 0;
+				while (parent != null && depth < 5)
+				{
+					parent.Background = null;
+					parent.SetBackgroundColor(Android.Graphics.Color.Transparent);
+					parent = parent.Parent as Android.Views.View;
+					depth++;
+				}
+			}
+		}
+		catch { /* Ignore platform reflection failures */ }
+#endif
 	}
 
 	public CommunityPost(string userName, PostDatabase postDb, FirebaseAuthClient auth)
@@ -59,7 +96,7 @@ public partial class CommunityPost : Popup
 		_userName = userName;
 		_postDb = postDb;
 		_auth = auth;
-		UserLabel.Text = $"Viewing as: {userName}";
+		
 
 		LikeCommand = new Command<PostData>(async (post) => await LikeAsync(post));
 		RefreshCommand = new Command(async () => await LoadRandomPostAsync());
@@ -99,11 +136,20 @@ public partial class CommunityPost : Popup
 			RandomPost = null;
 
 			var allPosts = await _postDb.GetAllPostsAsync();
-			if (allPosts.Any())
+			// Filter out own posts if user is signed in (by Author match)
+			var list = allPosts;
+			if (!string.IsNullOrWhiteSpace(_userName) && !string.Equals(_userName, "Guest", StringComparison.OrdinalIgnoreCase))
+			{
+				list = allPosts
+					.Where(p => !string.Equals(p.Author, _userName, StringComparison.OrdinalIgnoreCase))
+					.ToList();
+			}
+
+			if (list.Any())
 			{
 				var random = new Random();
-				var randomIndex = random.Next(0, allPosts.Count);
-				RandomPost = allPosts[randomIndex];
+				var randomIndex = random.Next(0, list.Count);
+				RandomPost = list[randomIndex];
 			}
 		}
 		catch (Exception ex)
@@ -129,21 +175,18 @@ public partial class CommunityPost : Popup
 
 		try
 		{
-			// Show immediate feedback
-			var newLikes = post.Likes + 1;
-			RandomPost = new PostData
-			{
-				PostId = post.PostId,
-				Author = post.Author,
-				Content = post.Content,
-				CreatedAt = post.CreatedAt,
-				Likes = newLikes
-			};
-			Console.WriteLine($"LikeAsync: UI updated to {newLikes} likes");
+			var userId = GetCurrentUserId();
 
-			// Try to update database
-			var success = await _postDb.TryIncrementLikesAsync(post.PostId, 1);
-			Console.WriteLine($"LikeAsync: Database update success: {success}");
+			// If already liked, stop
+			if (await _postDb.HasUserLikedAsync(post.PostId, userId))
+			{
+				await DisplayAlert("แจ้งเตือน", "คุณกดถูกใจโพสต์นี้แล้ว", "ปิด");
+				return;
+			}
+
+			// Register like once on server and increment count
+			var success = await _postDb.TryLikeOnceAsync(post.PostId, userId);
+			Console.WriteLine($"LikeAsync: Like-once registration success: {success}");
 
 			if (success)
 			{
@@ -154,6 +197,18 @@ public partial class CommunityPost : Popup
 					Console.WriteLine($"LikeAsync: Refreshed from DB, likes: {refreshed.Likes}");
 					RandomPost = refreshed;
 				}
+				else
+				{
+					// Fallback optimistic UI update
+					RandomPost = new PostData
+					{
+						PostId = post.PostId,
+						Author = post.Author,
+						Content = post.Content,
+						CreatedAt = post.CreatedAt,
+						Likes = post.Likes + 1
+					};
+				}
 			}
 		}
 		catch (Exception ex)
@@ -161,5 +216,21 @@ public partial class CommunityPost : Popup
 			Console.WriteLine($"LikeAsync: Error - {ex.Message}");
 			await DisplayAlert("Error", $"Failed to like post: {ex.Message}", "OK");
 		}
+	}
+
+	private string GetCurrentUserId()
+	{
+		var uid = _auth?.User?.Uid;
+		if (!string.IsNullOrWhiteSpace(uid))
+			return uid;
+
+		const string key = "guest_user_id";
+		var local = Preferences.Get(key, string.Empty);
+		if (string.IsNullOrWhiteSpace(local))
+		{
+			local = Guid.NewGuid().ToString();
+			Preferences.Set(key, local);
+		}
+		return local;
 	}
 }

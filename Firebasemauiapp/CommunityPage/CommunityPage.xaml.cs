@@ -20,26 +20,3 @@ public partial class CommunityPage : ContentPage
 	}
 }
 
-// Code-behind partial for opening the popup
-public partial class CommunityPage
-{
-	private async void OnOpenCommunityPopupTapped(object? sender, TappedEventArgs e)
-	{
-		var vm = BindingContext as CommunityViewModel;
-		var username = vm?.UserName ?? "Guest";
-
-		// Use parameterless popup that resolves its own services
-		var popup = new CommunityPost();
-		await this.ShowPopupAsync(popup);
-	}
-
-	private async void OnCreatePostTapped(object? sender, EventArgs e)
-	{
-		var vm = BindingContext as CommunityViewModel;
-		var username = vm?.UserName ?? "Guest";
-
-		// Use parameterless popup that resolves its own services
-		var createPostPopup = new CommunityCreatePost();
-		await this.ShowPopupAsync(createPostPopup);
-	}
-}
