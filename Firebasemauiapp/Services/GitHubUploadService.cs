@@ -74,4 +74,50 @@ public class GitHubUploadService
         }
         return $"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{path}";
     }
+
+    public async Task<bool> DeleteImageAsync(string existingUrl)
+    {
+        if (string.IsNullOrWhiteSpace(existingUrl)) return false;
+
+        var owner = Preferences.Default.Get("GitHubOwner", string.Empty);
+        var repo = Preferences.Default.Get("GitHubRepo", string.Empty);
+        var branch = Preferences.Default.Get("GitHubBranch", "main");
+        var token = Preferences.Default.Get("GitHubToken", string.Empty);
+        if (string.IsNullOrWhiteSpace(owner) || string.IsNullOrWhiteSpace(repo) || string.IsNullOrWhiteSpace(token))
+            return false; // not configured
+
+        // Expect format: https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{path}
+        var marker = $"raw.githubusercontent.com/{owner}/{repo}/{branch}/";
+        var idx = existingUrl.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
+        if (idx < 0) return false; // not a raw URL we recognize
+        var path = existingUrl[(idx + marker.Length)..];
+        if (string.IsNullOrWhiteSpace(path)) return false;
+
+        _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Get current file to obtain its sha
+        var getUrl = $"https://api.github.com/repos/{owner}/{repo}/contents/{path}?ref={branch}";
+        var getResp = await _http.GetAsync(getUrl);
+        if (!getResp.IsSuccessStatusCode)
+            return false; // can't fetch
+        using var metaDoc = JsonDocument.Parse(await getResp.Content.ReadAsStringAsync());
+        if (!metaDoc.RootElement.TryGetProperty("sha", out var shaEl)) return false;
+        var sha = shaEl.GetString();
+        if (string.IsNullOrWhiteSpace(sha)) return false;
+
+        var delUrl = $"https://api.github.com/repos/{owner}/{repo}/contents/{path}";
+        var payload = new
+        {
+            message = $"Delete previous diary image {Path.GetFileName(path)}",
+            sha = sha,
+            branch = branch
+        };
+        var json = JsonSerializer.Serialize(payload);
+        var req = new HttpRequestMessage(HttpMethod.Delete, delUrl)
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        };
+        var delResp = await _http.SendAsync(req);
+        return delResp.IsSuccessStatusCode;
+    }
 }

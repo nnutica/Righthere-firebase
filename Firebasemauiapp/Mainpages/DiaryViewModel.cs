@@ -68,6 +68,11 @@ public partial class DiaryViewModel : ObservableObject
             IsUploadingImage = true;
             using var original = await pick.OpenReadAsync();
             var uploader = ServiceHelper.Get<GitHubUploadService>();
+            // Delete previous image in repo if any
+            if (!string.IsNullOrWhiteSpace(ImageUrl))
+            {
+                try { await uploader.DeleteImageAsync(ImageUrl); } catch { /* ignore delete failures */ }
+            }
             var url = await uploader.UploadImageAsync(original, pick.FileName);
             ImageUrl = url;
         }

@@ -1,24 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage
-    x:Class="Firebasemauiapp.Mainpages.DiaryView"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:conv="clr-namespace:Firebasemauiapp.Converters"
-    Title="DiaryView"
-    BackgroundColor="#FEAA3A"
-    Shell.NavBarIsVisible="False">
+<ContentPage x:Class="Firebasemauiapp.Mainpages.DiaryView"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:conv="clr-namespace:Firebasemauiapp.Converters"
+             Title="DiaryView"
+             BackgroundColor="#FEAA3A"
+             Shell.NavBarIsVisible="False">
     <ContentPage.Resources>
         <conv:MoodNameToImageConverter x:Key="MoodNameToImageConverter"/>
     </ContentPage.Resources>
-    <!-- Layout: Row 0 Header, Row 1 Content (3 sub-rows) -->
     <Grid RowDefinitions="Auto,*"
           Padding="20"
           RowSpacing="12">
-        <!-- Header: current date/time -->
+        <!-- Header -->
         <Grid Grid.Row="0"
               RowDefinitions="Auto,Auto"
               ColumnDefinitions="Auto,*"
-              Margin="0,0,0,8">
+              Margin="0,0,0,12">
             <Button Text="←"
                     Clicked="OnBackClicked"
                     BackgroundColor="Transparent"
@@ -27,21 +25,26 @@
                     Padding="0"
                     WidthRequest="36"
                     HeightRequest="36"/>
+            <Image Source="calendar.png"
+                   Grid.Row="1"
+                   Grid.Column="0"
+                   WidthRequest="28"
+                   HeightRequest="28"
+                   Margin="0,4,8,0"/>
             <Label x:Name="DateLabel"
-                   Grid.ColumnSpan="2"
+                   Grid.Column="1"
                    Grid.Row="1"
                    TextColor="White"
-                   FontSize="14"
+                   FontSize="20"
                    Opacity="0.9"
                    Margin="0,4,0,0"/>
         </Grid>
-
-        <!-- Content area split into 3 rows -->
+        <!-- Content -->
         <Grid Grid.Row="1"
               RowDefinitions="Auto,*,Auto,Auto"
               ColumnDefinitions="*,*,*,*,*,*,*,*,*,*,*,*"
               RowSpacing="12">
-            <!-- New Row: Selected Mood indicator -->
+            <!-- Mood indicator -->
             <Grid Grid.Row="0"
                   Grid.ColumnSpan="12"
                   ColumnDefinitions="Auto,*"
@@ -58,64 +61,58 @@
                            Aspect="AspectFit"/>
                 </Border>
             </Grid>
-            <!-- Row 0: Entry Field (no background) -->
+            <!-- Diary editor -->
             <Border Grid.Row="1"
                     Grid.ColumnSpan="12"
-                    Margin="0,10,0,10"
+                    Margin="0,28,0,10"
                     StrokeThickness="0"
                     BackgroundColor="Transparent"
                     Padding="10"
                     VerticalOptions="FillAndExpand"
-                    HeightRequest="300">
+                    HeightRequest="280">
                 <Editor x:Name="DiaryEntry"
                         BackgroundColor="Transparent"
                         Placeholder="share something good..."
                         Text="{Binding DiaryContent}"
-                        TextColor="Black"
+                        FontSize="16    "
+                        TextColor="White"
                         VerticalOptions="FillAndExpand"
                         VerticalTextAlignment="Start"/>
             </Border>
-
-            <!-- Row 1: Image preview (optimized for portrait with AspectFit and taller frame) -->
-            <Border Grid.Row="2"
-                    Grid.ColumnSpan="12"
-                    BackgroundColor="#FFFFFFFF"
-                    StrokeThickness="1"
-                    Stroke="#50A65D"
-                    Padding="6"
-                    Margin="0,4,0,0"
-                    HeightRequest="320"
-                    IsVisible="True">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16"/>
-                </Border.StrokeShape>
-                <Border.Triggers>
-                    <DataTrigger TargetType="Border"
+            <!-- Rounded image (using Frame to clip) -->
+            <Frame Grid.Row="2"
+                   Grid.ColumnSpan="12"
+                   Padding="0"
+                   Margin="0,4,0,0"
+                   CornerRadius="20"
+                   HasShadow="False"
+                   BackgroundColor="Transparent"
+                   BorderColor="Transparent">
+                <Frame.Triggers>
+                    <DataTrigger TargetType="Frame"
                                  Binding="{Binding ImageUrl}"
                                  Value="">
                         <Setter Property="IsVisible"
                                 Value="False"/>
                     </DataTrigger>
-                    <DataTrigger TargetType="Border"
+                    <DataTrigger TargetType="Frame"
                                  Binding="{Binding ImageUrl}"
                                  Value="{x:Null}">
                         <Setter Property="IsVisible"
                                 Value="False"/>
                     </DataTrigger>
-                </Border.Triggers>
+                </Frame.Triggers>
                 <Image Source="{Binding ImageUrl}"
-                       Aspect="AspectFit"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       HeightRequest="408"/>
-            </Border>
-
-            <!-- Row 2: Action row: + icon (left) and Next (right) -->
+                       Aspect="AspectFill"
+                       HeightRequest="360"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Fill"/>
+            </Frame>
+            <!-- Action row -->
             <Grid Grid.Row="3"
                   Grid.ColumnSpan="12"
                   ColumnDefinitions="Auto,Auto,*"
                   VerticalOptions="Center">
-                <!-- + Image icon -->
                 <ImageButton Grid.Column="0"
                              Source="imgicon.png"
                              BackgroundColor="White"
@@ -132,15 +129,11 @@
                                 Opacity="0.35"/>
                     </ImageButton.Shadow>
                 </ImageButton>
-
-                <!-- Spinner next to + when uploading -->
                 <ActivityIndicator Grid.Column="1"
                                    Margin="10,0,0,0"
                                    Color="#50A65D"
                                    IsRunning="{Binding IsUploadingImage}"
                                    IsVisible="{Binding IsUploadingImage}"/>
-
-                <!-- Next button expanded to the right -->
                 <Button Grid.Column="2"
                         x:Name="AnalyzeButton"
                         BackgroundColor="White"
@@ -162,8 +155,6 @@
                     </Button.Shadow>
                 </Button>
             </Grid>
-
-            <!-- Loading Indicator under the row (if needed overlay could be used) -->
             <ActivityIndicator Grid.Row="3"
                                Grid.ColumnSpan="12"
                                Margin="10"
