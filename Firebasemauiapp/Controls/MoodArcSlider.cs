@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Controls.Shapes;
-using Microsoft.Maui; // Added missing using directive
+using Microsoft.Maui;
 
 namespace Firebasemauiapp.Controls
 {
-    // A simple half-circle discrete mood slider made of clickable dots.
-    // Value mapped 1..10 across 10 dots. Supports tap + drag.
+    // Horizontal linear mood slider with single row of connected dots
+    // Value mapped 0..10 across 10 dots. Supports tap + drag.
+    // COLOR CONFIGURATION:
+    // - Line 87, 120: Unfilled color = #F8A33A (orange)
+    // - Line 182, 183: Filled color = Colors.White (white)
+    // - Line 184, 185: Unfilled color = #F8A33A (orange)
+    // - Line 192: Filled line color = Colors.White (white)
+    // - Line 192: Unfilled line color = #F8A33A (orange)
     public class MoodArcSlider : ContentView
     {
         public static readonly BindableProperty ValueProperty = BindableProperty.Create(
@@ -21,22 +27,16 @@ namespace Firebasemauiapp.Controls
         }
 
         private readonly AbsoluteLayout _layout = new AbsoluteLayout();
-        private readonly List<View> _dots = new();
-        private const int DotCount = 10; // 1..10
-
-        // Geometry cache for drag calculations
-        private double _radius;
-        private double _centerX;
-        private double _centerY;
-        private Point _dragStart;
-        // Downward arc (smile): left -> right; use lower half of the circle
-        private const double StartDeg = 160.0; // left
-        private const double EndDeg = 20.0;    // right
+        private readonly List<Border> _dots = new();
+        private readonly List<BoxView> _lines = new();
+        private const int DotCount = 10;
+        private bool _isBuilt = false;
 
         public MoodArcSlider()
         {
             Content = _layout;
             SizeChanged += (_, _) => BuildDots();
+            Loaded += (_, _) => BuildDots();
         }
 
         private static void OnValueChanged(BindableObject bindable, object oldValue, object newValue)
@@ -47,116 +47,101 @@ namespace Firebasemauiapp.Controls
 
         private void BuildDots()
         {
-            if (Width <= 0 || Height <= 0) return;
+            // Use WidthRequest/HeightRequest as fallback if Width/Height not set yet
+            double actualWidth = Width > 0 ? Width : WidthRequest;
+            double actualHeight = Height > 0 ? Height : HeightRequest;
+            
+            if (actualWidth <= 0 || actualHeight <= 0) return;
+            if (_isBuilt) return; // Prevent rebuilding multiple times
+            
             _layout.Children.Clear();
             _dots.Clear();
+            _lines.Clear();
+            _isBuilt = true;
 
-            // Use available width, set arc radius.
-            double radius = Math.Min(Width, Height * 2) / 2.0; // ensure fits vertically as half circle
-            double centerX = Width / 2.0;
-            // Place circle center at top so the visible arc is the lower half (curving down)
-            double centerY = 0;
+            double dotSize = 24; // Optimized size to not overlap lines
+            double lineThickness = 8; // Increased from 3 to 5
+            double spacing = (actualWidth - dotSize * DotCount) / (DotCount - 1);
+            double rowY = (actualHeight - dotSize) / 2; // Center vertically
 
-            _radius = radius;
-            _centerX = centerX;
-            _centerY = centerY;
+            // Build lines first (so they appear behind dots)
+            for (int i = 0; i < DotCount - 1; i++)
+            {
+                double x = i * (dotSize + spacing);
+                double y = rowY;
 
-            // Angles for smile arc (left 160° to right 20°)
-            double startDeg = StartDeg;
-            double endDeg = EndDeg;
+                var line = new BoxView
+                {
+                    Color = Color.FromArgb("#CE8A30"), // Default: orange (unfilled)
+                    HeightRequest = lineThickness
+                };
+                AbsoluteLayout.SetLayoutBounds(line, new Rect(x + dotSize, y + dotSize / 2 - lineThickness / 2, spacing, lineThickness));
+                _layout.Children.Add(line);
+                _lines.Add(line);
+            }
+
+            // Build dots on top of lines
             for (int i = 0; i < DotCount; i++)
             {
-                double t = i / (double)(DotCount - 1);
-                // Lerp even if end < start (wrap not crossing 0 here)
-                double deg = startDeg + (endDeg - startDeg) * t;
-                double rad = deg * Math.PI / 180.0;
-                // Larger, responsive dots with bigger tap area
-                double dotRadius = Math.Max(14, Width * 0.05);
-                double x = centerX + radius * Math.Cos(rad);
-                double y = centerY + radius * Math.Sin(rad);
+                double x = i * (dotSize + spacing);
+                double y = rowY;
 
-                // Create a larger invisible tap zone for easier selection
-                double tapSize = dotRadius * 2.2; // generous target, avoid overlap
-                var tapZone = new Grid { WidthRequest = tapSize, HeightRequest = tapSize, BackgroundColor = Colors.Transparent };
-
-                // Visual dot inside the tap zone
-                var frame = new Border
-                {
-                    WidthRequest = dotRadius * 2,
-                    HeightRequest = dotRadius * 2,
-                    BackgroundColor = Colors.Black,
-                    Stroke = Colors.White,
-                    StrokeThickness = 1,
-                    StrokeShape = new RoundRectangle { CornerRadius = (float)dotRadius },
-                    HorizontalOptions = LayoutOptions.Center,
-                    VerticalOptions = LayoutOptions.Center
-                };
-                tapZone.Add(frame);
-
-                var tap = new TapGestureRecognizer();
-                int idx = i;
-                tap.Tapped += (_, __) =>
-                {
-                    Value = idx + 1; // map to 1..10 (0 means none)
-                };
-                tapZone.GestureRecognizers.Add(tap);
-
-                // Add pan for continuous dragging starting from this dot
-                var pan = new PanGestureRecognizer();
-                Point startFrom = new Point(x, y);
-                pan.PanUpdated += (_, e) =>
-                {
-                    if (e.StatusType == GestureStatus.Started)
-                    {
-                        _dragStart = startFrom; // start from the dot center
-                    }
-                    else if (e.StatusType == GestureStatus.Running)
-                    {
-                        var current = new Point(_dragStart.X + e.TotalX, _dragStart.Y + e.TotalY);
-                        UpdateValueFromPoint(current);
-                    }
-                };
-                tapZone.GestureRecognizers.Add(pan);
-
-                // Position: adjust by dotRadius to center
-                AbsoluteLayout.SetLayoutBounds(tapZone, new Rect(x - tapSize / 2, y - tapSize / 2, tapSize, tapSize));
-                _layout.Children.Add(tapZone);
-                _dots.Add(frame); // keep reference to visual dot for styling
+                var dot = CreateDot(dotSize, i);
+                AbsoluteLayout.SetLayoutBounds(dot, new Rect(x, y, dotSize, dotSize));
+                _layout.Children.Add(dot);
+                _dots.Add(dot);
             }
 
             UpdateDotStyles();
         }
 
-        private void UpdateValueFromPoint(Point pt)
+        private Border CreateDot(double size, int index)
         {
-            // Convert point to angle around the circle center (0..360)
-            double ang = Math.Atan2(pt.Y - _centerY, pt.X - _centerX) * 180.0 / Math.PI;
-            if (ang < 0) ang += 360;
-
-            // Map along the SHORTEST path from StartDeg (left) to EndDeg (right)
-            static double SignedDelta(double from, double to)
+            var dot = new Border
             {
-                double d = (to - from + 540) % 360 - 180; // -180..180
-                return d;
-            }
+                WidthRequest = size,
+                HeightRequest = size,
+                BackgroundColor = Color.FromArgb("#ac7328df"), // Default: orange (unfilled)
+                Stroke = Color.FromArgb("#ac7328df"),
+                StrokeThickness = 5, // Increased from 2 to 5 for thicker border
+                StrokeShape = new RoundRectangle { CornerRadius = (float)(size / 2) }
+            };
 
-            double start = StartDeg;
-            double end = EndDeg;
-            double diff = SignedDelta(start, end); // negative (~-140) for smile arc
-            double d = SignedDelta(start, ang);
+            var tap = new TapGestureRecognizer();
+            int idx = index % DotCount;
+            tap.Tapped += (_, __) =>
+            {
+                Value = idx + 1;
+            };
+            dot.GestureRecognizers.Add(tap);
 
-            // Clamp d to the arc range [min(diff,0) .. max(diff,0)]
-            if (diff < 0)
-                d = Math.Max(diff, Math.Min(0, d));
-            else
-                d = Math.Min(diff, Math.Max(0, d));
+            var pan = new PanGestureRecognizer();
+            pan.PanUpdated += (_, e) =>
+            {
+                if (e.StatusType == GestureStatus.Running)
+                {
+                    double actualWidth = Width > 0 ? Width : WidthRequest;
+                    double spacing = (actualWidth - size * DotCount) / (DotCount - 1);
+                    UpdateValueFromX(e.TotalX + (idx * (size + spacing)));
+                }
+            };
+            dot.GestureRecognizers.Add(pan);
 
-            // Progress 0..1 from left(0) to right(1)
-            double t = diff == 0 ? 0 : Math.Abs(d / diff);
+            return dot;
+        }
 
-            // Map to discrete 0..10
-            int newVal = (int)Math.Round(t * DotCount);
+        private void UpdateValueFromX(double x)
+        {
+            double actualWidth = Width > 0 ? Width : WidthRequest;
+            if (actualWidth <= 0) return;
+
+            double dotSize = 28; // Must match BuildDots
+            double spacing = (actualWidth - dotSize * DotCount) / (DotCount - 1);
+            double totalStep = dotSize + spacing;
+
+            int newVal = (int)Math.Round(x / totalStep);
             newVal = Math.Max(0, Math.Min(DotCount, newVal));
+
             if (Value == null || newVal != Value.Value)
                 Value = newVal;
         }
@@ -166,34 +151,33 @@ namespace Firebasemauiapp.Controls
             if (_dots.Count == 0) return;
             int v = Value ?? 0;
             v = Math.Max(0, Math.Min(DotCount, v));
-            int activeIndex = Math.Clamp(v - 1, -1, DotCount - 1);
+
+            // Update all dots in single row
+            // Filled = solid white circle, Unfilled = hollow orange circle
             for (int i = 0; i < _dots.Count; i++)
             {
-                if (_dots[i] is Border f)
+                bool isFilled = i < v;
+                
+                if (isFilled)
                 {
-                    bool isFilled = i < v;                // fill from left up to Value
-                    bool isActive = i == activeIndex;      // last filled dot
-                    f.BackgroundColor = isFilled ? Colors.White : Colors.Black;
-                    f.Scale = isActive ? 1.25 : 1.0;
-                    f.Stroke = Colors.White;
-                    f.StrokeThickness = isActive ? 3 : 1;
-                    if (isActive)
-                    {
-                        f.Shadow = new Shadow { Brush = Colors.Black, Opacity = 0.25f, Radius = 8, Offset = new Point(0, 2) };
-                    }
-                    else
-                    {
-                        // Assign an empty Shadow to satisfy non-nullable requirement
-                        f.Shadow = new Shadow { Opacity = 0, Radius = 0 };
-                    }
+                    // Filled: solid white circle
+                    _dots[i].BackgroundColor = Colors.White;
+                    _dots[i].Stroke = Colors.White;
+                }
+                else
+                {
+                    // Unfilled: hollow circle with orange border
+                    _dots[i].BackgroundColor = Colors.Transparent;
+                    _dots[i].Stroke = Color.FromArgb("#CE8A30");
                 }
             }
-        }
 
-        // Default color for non-selected dots (black)
-        private Color InterpolateColor(int index)
-        {
-            return Colors.Black;
+            // Update connecting lines
+            for (int i = 0; i < _lines.Count; i++)
+            {
+                bool isFilled = i < v - 1;
+                _lines[i].Color = isFilled ? Colors.White : Color.FromArgb("#CE8A30");
+            }
         }
     }
 }

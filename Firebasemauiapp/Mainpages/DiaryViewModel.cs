@@ -58,22 +58,45 @@ public partial class DiaryViewModel : ObservableObject
     {
         try
         {
-            var pick = await FilePicker.Default.PickAsync(new PickOptions
+            // Ask user to choose between camera or gallery
+            var action = await Shell.Current.DisplayActionSheet(
+                "Choose photo source", 
+                "Cancel", 
+                null, 
+                "Take Photo", 
+                "Choose from Gallery");
+
+            FileResult? result = null;
+            
+            if (action == "Take Photo")
             {
-                PickerTitle = "Select an image",
-                FileTypes = FilePickerFileType.Images
-            });
-            if (pick == null) return;
+                // Camera with potential crop on some devices
+                result = await MediaPicker.Default.CapturePhotoAsync();
+            }
+            else if (action == "Choose from Gallery")
+            {
+                // Gallery picker
+                result = await MediaPicker.Default.PickPhotoAsync(new MediaPickerOptions
+                {
+                    Title = "Select a photo"
+                });
+            }
+            
+            if (result == null) return;
 
             IsUploadingImage = true;
-            using var original = await pick.OpenReadAsync();
+            
+            // Use original image directly
+            string finalPath = result.FullPath;
+
+            using var stream = File.OpenRead(finalPath);
             var uploader = ServiceHelper.Get<GitHubUploadService>();
             // Delete previous image in repo if any
             if (!string.IsNullOrWhiteSpace(ImageUrl))
             {
                 try { await uploader.DeleteImageAsync(ImageUrl); } catch { /* ignore delete failures */ }
             }
-            var url = await uploader.UploadImageAsync(original, pick.FileName);
+            var url = await uploader.UploadImageAsync(stream, result.FileName);
             ImageUrl = url;
         }
         catch (Exception ex)

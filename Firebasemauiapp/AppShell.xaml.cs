@@ -21,6 +21,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("main/summary", typeof(SummaryView));
 		Routing.RegisterRoute("main/levelmood", typeof(LevelMoodPage));
 		Routing.RegisterRoute("main/write", typeof(DiaryView));
+	
 	}
 
 	private async void OnLogoutClicked(object sender, EventArgs e)

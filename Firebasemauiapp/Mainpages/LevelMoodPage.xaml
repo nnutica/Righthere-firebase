@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:controls="clr-namespace:Firebasemauiapp.Controls"
              x:Class="Firebasemauiapp.Mainpages.LevelMoodPage"
+             Shell.NavBarIsVisible="False"
              Title="Level of Mood">
     <Grid RowDefinitions="*,32">
         <!-- Orange card-like area -->
@@ -37,19 +38,23 @@
                     </Label.FormattedText>
                 </Label>
             </VerticalStackLayout>
-            <VerticalStackLayout Grid.Row="1"
-                                 Spacing="20"
-                                 HorizontalOptions="Center"
-                                 VerticalOptions="Center">
+            <!-- Use AbsoluteLayout for precise positioning -->
+            <AbsoluteLayout Grid.Row="1">
+                <!-- Mood Icon -->
                 <Image Source="{Binding Mood.Icon}"
                        HeightRequest="200"
                        WidthRequest="200"
                        Aspect="AspectFit"
-                       HorizontalOptions="Center"/>
+                       AbsoluteLayout.LayoutBounds="0.5, 0.25, 200, 200"
+                       AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                
+                <!-- "I'm Feeling [Mood]" Label -->
                 <Label FontSize="24"
                        TextColor="White"
                        FontAttributes="Bold"
-                       HorizontalOptions="Center">
+                       HorizontalTextAlignment="Center"
+                       AbsoluteLayout.LayoutBounds="0.5, 0.48, 300, 30"
+                       AbsoluteLayout.LayoutFlags="PositionProportional">
                     <Label.FormattedText>
                         <FormattedString>
                             <Span Text="I'm Feeling "
@@ -63,24 +68,39 @@
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                <!-- Semicircle mood arc slider -->
+                
+                <!-- Linear single-row mood slider -->
                 <controls:MoodArcSlider WidthRequest="340"
-                                        HeightRequest="180"
-                                        Value="{Binding Score}"/>
+                                        HeightRequest="50"
+                                        Value="{Binding Score}"
+                                        AbsoluteLayout.LayoutBounds="0.5, 0.65, 340, 50"
+                                        AbsoluteLayout.LayoutFlags="PositionProportional"/>
+                
+                <!-- Score Label -->
                 <Label Text="{Binding Score, StringFormat='Score: {0}/10'}"
                        FontSize="16"
                        TextColor="White"
-                       HorizontalOptions="Center"/>
-            </VerticalStackLayout>
+                       HorizontalTextAlignment="Center"
+                       AbsoluteLayout.LayoutBounds="0.5, 0.88, 150, 25"
+                       AbsoluteLayout.LayoutFlags="PositionProportional"/>
+            </AbsoluteLayout>
 
             <Button Grid.Row="2"
-                    Text="Let’s Express Your Mood!"
+                    Text="Let's Express Your Mood!"
                     BackgroundColor="#8FB78F"
                     TextColor="White"
                     CornerRadius="12"
                     HeightRequest="48"
                     Command="{Binding SetMoodCommand}">
                 <Button.Triggers>
+                    <DataTrigger TargetType="Button"
+                                 Binding="{Binding Score}"
+                                 Value="{x:Null}">
+                        <Setter Property="IsEnabled"
+                                Value="False"/>
+                        <Setter Property="BackgroundColor"
+                                Value="#D3D3D3"/>
+                    </DataTrigger>
                     <DataTrigger TargetType="Button"
                                  Binding="{Binding Score}"
                                  Value="0">

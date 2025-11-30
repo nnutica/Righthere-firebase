@@ -13,6 +13,7 @@
 
             <!-- Converters -->
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+            <converters:ScoreToHeightConverter x:Key="ScoreToHeightConverter"/>
 
             <!-- Make Shell navigation bar transparent and remove shadow globally -->
             <Style TargetType="ContentPage"

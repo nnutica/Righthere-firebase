@@ -34,6 +34,9 @@ namespace Firebasemauiapp.Model
         [FirestoreProperty("emotionalReflection")]
         public string EmotionalReflection { get; set; } = string.Empty;
 
+        [FirestoreProperty("reason")]
+        public string Reason { get; set; } = string.Empty;
+
         // Backward-compatible single image field
         [FirestoreProperty("imageUrl")]
         public string? ImageUrl { get; set; }

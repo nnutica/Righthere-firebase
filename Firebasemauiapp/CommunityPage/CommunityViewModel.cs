@@ -167,16 +167,33 @@ public partial class CommunityViewModel : ObservableObject
         try
         {
             var userId = GetCurrentUserId();
-            if (await _postDb.HasUserLikedAsync(RandomPost.PostId, userId))
-                return; // already liked
-            var success = await _postDb.TryLikeOnceAsync(RandomPost.PostId, userId);
-            if (success)
+            var hasLiked = await _postDb.HasUserLikedAsync(RandomPost.PostId, userId);
+            
+            if (hasLiked)
             {
-                var refreshed = await _postDb.GetPostByIdAsync(RandomPost.PostId);
-                if (refreshed != null)
-                    RandomPost = refreshed;
-                else
-                    RandomPost.Likes += 1; // optimistic
+                // Unlike: remove like
+                var success = await _postDb.UnlikePostAsync(RandomPost.PostId, userId);
+                if (success)
+                {
+                    var refreshed = await _postDb.GetPostByIdAsync(RandomPost.PostId);
+                    if (refreshed != null)
+                        RandomPost = refreshed;
+                    else
+                        RandomPost.Likes = Math.Max(0, RandomPost.Likes - 1); // optimistic
+                }
+            }
+            else
+            {
+                // Like: add like
+                var success = await _postDb.TryLikeOnceAsync(RandomPost.PostId, userId);
+                if (success)
+                {
+                    var refreshed = await _postDb.GetPostByIdAsync(RandomPost.PostId);
+                    if (refreshed != null)
+                        RandomPost = refreshed;
+                    else
+                        RandomPost.Likes += 1; // optimistic
+                }
             }
         }
         catch { }

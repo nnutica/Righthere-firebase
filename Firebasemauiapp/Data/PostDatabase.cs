@@ -181,6 +181,26 @@ public class PostDatabase
         return success;
     }
 
+    // UNLIKE: Remove user's like and decrement counter
+    public async Task<bool> UnlikePostAsync(string postId, string userId)
+    {
+        var db = await GetDatabaseAsync();
+        var postRef = db.Collection(_collectionName).Document(postId);
+        var likeRef = postRef.Collection("likes").Document(userId);
+
+        // Check if user has liked
+        var existing = await likeRef.GetSnapshotAsync();
+        if (!existing.Exists)
+            return false; // User hasn't liked, nothing to unlike
+
+        // Remove like marker
+        await likeRef.DeleteAsync();
+
+        // Decrement like counter
+        var success = await TryIncrementLikesAsync(postId, -1);
+        return success;
+    }
+
     // DELETE
     public async Task DeletePostAsync(string postId)
     {

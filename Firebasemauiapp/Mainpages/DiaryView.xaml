@@ -39,55 +39,46 @@
                    Opacity="0.9"
                    Margin="0,4,0,0"/>
         </Grid>
-        <!-- Content -->
-        <Grid Grid.Row="1"
-              RowDefinitions="Auto,*,Auto,Auto"
-              ColumnDefinitions="*,*,*,*,*,*,*,*,*,*,*,*"
-              RowSpacing="12">
-            <!-- Mood indicator -->
-            <Grid Grid.Row="0"
-                  Grid.ColumnSpan="12"
-                  ColumnDefinitions="Auto,*"
-                  Margin="0,0,0,10">
-                <Border BackgroundColor="White"
-                        WidthRequest="60"
-                        HeightRequest="60"
-                        VerticalOptions="Start">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="12"/>
-                    </Border.StrokeShape>
-                    <Image Source="{Binding Mood.Name, Converter={StaticResource MoodNameToImageConverter}}"
-                           Margin="8"
-                           Aspect="AspectFit"/>
-                </Border>
-            </Grid>
-            <!-- Diary editor -->
-            <Border Grid.Row="1"
-                    Grid.ColumnSpan="12"
-                    Margin="0,28,0,10"
-                    StrokeThickness="0"
+        <!-- Content with AbsoluteLayout for precise positioning -->
+        <AbsoluteLayout Grid.Row="1">
+            <!-- Mood indicator - Fixed at top -->
+            <Border BackgroundColor="White"
+                    WidthRequest="70"
+                    HeightRequest="70"
+                    AbsoluteLayout.LayoutBounds="0, 0, 70, 70"
+                    AbsoluteLayout.LayoutFlags="None">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12"/>
+                </Border.StrokeShape>
+                <Image Source="{Binding Mood.Name, Converter={StaticResource MoodNameToImageConverter}}"
+                       Margin="8"
+                       Aspect="AspectFit"/>
+            </Border>
+            
+            <!-- Diary editor - positioned below mood indicator with margin -->
+            <Border StrokeThickness="0"
                     BackgroundColor="Transparent"
                     Padding="10"
-                    VerticalOptions="FillAndExpand"
-                    HeightRequest="280">
+                    AbsoluteLayout.LayoutBounds="0, 58, 1, 240"
+                    AbsoluteLayout.LayoutFlags="WidthProportional">
                 <Editor x:Name="DiaryEntry"
                         BackgroundColor="Transparent"
                         Placeholder="share something good..."
                         Text="{Binding DiaryContent}"
-                        FontSize="16    "
+                        FontSize="16"
                         TextColor="White"
                         VerticalOptions="FillAndExpand"
                         VerticalTextAlignment="Start"/>
             </Border>
-            <!-- Rounded image (using Frame to clip) -->
-            <Frame Grid.Row="2"
-                   Grid.ColumnSpan="12"
-                   Padding="0"
-                   Margin="0,4,0,0"
+            
+            <!-- Rounded image - positioned below editor, enlarged -->
+            <Frame Padding="0"
                    CornerRadius="20"
                    HasShadow="False"
                    BackgroundColor="Transparent"
-                   BorderColor="Transparent">
+                   BorderColor="Transparent"
+                   AbsoluteLayout.LayoutBounds="0, 298, 1, 340"
+                   AbsoluteLayout.LayoutFlags="WidthProportional">
                 <Frame.Triggers>
                     <DataTrigger TargetType="Frame"
                                  Binding="{Binding ImageUrl}"
@@ -104,15 +95,15 @@
                 </Frame.Triggers>
                 <Image Source="{Binding ImageUrl}"
                        Aspect="AspectFill"
-                       HeightRequest="360"
                        HorizontalOptions="Fill"
                        VerticalOptions="Fill"/>
             </Frame>
-            <!-- Action row -->
-            <Grid Grid.Row="3"
-                  Grid.ColumnSpan="12"
-                  ColumnDefinitions="Auto,Auto,*"
-                  VerticalOptions="Center">
+            
+            <!-- Action buttons at bottom -->
+            <Grid ColumnDefinitions="Auto,Auto,*"
+                  AbsoluteLayout.LayoutBounds="0, 640, 1, 70"
+                  AbsoluteLayout.LayoutFlags="WidthProportional"
+                  Margin="0,0,0,10">
                 <ImageButton Grid.Column="0"
                              Source="imgicon.png"
                              BackgroundColor="White"
@@ -155,12 +146,14 @@
                     </Button.Shadow>
                 </Button>
             </Grid>
-            <ActivityIndicator Grid.Row="3"
-                               Grid.ColumnSpan="12"
-                               Margin="10"
+            
+            <!-- Loading indicator -->
+            <ActivityIndicator Margin="10"
                                Color="White"
                                IsRunning="{Binding IsLoadingVisible}"
-                               IsVisible="{Binding IsLoadingVisible}"/>
-        </Grid>
+                               IsVisible="{Binding IsLoadingVisible}"
+                               AbsoluteLayout.LayoutBounds="0.5, 0.5, 50, 50"
+                               AbsoluteLayout.LayoutFlags="PositionProportional"/>
+        </AbsoluteLayout>
     </Grid>
 </ContentPage>

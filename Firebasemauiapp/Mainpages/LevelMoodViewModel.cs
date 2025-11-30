@@ -22,7 +22,7 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
     private MoodOption? _mood;
 
     [ObservableProperty]
-    private int _score = 0;
+    private int? _score = 0;
 
     public LevelMoodViewModel(FirebaseAuthClient authClient)
     {
@@ -77,7 +77,7 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
         {
             ["Username"] = Username,
             ["Mood"] = Mood!,
-            ["MoodScore"] = Score
+            ["MoodScore"] = Score ?? 0
         };
         await Shell.Current.GoToAsync("//main/write", true, navParams);
     }

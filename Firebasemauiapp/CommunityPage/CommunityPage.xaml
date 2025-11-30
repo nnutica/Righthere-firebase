@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:Firebasemauiapp.CommunityPage"
              x:Class="Firebasemauiapp.CommunityPage.CommunityPage"
+             Shell.NavBarIsVisible="False"
              Title="CommunityPage">
     <!-- Background image layer + content -->
   <Grid RowDefinitions="*">

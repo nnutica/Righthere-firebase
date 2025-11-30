@@ -209,12 +209,6 @@ public partial class SummaryViewModel : ObservableObject
 
                 string diaryId = await _diaryDatabase.SaveDiaryAsync(diary);
                 await Shell.Current.DisplayAlert("Saved", "Diary entry saved successfully.", "OK");
-
-                // เครียร์ข้อมูลใน SummaryPageData หลังจากเซฟแล้ว
-                SummaryPageData.Clear();
-
-                // ไปหน้า Starter ทั้งหน้าและ Tab พร้อมรีเซ็ตแท็บ Diary
-                await ResetDiaryAndGoToStarter();
             }
             catch (Exception ex)
             {
@@ -222,11 +216,12 @@ public partial class SummaryViewModel : ObservableObject
                 return;
             }
         }
-        else
-        {
-            // ถ้าไม่เซฟ ก็กลับไปหน้า Starter แต่ไม่เครียร์ข้อมูล
-            await Shell.Current.GoToAsync("//main/home/starter");
-        }
+        
+        // เครียร์ข้อมูลทั้งหมดไม่ว่าจะกด Yes หรือ No
+        SummaryPageData.Clear();
+        
+        // ไปหน้า Starter ทั้งหน้าและ Tab พร้อมรีเซ็ตแท็บ Diary
+        await ResetDiaryAndGoToStarter();
     }
 
     [RelayCommand]
