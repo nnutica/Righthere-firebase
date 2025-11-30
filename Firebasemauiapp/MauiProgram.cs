@@ -69,7 +69,6 @@ public static class MauiProgram
 		builder.Services.AddTransient<DiaryHistoryViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
 		builder.Services.AddTransient<CommunityViewModel>();
-		// Removed QuestViewModel (quests now live in StarterViewModel)
 		builder.Services.AddTransient<LevelMoodViewModel>();
 
 		// Views
