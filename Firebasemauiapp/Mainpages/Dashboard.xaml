@@ -9,19 +9,20 @@
              Title="Dashboard">
     <!-- Add bottom white rounded strip by wrapping content in a two-row Grid -->
     <Grid RowDefinitions="*,32">
-        <ScrollView Grid.Row="0" BackgroundColor="{Binding MoodBackgroundColor}">
+        <ScrollView Grid.Row="0"
+                    BackgroundColor="{Binding MoodBackgroundColor}">
             <!-- Use Grid for structured layout -->
             <Grid RowDefinitions="Auto,Auto,Auto,Auto"
-                  Padding="16"
                   RowSpacing="16">
                 <!-- Header -->
                 <Grid Grid.Row="0"
                       ColumnDefinitions="*,Auto"
-                      Padding="0,8,0,8">
+                      Padding="40,20,24,16">
                     <Label Text="Embracing the&#x0a;echoes of your&#x0a;week."
-                           FontSize="22"
+                           FontSize="48"
                            FontAttributes="Bold"
                            TextColor="White"
+                           HorizontalOptions="Center"
                            LineBreakMode="WordWrap"/>
                     <ImageButton Source="back.png"
                                  WidthRequest="32"
@@ -40,8 +41,9 @@
                         StrokeThickness="0"
                         StrokeShape="RoundRectangle 18"
                         Padding="20"
-                        Margin="0,0,0,12">
-                    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="Auto,*">
+                        Margin="24,0,24,12">
+                    <Grid RowDefinitions="Auto,Auto"
+                          ColumnDefinitions="Auto,*">
                         <!-- Tree Image -->
                         <Image Source="{Binding MostFrequentMoodImage}"
                                HeightRequest="100"
@@ -51,9 +53,11 @@
                                Grid.RowSpan="2"
                                VerticalOptions="Center"
                                Margin="0,0,16,0"/>
-                        
+
                         <!-- Text Content -->
-                        <VerticalStackLayout Grid.Row="0" Grid.Column="1" Spacing="4">
+                        <VerticalStackLayout Grid.Row="0"
+                                             Grid.Column="1"
+                                             Spacing="4">
                             <Label Text="Overall Wellness"
                                    FontSize="16"
                                    TextColor="#4A7BA7"
@@ -63,9 +67,12 @@
                                    TextColor="#4A7BA7"
                                    FontAttributes="Bold"/>
                         </VerticalStackLayout>
-                        
+
                         <!-- Score -->
-                        <HorizontalStackLayout Grid.Row="1" Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                        <HorizontalStackLayout Grid.Row="1"
+                                               Grid.Column="1"
+                                               Spacing="4"
+                                               VerticalOptions="Center">
                             <Label Text="{Binding AverageSentimentScore, StringFormat='{0:F0}'}"
                                    FontSize="60"
                                    FontAttributes="Bold"
@@ -81,13 +88,15 @@
                 </Border>
 
                 <!-- Weekly Pulse Section -->
-                <VerticalStackLayout Grid.Row="2" Spacing="8">
+                <VerticalStackLayout Grid.Row="2"
+                                     Spacing="8"
+                                     Padding="24,0">
                     <!-- Title outside card -->
                     <Label Text="Weekly Pulse"
-                           FontSize="20"
+                           FontSize="28"
                            FontAttributes="Bold"
                            TextColor="White"/>
-                    
+
                     <!-- Weekly Pulse Card -->
                     <Border BackgroundColor="White"
                             StrokeThickness="0"
@@ -106,7 +115,7 @@
                                         Padding="0"
                                         Grid.Column="0"
                                         Command="{Binding PreviousWeekCommand}"/>
-                                
+
                                 <Label Text="{Binding WeekDateRange}"
                                        FontSize="13"
                                        TextColor="#7A7A7A"
@@ -114,7 +123,7 @@
                                        HorizontalOptions="Start"
                                        Margin="8,0,0,0"
                                        Grid.Column="1"/>
-                                
+
                                 <!-- Next week button -->
                                 <Button Text="&gt;&gt;"
                                         FontSize="16"
@@ -125,7 +134,7 @@
                                         Padding="0"
                                         Grid.Column="2"
                                         Command="{Binding NextWeekCommand}"/>
-                                
+
                                 <Button Text="History >"
                                         FontSize="13"
                                         TextColor="#FFA726"
@@ -133,105 +142,136 @@
                                         Grid.Column="3"
                                         Command="{Binding GoToDiaryHistoryCommand}"/>
                             </Grid>
-                            
+
                             <!-- Column Chart -->
-                            <Grid ColumnDefinitions="*,*,*,*,*,*,*" ColumnSpacing="8" HeightRequest="140" Margin="0,8,0,0">
-                                <VerticalStackLayout Grid.Column="0" Spacing="4" VerticalOptions="End">
+                            <Grid ColumnDefinitions="*,*,*,*,*,*,*"
+                                  ColumnSpacing="8"
+                                  HeightRequest="140"
+                                  Margin="0,8,0,0">
+                                <VerticalStackLayout Grid.Column="0"
+                                                     Spacing="4"
+                                                     VerticalOptions="End">
                                     <Label Text="{Binding WeeklyPulseData[0].ScoreText}"
                                            FontSize="12"
                                            TextColor="#7A7A7A"
                                            FontAttributes="Bold"
-                                           HorizontalOptions="Center"
-                                           />
+                                           HorizontalOptions="Center"/>
                                     <BoxView HeightRequest="{Binding WeeklyPulseData[0].Score, Converter={StaticResource ScoreToHeightConverter}}"
                                              BackgroundColor="#90CAF9"
                                              CornerRadius="6,6,0,0"
                                              WidthRequest="35"/>
-                                    <Label Text="Sun" FontSize="11" TextColor="#555" HorizontalOptions="Center"/>
+                                    <Label Text="Sun"
+                                           FontSize="11"
+                                           TextColor="#555"
+                                           HorizontalOptions="Center"/>
                                 </VerticalStackLayout>
-                                
-                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="End">
+
+                                <VerticalStackLayout Grid.Column="1"
+                                                     Spacing="4"
+                                                     VerticalOptions="End">
                                     <Label Text="{Binding WeeklyPulseData[1].ScoreText}"
                                            FontSize="12"
                                            TextColor="#7A7A7A"
                                            FontAttributes="Bold"
-                                           HorizontalOptions="Center"
-                                           />
+                                           HorizontalOptions="Center"/>
                                     <BoxView HeightRequest="{Binding WeeklyPulseData[1].Score, Converter={StaticResource ScoreToHeightConverter}}"
                                              BackgroundColor="#90CAF9"
                                              CornerRadius="6,6,0,0"
                                              WidthRequest="35"/>
-                                    <Label Text="Mon" FontSize="11" TextColor="#555" HorizontalOptions="Center"/>
+                                    <Label Text="Mon"
+                                           FontSize="11"
+                                           TextColor="#555"
+                                           HorizontalOptions="Center"/>
                                 </VerticalStackLayout>
-                                
-                                <VerticalStackLayout Grid.Column="2" Spacing="4" VerticalOptions="End">
+
+                                <VerticalStackLayout Grid.Column="2"
+                                                     Spacing="4"
+                                                     VerticalOptions="End">
                                     <Label Text="{Binding WeeklyPulseData[2].ScoreText}"
                                            FontSize="12"
                                            TextColor="#7A7A7A"
                                            FontAttributes="Bold"
-                                           HorizontalOptions="Center"
-                                           />
+                                           HorizontalOptions="Center"/>
                                     <BoxView HeightRequest="{Binding WeeklyPulseData[2].Score, Converter={StaticResource ScoreToHeightConverter}}"
                                              BackgroundColor="#90CAF9"
                                              CornerRadius="6,6,0,0"
                                              WidthRequest="35"/>
-                                    <Label Text="Tue" FontSize="11" TextColor="#555" HorizontalOptions="Center"/>
+                                    <Label Text="Tue"
+                                           FontSize="11"
+                                           TextColor="#555"
+                                           HorizontalOptions="Center"/>
                                 </VerticalStackLayout>
-                                
-                                <VerticalStackLayout Grid.Column="3" Spacing="4" VerticalOptions="End">
+
+                                <VerticalStackLayout Grid.Column="3"
+                                                     Spacing="4"
+                                                     VerticalOptions="End">
                                     <Label Text="{Binding WeeklyPulseData[3].ScoreText}"
                                            FontSize="12"
                                            TextColor="#7A7A7A"
                                            FontAttributes="Bold"
-                                           HorizontalOptions="Center"
-                                           />
+                                           HorizontalOptions="Center"/>
                                     <BoxView HeightRequest="{Binding WeeklyPulseData[3].Score, Converter={StaticResource ScoreToHeightConverter}}"
                                              BackgroundColor="#90CAF9"
                                              CornerRadius="6,6,0,0"
                                              WidthRequest="35"/>
-                                    <Label Text="Wed" FontSize="11" TextColor="#555" HorizontalOptions="Center"/>
+                                    <Label Text="Wed"
+                                           FontSize="11"
+                                           TextColor="#555"
+                                           HorizontalOptions="Center"/>
                                 </VerticalStackLayout>
-                                
-                                <VerticalStackLayout Grid.Column="4" Spacing="4" VerticalOptions="End">
+
+                                <VerticalStackLayout Grid.Column="4"
+                                                     Spacing="4"
+                                                     VerticalOptions="End">
                                     <Label Text="{Binding WeeklyPulseData[4].ScoreText}"
                                            FontSize="12"
                                            TextColor="#7A7A7A"
                                            FontAttributes="Bold"
-                                           HorizontalOptions="Center"
-                                           />
+                                           HorizontalOptions="Center"/>
                                     <BoxView HeightRequest="{Binding WeeklyPulseData[4].Score, Converter={StaticResource ScoreToHeightConverter}}"
                                              BackgroundColor="#90CAF9"
                                              CornerRadius="6,6,0,0"
                                              WidthRequest="35"/>
-                                    <Label Text="Thu" FontSize="11" TextColor="#555" HorizontalOptions="Center"/>
+                                    <Label Text="Thu"
+                                           FontSize="11"
+                                           TextColor="#555"
+                                           HorizontalOptions="Center"/>
                                 </VerticalStackLayout>
-                                
-                                <VerticalStackLayout Grid.Column="5" Spacing="4" VerticalOptions="End">
+
+                                <VerticalStackLayout Grid.Column="5"
+                                                     Spacing="4"
+                                                     VerticalOptions="End">
                                     <Label Text="{Binding WeeklyPulseData[5].ScoreText}"
                                            FontSize="12"
                                            TextColor="#7A7A7A"
                                            FontAttributes="Bold"
-                                           HorizontalOptions="Center"
-                                           />
+                                           HorizontalOptions="Center"/>
                                     <BoxView HeightRequest="{Binding WeeklyPulseData[5].Score, Converter={StaticResource ScoreToHeightConverter}}"
                                              BackgroundColor="#90CAF9"
                                              CornerRadius="6,6,0,0"
                                              WidthRequest="35"/>
-                                    <Label Text="Fri" FontSize="11" TextColor="#555" HorizontalOptions="Center"/>
+                                    <Label Text="Fri"
+                                           FontSize="11"
+                                           TextColor="#555"
+                                           HorizontalOptions="Center"/>
                                 </VerticalStackLayout>
-                                
-                                <VerticalStackLayout Grid.Column="6" Spacing="4" VerticalOptions="End">
+
+                                <VerticalStackLayout Grid.Column="6"
+                                                     Spacing="4"
+                                                     VerticalOptions="End">
                                     <Label Text="{Binding WeeklyPulseData[6].ScoreText}"
                                            FontSize="12"
                                            TextColor="#7A7A7A"
                                            FontAttributes="Bold"
-                                           HorizontalOptions="Center"
-                                           />
+                                           HorizontalOptions="Center"/>
                                     <BoxView HeightRequest="{Binding WeeklyPulseData[6].Score, Converter={StaticResource ScoreToHeightConverter}}"
                                              BackgroundColor="#90CAF9"
                                              CornerRadius="6,6,0,0"
                                              WidthRequest="35"/>
-                                    <Label Text="Sat" FontSize="11" TextColor="#555" HorizontalOptions="Center"/>
+                                    <Label Text="Sat"
+                                           FontSize="11"
+                                           TextColor="#555"
+                                           HorizontalOptions="Center"/>
                                 </VerticalStackLayout>
                             </Grid>
                         </VerticalStackLayout>
@@ -239,13 +279,15 @@
                 </VerticalStackLayout>
 
                 <!-- Resonating Themes Section -->
-                <VerticalStackLayout Grid.Row="3" Spacing="8">
+                <VerticalStackLayout Grid.Row="3"
+                                     Spacing="8"
+                                     Padding="24,0">
                     <!-- Title outside card -->
                     <Label Text="Resonating Themes"
-                           FontSize="20"
+                           FontSize="28"
                            FontAttributes="Bold"
                            TextColor="White"/>
-                    
+
                     <!-- Themes Card -->
                     <Border BackgroundColor="White"
                             StrokeThickness="0"

@@ -1,4 +1,3 @@
-using SkiaSharp;
 
 
 namespace Firebasemauiapp.Mainpages;
@@ -20,6 +19,6 @@ public partial class Dashboard : ContentPage
 		}
 	}
 
-	
-	
+
+
 }

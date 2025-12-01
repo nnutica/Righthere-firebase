@@ -84,10 +84,10 @@ public partial class DashboardViewModel : ObservableObject
 	{
 		[ObservableProperty]
 		private string _day = "";
-		
+
 		[ObservableProperty]
 		private double _score;
-		
+
 		public string ScoreText => Score > 0 ? Score.ToString("F0") : "";
 	}
 
@@ -113,7 +113,7 @@ public partial class DashboardViewModel : ObservableObject
 		GoToDiaryHistoryCommand = new AsyncRelayCommand(GoToDiaryHistory);
 		PreviousWeekCommand = new AsyncRelayCommand(PreviousWeek);
 		NextWeekCommand = new AsyncRelayCommand(NextWeek);
-		
+
 		// Initialize WeeklyPulseData with 7 empty items
 		for (int i = 0; i < 7; i++)
 		{
@@ -139,14 +139,14 @@ public partial class DashboardViewModel : ObservableObject
 			SentimentScores.Clear();
 			ChartData.Clear();
 			ResonatingThemes.Clear();
-			
+
 			var user = _authClient.User;
 			if (user == null) return;
-			
+
 			var diaries = (await _diaryDatabase.GetDiariesByUserAsync(user.Uid))
 				.OrderBy(x => x.CreatedAtDateTime)
 				.ToList();
-			
+
 			foreach (var d in diaries)
 			{
 				SentimentScores.Add(d.SentimentScore);
@@ -156,22 +156,22 @@ public partial class DashboardViewModel : ObservableObject
 			// Week starts on Sunday (0) and ends on Saturday (6)
 			var today = DateTime.Today;
 			var currentDayOfWeek = (int)today.DayOfWeek; // Sunday = 0, Saturday = 6
-			
+
 			// Calculate the start of current week (Sunday)
 			var currentWeekStart = today.AddDays(-currentDayOfWeek);
-			
+
 			// Apply week offset
 			var weekStart = currentWeekStart.AddDays(WeekOffset * 7);
 			var weekEnd = weekStart.AddDays(6);
-			
+
 			// Filter diaries for the selected week
 			var weekDiaries = diaries
 				.Where(d => d.CreatedAtDateTime.Date >= weekStart && d.CreatedAtDateTime.Date <= weekEnd)
 				.ToList();
-			
+
 			// Calculate most frequent mood in selected week
 			CalculateMostFrequentMood(weekDiaries);
-			
+
 			// Calculate Overall Wellness Pulse (average of selected week)
 			if (weekDiaries.Any())
 			{
@@ -188,20 +188,20 @@ public partial class DashboardViewModel : ObservableObject
 			{
 				var targetDate = weekStart.AddDays(i);
 				var diary = weekDiaries.FirstOrDefault(d => d.CreatedAtDateTime.Date == targetDate);
-				
+
 				WeeklyPulseData[i].Day = targetDate.ToString("ddd").Substring(0, 3);
 				WeeklyPulseData[i].Score = diary?.SentimentScore ?? 0;
 			}
-			
+
 			// Update date range display
 			WeekDateRange = $"{weekStart:ddd, dd} - {weekEnd:ddd, dd}";
-			
+
 			// Notify changes
 			OnPropertyChanged(nameof(WeeklyPulseData));
 
 			// Calculate Resonating Themes from selected week
 			CalculateResonatingThemes(weekDiaries);
-			
+
 			// Show week scores for line chart
 			foreach (var d in weekDiaries)
 			{
@@ -252,12 +252,12 @@ public partial class DashboardViewModel : ObservableObject
 			// Set background color based on mood
 			MoodBackgroundColor = mood switch
 			{
-				"happiness" => Color.FromArgb("#FFF9C4"), // Light yellow
-				"anger" => Color.FromArgb("#FFCDD2"), // Light red
-				"sadness" => Color.FromArgb("#BBDEFB"), // Light blue
-				"fear" => Color.FromArgb("#E1BEE7"), // Light purple
-				"love" => Color.FromArgb("#F8BBD0"), // Light pink
-				"surprise" => Color.FromArgb("#FFE0B2"), // Light orange
+				"happiness" => Color.FromArgb("#F5C857"), // Light yellow
+				"anger" => Color.FromArgb("#FF5555"), // Light red
+				"sadness" => Color.FromArgb("#2B638D"), // Light blue
+				"fear" => Color.FromArgb("#662B8D"), // Light purple
+				"love" => Color.FromArgb("#FF82E8"), // Light pink
+				"surprise" => Color.FromArgb("#DFBC31"), // Light orange
 				_ => Color.FromArgb("#F8FAED")
 			};
 		}
