@@ -198,11 +198,11 @@ public partial class StarterViewModel : ObservableObject
 
             var db = await _firestoreService.GetDatabaseAsync();
             var snap = await db.Collection("users").Document(user.Uid).GetSnapshotAsync();
-            
+
             if (snap.Exists)
             {
                 Console.WriteLine("StarterViewModel: User document exists");
-                
+
                 // Load coin
                 if (snap.TryGetValue("coin", out int coin))
                 {

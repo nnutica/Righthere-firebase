@@ -63,9 +63,7 @@
 		<!-- Firebase Admin SDK Key - Embed as resource in the assembly -->
 		<!-- Using EmbeddedResource ensures it's always bundled in APK/AAB -->
 		<None Remove="Resources\Raw\admin-sdk.json" />
-		<EmbeddedResource Include="Resources\Raw\admin-sdk.json">
-			<LogicalName>admin-sdk.json</LogicalName>
-		</EmbeddedResource>
+		<EmbeddedResource Include="Resources\Raw\admin-sdk.json" />
 	</ItemGroup>
 
 	<ItemGroup>
