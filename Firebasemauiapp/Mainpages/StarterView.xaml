@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:converters="clr-namespace:Firebasemauiapp.Converters;assembly=Firebasemauiapp"
+    xmlns:local="clr-namespace:Firebasemauiapp.Mainpages"
     x:Name="Root"
     Title="StarterView"
     BackgroundImageSource="main_bg.png"
@@ -172,21 +173,25 @@
                             <Image x:Name="PlantImageView"
                                    Source="{Binding PlantImage}"
                                    WidthRequest="220"
-                                   HeightRequest="160"
+                                   HeightRequest="200"
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center"
-                                   TranslationY="-18"
-                                   ZIndex="1"/>
+                                   TranslationY="-54"
+                                   ZIndex="2"/>
 
-                            <!-- Pot (front layer) -->
+                            <!-- Pot (front layer) - Tappable to change pot -->
                             <Image x:Name="PotImageView"
                                    Source="{Binding PotImage}"
                                    WidthRequest="200"
-                                   HeightRequest="120"
+                                   HeightRequest="200"
                                    HorizontalOptions="Center"
                                    VerticalOptions="End"
                                    TranslationY="10"
-                                   ZIndex="2"/>
+                                   ZIndex="1">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenPotSelectionCommand}"/>
+                                </Image.GestureRecognizers>
+                            </Image>
 
                             <!-- Removed tap button: plant is no longer interactive -->
                         </Grid>
@@ -342,5 +347,9 @@
                 <RoundRectangle CornerRadius="28,28,0,0"/>
             </Border.StrokeShape>
         </Border>
+
+        <!-- Pot Selection Popup -->
+        <ContentView x:Name="PotSelectionPopupContainer"
+                     Grid.RowSpan="2"/>
     </Grid>
 </ContentPage>

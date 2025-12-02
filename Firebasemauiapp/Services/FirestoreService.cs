@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Google.Cloud.Firestore;
 using Google.Apis.Auth.OAuth2;
@@ -19,40 +21,126 @@ public class FirestoreService
     {
         try
         {
-            // อ่าน service account key จากไฟล์ admin-sdk.json ใน Resources/Raw
-            using var stream = await FileSystem.Current.OpenAppPackageFileAsync("admin-sdk.json");
-
-            // สร้าง credential จาก stream
-            var credential = GoogleCredential.FromStream(stream);
-
-            // สร้าง FirestoreDb ด้วย credential
-            var projectId = "righthere-backend";
-
-            // สร้าง FirestoreDbBuilder และตั้งค่า credential
-            var builder = new FirestoreDbBuilder
+            Console.WriteLine("FirestoreService: Starting initialization...");
+            Console.WriteLine($"FirestoreService: App data directory: {FileSystem.AppDataDirectory}");
+            Console.WriteLine($"FirestoreService: Cache directory: {FileSystem.CacheDirectory}");
+            
+            // Method 1: อ่านจาก EmbeddedResource (จะทำงานทั้ง emulator และ deployed APK)
+            try
             {
-                ProjectId = projectId,
-                Credential = credential
-            };
+                Console.WriteLine("FirestoreService: Method 1 - Reading admin-sdk.json from EmbeddedResource...");
+                
+                var assembly = typeof(FirestoreService).Assembly;
+                var resourceNames = assembly.GetManifestResourceNames();
+                Console.WriteLine($"FirestoreService: Available embedded resources: {string.Join(", ", resourceNames)}");
+                
+                // ลองหาชื่อ resource ที่มี admin-sdk
+                var resourceName = resourceNames.FirstOrDefault(n => n.Contains("admin-sdk.json"));
+                
+                if (resourceName == null)
+                {
+                    // ลองใช้ชื่อเต็ม
+                    resourceName = "Firebasemauiapp.admin-sdk.json";
+                    Console.WriteLine($"FirestoreService: Trying full resource name: {resourceName}");
+                }
+                else
+                {
+                    Console.WriteLine($"FirestoreService: Found resource: {resourceName}");
+                }
+                
+                using var stream = assembly.GetManifestResourceStream(resourceName);
+                
+                if (stream == null)
+                {
+                    throw new FileNotFoundException($"Embedded resource '{resourceName}' not found in assembly");
+                }
+                
+                Console.WriteLine($"FirestoreService: ✅ Resource stream opened! Length: {stream.Length} bytes");
+                
+                var credential = GoogleCredential.FromStream(stream);
+                Console.WriteLine("FirestoreService: ✅ Credential created from embedded resource");
+                
+                var projectId = "righthere-backend";
+                var builder = new FirestoreDbBuilder
+                {
+                    ProjectId = projectId,
+                    Credential = credential
+                };
 
-            db = await builder.BuildAsync();
+                Console.WriteLine("FirestoreService: Building Firestore DB...");
+                db = await builder.BuildAsync();
+                Console.WriteLine("FirestoreService: ✅✅✅ Initialized with admin-sdk.json from EmbeddedResource!");
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"FirestoreService: ❌ Method 1 failed: {ex.GetType().Name}");
+                Console.WriteLine($"FirestoreService: Message: {ex.Message}");
+                Console.WriteLine($"FirestoreService: StackTrace: {ex.StackTrace}");
+            }
 
-            Console.WriteLine("Firestore initialized successfully!");
+            // Method 2: ลองอ่านจาก FileSystem (fallback สำหรับ emulator)
+            try
+            {
+                Console.WriteLine("FirestoreService: Method 2 - Trying FileSystem.OpenAppPackageFileAsync...");
+                using var stream = await FileSystem.Current.OpenAppPackageFileAsync("admin-sdk.json");
+                
+                Console.WriteLine($"FirestoreService: ✅ Stream opened from FileSystem! Length: {stream.Length} bytes");
+                
+                var credential = GoogleCredential.FromStream(stream);
+                var projectId = "righthere-backend";
+                var builder = new FirestoreDbBuilder
+                {
+                    ProjectId = projectId,
+                    Credential = credential
+                };
+
+                db = await builder.BuildAsync();
+                Console.WriteLine("FirestoreService: ✅ Initialized with FileSystem method!");
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"FirestoreService: ❌ Method 2 failed: {ex.Message}");
+            }
+
+            // Fallback: ลองใช้ environment variables (จะไม่สำเร็จใน Android แต่ลองดู)
+            Console.WriteLine("FirestoreService: ⚠️ Attempting fallback with environment credentials...");
+            
+            try
+            {
+                // ลองสร้างแบบใช้ default credentials (ไม่น่าจะได้บน Android)
+                Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", 
+                    Path.Combine(FileSystem.AppDataDirectory, "admin-sdk.json"));
+                
+                db = FirestoreDb.Create("righthere-backend");
+                Console.WriteLine("FirestoreService: ⚠️ Initialized with environment credentials");
+            }
+            catch (Exception envEx)
+            {
+                Console.WriteLine($"FirestoreService: ❌ Environment credentials failed: {envEx.Message}");
+                
+                // Last resort: สร้าง anonymous GoogleCredential
+                Console.WriteLine("FirestoreService: 🔧 Creating anonymous credential as last resort...");
+                
+                var anonCredential = GoogleCredential.FromAccessToken(null);
+                var builder = new FirestoreDbBuilder
+                {
+                    ProjectId = "righthere-backend",
+                    Credential = anonCredential
+                };
+                
+                db = await builder.BuildAsync();
+                Console.WriteLine("FirestoreService: ⚠️ Created with anonymous credential - ACCESS WILL BE LIMITED");
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error initializing Firestore: {ex.Message}");
-            // สำหรับ development ถ้า credential ไม่ทำงาน ให้ลองใช้แบบง่าย
-            try
-            {
-                db = FirestoreDb.Create("righthere-backend");
-                Console.WriteLine("Firestore initialized with default credentials");
-            }
-            catch (Exception ex2)
-            {
-                Console.WriteLine($"Fallback initialization also failed: {ex2.Message}");
-                throw;
-            }
+            Console.WriteLine($"FirestoreService: ❌ FATAL: Initialization failed completely");
+            Console.WriteLine($"FirestoreService: Exception type: {ex.GetType().Name}");
+            Console.WriteLine($"FirestoreService: Message: {ex.Message}");
+            Console.WriteLine($"FirestoreService: StackTrace: {ex.StackTrace}");
+            throw new Exception($"Unable to initialize Firestore: {ex.Message}", ex);
         }
     }
 

@@ -8,7 +8,7 @@
     Shell.NavBarIsVisible="False"
     BackgroundColor="#FEAA3A">
 
-    <!-- Fullscreen cards: fill entire page, no title, no buttons -->
+    <!-- Key Themes page with sticky note cards -->
     <Grid RowDefinitions="Auto,*,Auto">
 
         <Image Source="summarybg.png"
@@ -16,122 +16,132 @@
                Aspect="AspectFill"
                InputTransparent="True"/>
 
-        <!-- Header -->
-        <Label Grid.Row="0"
-               Text="What&#10;You&#10;Shared&#10;Today"
-               TextColor="White"
-               FontSize="44"
-               FontAttributes="Bold"
-               LineHeight="0.95"
-               Margin="30,20,0,0"
-               HeightRequest="200"/>
+        <!-- Header: Key Themes -->
+        <VerticalStackLayout Grid.Row="0"
+                             Spacing="-6"
+                             Margin="40,30,0,10"
+                             VerticalOptions="Start">
+            <Label Text="Key"
+                   FontFamily="AppFont"
+                   FontSize="44"
+                   FontAttributes="Bold"
+                   TextColor="White"/>
+            <Label Text="Themes"
+                   FontFamily="AppFont"
+                   FontSize="44"
+                   FontAttributes="Bold"
+                   TextColor="White"/>
+        </VerticalStackLayout>
+
+        <!-- Sticky note cards layout -->
+        <AbsoluteLayout Grid.Row="1"
+                        Padding="10">
 
 
-        <!-- Date chip (top-right) -->
-        <Border Grid.Row="0"
-                HorizontalOptions="End"
-                VerticalOptions="Start"
-                HeightRequest="150"
-                WidthRequest="80"
-                Margin="0,70,0,10"
-                BackgroundColor="#FFFFFFFF"
-                Opacity="0.75">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="18,0,18,0"/>
-            </Border.StrokeShape>
-            <Border.Shadow>
-                <Shadow Brush="#40000000"
-                        Radius="16"
-                        Offset="0,6"
-                        Opacity="0.35"/>
-            </Border.Shadow>
-            <VerticalStackLayout Spacing="2"
-                                 HorizontalOptions="Center"
-                                 VerticalOptions="Center">
-                <Label FontFamily="contextfont"
+
+            <!-- Card 2: Blue note with red tape (top-right) -->
+            <Grid AbsoluteLayout.LayoutBounds="200,-10,240,240"
+                  Rotation="3">
+                <Image Source="postit1.png"
+                       Aspect="AspectFill"/>
+                <Label Text="Family"
+                       FontFamily="AppFont"
+                       FontSize="32"
+                       FontAttributes="Bold"
+                       TextColor="#2C5E5E"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       TranslationY="10"/>
+            </Grid>
+            <!-- Card 1: Purple note with 3 holes (left side) -->
+            <Grid AbsoluteLayout.LayoutBounds="-5,80,240,240"
+                  Rotation="3">
+                <Image Source="postit2.png"
+                       Aspect="AspectFill"/>
+                <Label Text="Dinner"
+                       FontFamily="AppFont"
                        FontSize="28"
-                       TextColor="#FEAA3A"
-                       HorizontalTextAlignment="Center"
-                       Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:MMM}'}"/>
-                <Label FontFamily="contextfont"
+                       FontAttributes="Bold"
+                       TextColor="#2C5E5E"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+            </Grid>
+            <!-- Card 3: Pink note with dots and orange tape (middle-right) -->
+            <Grid AbsoluteLayout.LayoutBounds="220,235,220,220"
+                  Rotation="2">
+                <Image Source="postit3.png"
+                       Aspect="AspectFill"/>
+                <Label Text="Gift"
+                       FontFamily="AppFont"
+                       FontSize="32"
+                       FontAttributes="Bold"
+                       TextColor="#2C5E5E"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+            </Grid>
+
+            <!-- Card 4: Green note with curved corner (bottom-left) -->
+            <Grid AbsoluteLayout.LayoutBounds="-5,320,240,240"
+                  Rotation="-4">
+                <Image Source="postit4.png"
+                       Aspect="AspectFill"/>
+                <Label Text="Surprise"
+                       FontFamily="AppFont"
                        FontSize="28"
-                       TextColor="#FEAA3A"
+                       FontAttributes="Bold"
+                       TextColor="#2C5E5E"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"/>
+            </Grid>
+
+            <!-- Card 5: Light pink note with blue tape (bottom-right) -->
+            <Grid AbsoluteLayout.LayoutBounds="180,440,240,240"
+                  Rotation="-2">
+                <Image Source="postit5.png"
+                       Aspect="AspectFill"/>
+                <Label Text="Long Distance"
+                       FontFamily="AppFont"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="#2C5E5E"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       LineBreakMode="WordWrap"
                        HorizontalTextAlignment="Center"
-                       Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dd}'}"/>
-            </VerticalStackLayout>
-        </Border>
+                       MaxLines="2"/>
+            </Grid>
+        </AbsoluteLayout>
 
-        <!-- Illustration on the right -->
-        <Image Grid.Row="1"
-               Source="womenhug.png"
-               Aspect="AspectFill"
-               HorizontalOptions="End"
-               VerticalOptions="Center"
-               WidthRequest="300"
-               Margin="0,0,0,0"
-               TranslationY="-40"
-               InputTransparent="True"/>
+        <!-- Bottom controls -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="Auto,*,Auto"
+              Padding="20"
+              Margin="0,0,0,12">
 
-        <!-- Suggestion (translucent card with shadow) -->
-        <Grid Grid.Row="1"
-              Margin="0,0,0,0"
-              HorizontalOptions="Start"
-              VerticalOptions="Start">
-            <Border BackgroundColor="#CCFFFFFF"
-                    HeightRequest="390"
-                    HorizontalOptions="Start"
-                    VerticalOptions="Center"
-                    WidthRequest="270"
-                    Padding="20"
-                    TranslationY="50">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="0,18,0,18"/>
-                </Border.StrokeShape>
-                <Border.Shadow>
-                    <Shadow Brush="#40000000"
-                            Radius="16"
-                            Offset="0,6"
-                            Opacity="0.7"/>
-                </Border.Shadow>
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="A Little Encouragement"
-                           FontFamily="AppFont"
-                           FontSize="24"
-                           FontAttributes="Bold"
-                           TextColor="#FEAA3A"/>
-                    <Label Text="{Binding Suggestion}"
-                           FontFamily="contextfont"
-                           FontSize="14"
-                           TextColor="#8FB78F"
-                           LineHeight="1.2"/>
-                </VerticalStackLayout>
-            </Border>
-        </Grid>
-        <HorizontalStackLayout Grid.Row="2"
-                               Spacing="12"
-                               HorizontalOptions="Center"
-                               Padding="0,0,0,20">
-            <Button Text="◀"
-                    BackgroundColor="White"
-                    TextColor="#FEAA3A"
+            <!-- Page indicator dots (left) -->
+            <HorizontalStackLayout Grid.Column="0"
+                                   Spacing="8"
+                                   VerticalOptions="Center">
+                <Ellipse WidthRequest="10"
+                         HeightRequest="10"
+                         Fill="White"/>
+                <Ellipse WidthRequest="10"
+                         HeightRequest="10"
+                         Fill="#80FFFFFF"/>
+                <Ellipse WidthRequest="10"
+                         HeightRequest="10"
+                         Fill="#80FFFFFF"/>
+            </HorizontalStackLayout>
+
+            <!-- Next button (right) -->
+            <Button Grid.Column="2"
+                    Text="Next"
+                    BackgroundColor="#8FB78F"
+                    TextColor="White"
+                    FontFamily="AppFont"
+                    FontSize="18"
                     CornerRadius="24"
-                    WidthRequest="48"
-                    HeightRequest="48"
-                    IsVisible="{Binding IsFirstPage, Converter={StaticResource InvertedBoolConverter}}"
-                    Command="{Binding PrevPageCommand}">
-                <Button.Shadow>
-                    <Shadow Brush="#40000000"
-                            Radius="12"
-                            Offset="0,4"
-                            Opacity="0.35"/>
-                </Button.Shadow>
-            </Button>
-
-            <Button Text="▶"
-                    BackgroundColor="White"
-                    TextColor="#FEAA3A"
-                    CornerRadius="24"
-                    WidthRequest="48"
+                    WidthRequest="120"
                     HeightRequest="48"
                     Command="{Binding NextPageCommand}">
                 <Button.Shadow>
@@ -141,7 +151,7 @@
                             Opacity="0.35"/>
                 </Button.Shadow>
             </Button>
-        </HorizontalStackLayout>
+        </Grid>
     </Grid>
 
 

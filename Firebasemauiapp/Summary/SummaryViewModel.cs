@@ -60,6 +60,9 @@ public partial class SummaryViewModel : ObservableObject
 
     public ICommand GoToStarterCommand { get; }
 
+    // Callback for showing custom popup
+    public Func<Task<bool>>? ShowSavePopup { get; set; }
+
     public SummaryViewModel(DiaryDatabase diaryDatabase, FirebaseAuthClient authClient)
     {
         _diaryDatabase = diaryDatabase;
@@ -96,6 +99,14 @@ public partial class SummaryViewModel : ObservableObject
         ImageUrl = SummaryPageData.ImageUrl;
         SetEmotionImage(mood);
 
+        // Debug logs
+        Console.WriteLine($"[SummaryViewModel] SetData called:");
+        Console.WriteLine($"  Content length: {content?.Length ?? 0}");
+        Console.WriteLine($"  Mood: {mood}");
+        Console.WriteLine($"  Emotion (AI Reflection): {emotion}");
+        Console.WriteLine($"  Keywords: {keywords}");
+        Console.WriteLine($"  Suggestion: {suggestion}");
+
         BuildKeywordsList(keywords);
         OnPropertyChanged(nameof(NextButtonText));
     }
@@ -106,80 +117,44 @@ public partial class SummaryViewModel : ObservableObject
         {
             var parts = (keywords ?? string.Empty)
                 .Split(new[] { ',', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-            KeywordsList = new ObservableCollection<string>();
-            KeywordCards = new ObservableCollection<KeywordCard>();
+
+            KeywordsList.Clear();
+
             foreach (var p in parts)
             {
                 var t = p.Trim();
-                if (!string.IsNullOrWhiteSpace(t)) KeywordsList.Add(t);
-            }
-            BuildKeywordCards();
-        }
-        catch { KeywordsList = new ObservableCollection<string>(); }
-    }
-
-    private void BuildKeywordCards()
-    {
-        KeywordCards.Clear();
-        if (KeywordsList.Count == 0) return;
-
-        // Predefined palette & layout (normalized Rect: X,Y,Width,Height)
-        var colors = new[] {"#A6C9C6","#F0E7DA","#8EB7D1","#25E88C","#F4F3EF","#D7C1FF","#FFD9A1"};
-        var rects = new List<Rect>
-        {
-            // Reference-style overlapping layout
-            new Rect(0.62, 0.04, 240,240), 
-            new Rect(0.38, 0.18, 240,270), 
-            new Rect(0.62, 0.31, 240,240), 
-            new Rect(0.35, 0.48, 240,240), 
-            new Rect(0.65, 0.63, 240,100) // Card 5 (bottom-right small top layer)
-        };
-
-        // If fewer than 5, use first N rects.
-        int count = Math.Min(KeywordsList.Count, rects.Count);
-        for (int i = 0; i < count; i++)
-        {
-            KeywordCards.Add(new KeywordCard
-            {
-                Text = KeywordsList[i],
-                Bounds = rects[i],
-                Color = colors[i % colors.Length]
-            });
-        }
-
-        // If more than 5, append smaller chips at bottom wrap style (simple horizontal flow)
-        if (KeywordsList.Count > rects.Count)
-        {
-            double startY = 0.78; // begin near bottom area used by last main card
-            double rowHeight = 0.10;
-            double chipH = 0.08;
-            double xStart = 0.05;
-            double x = xStart;
-            foreach (var extra in KeywordsList.Skip(rects.Count))
-            {
-                double chipW = 0.28;
-                if (x + chipW > 0.95)
+                if (!string.IsNullOrWhiteSpace(t))
                 {
-                    x = xStart;
-                    startY += rowHeight;
-                    if (startY > 0.92) break; // avoid overflow off-screen
+                    KeywordsList.Add(t);
                 }
-                KeywordCards.Add(new KeywordCard
-                {
-                    Text = extra,
-                    Bounds = new Rect(x, startY, chipW, chipH),
-                    Color = colors[(KeywordCards.Count) % colors.Length]
-                });
-                x += chipW + 0.035;
             }
+
+            // Notify UI that KeywordsList has changed
+            OnPropertyChanged(nameof(KeywordsList));
+        }
+        catch
+        {
+            KeywordsList.Clear();
+            OnPropertyChanged(nameof(KeywordsList));
         }
     }
+
+
 
     [RelayCommand]
     private async Task SaveAndGoBack()
     {
-        // แสดง confirmation dialog
-        bool result = await Shell.Current.DisplayAlert("Save Diary", "Do you want to save this diary entry?", "Yes", "No");
+        // แสดง custom popup
+        bool result = false;
+        if (ShowSavePopup != null)
+        {
+            result = await ShowSavePopup();
+        }
+        else
+        {
+            // Fallback to standard alert if popup not available
+            result = await Shell.Current.DisplayAlert("Save Diary", "Do you want to save this diary entry?", "Yes", "No");
+        }
 
         if (result)
         {
@@ -216,10 +191,10 @@ public partial class SummaryViewModel : ObservableObject
                 return;
             }
         }
-        
+
         // เครียร์ข้อมูลทั้งหมดไม่ว่าจะกด Yes หรือ No
         SummaryPageData.Clear();
-        
+
         // ไปหน้า Starter ทั้งหน้าและ Tab พร้อมรีเซ็ตแท็บ Diary
         await ResetDiaryAndGoToStarter();
     }

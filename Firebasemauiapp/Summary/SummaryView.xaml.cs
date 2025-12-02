@@ -8,6 +8,12 @@ public partial class SummaryView : ContentPage
         InitializeComponent();
         NavigationPage.SetHasNavigationBar(this, false);
         BindingContext = viewModel;
+
+        // Set popup callback
+        if (viewModel != null)
+        {
+            viewModel.ShowSavePopup = ShowSaveConfirmationPopup;
+        }
     }
 
     protected override async void OnAppearing()
@@ -17,5 +23,10 @@ public partial class SummaryView : ContentPage
         {
             await viewModel.InitializeAsync();
         }
+    }
+
+    public Task<bool> ShowSaveConfirmationPopup()
+    {
+        return SavePopup.ShowAsync();
     }
 }

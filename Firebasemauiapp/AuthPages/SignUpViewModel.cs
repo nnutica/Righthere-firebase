@@ -86,6 +86,9 @@ public partial class SignUpViewModel : ObservableObject
                     { "username", Username },
                     { "coin", 0 },
                     {"role", "user" },
+                    { "inventory", new List<object>() },
+                    { "currentPlant", "plant.png" },
+                    { "currentPot", "pot.png" },
                     { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) }
                 };
                 await userDoc.SetAsync(payload, SetOptions.Overwrite);

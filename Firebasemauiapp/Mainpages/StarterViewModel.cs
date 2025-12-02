@@ -48,10 +48,13 @@ public partial class StarterViewModel : ObservableObject
 
     // Visual assets for the composed plant
     [ObservableProperty]
-    private string _plantImage = "plant.png";
+    private string _plantImage = "empty.png";
 
     [ObservableProperty]
     private string _potImage = "pot.png";
+
+    // Callback for opening pot selection popup
+    public Func<string, Task<string?>>? OpenPotSelectionPopup { get; set; }
 
     [RelayCommand]
     private void ToggleMenu()
@@ -65,6 +68,20 @@ public partial class StarterViewModel : ObservableObject
         if (Shell.Current != null)
         {
             Shell.Current.FlyoutIsPresented = true;
+        }
+    }
+
+    [RelayCommand]
+    private async Task OpenPotSelection()
+    {
+        if (OpenPotSelectionPopup == null) return;
+
+        var selectedPot = await OpenPotSelectionPopup(PotImage);
+        if (!string.IsNullOrWhiteSpace(selectedPot))
+        {
+            // Update UI immediately
+            PotImage = selectedPot;
+            Console.WriteLine($"Pot changed to: {selectedPot}");
         }
     }
 
@@ -172,24 +189,86 @@ public partial class StarterViewModel : ObservableObject
             var user = _authClient.User;
             if (user?.Uid == null)
             {
+                Console.WriteLine("StarterViewModel: No user ID for RefreshCoinAsync");
                 Coin = 0;
                 return;
             }
 
+            Console.WriteLine($"StarterViewModel: Loading data for user {user.Uid}");
+
             var db = await _firestoreService.GetDatabaseAsync();
             var snap = await db.Collection("users").Document(user.Uid).GetSnapshotAsync();
-            if (snap.Exists && snap.TryGetValue("coin", out int coin))
+            
+            if (snap.Exists)
             {
-                Coin = coin;
+                Console.WriteLine("StarterViewModel: User document exists");
+                
+                // Load coin
+                if (snap.TryGetValue("coin", out int coin))
+                {
+                    Coin = coin;
+                    Console.WriteLine($"StarterViewModel: Loaded coins: {Coin}");
+                }
+                else
+                {
+                    Coin = 0;
+                    Console.WriteLine("StarterViewModel: No coin field, defaulting to 0");
+                }
+
+                // Load current plant and pot images
+                if (snap.TryGetValue("currentPlant", out string? plantImg) && !string.IsNullOrWhiteSpace(plantImg))
+                {
+                    PlantImage = plantImg;
+                    Console.WriteLine($"StarterViewModel: Loaded plant: {PlantImage}");
+                }
+                else
+                {
+                    PlantImage = "empty.png";
+                    Console.WriteLine("StarterViewModel: No currentPlant, using empty.png");
+                }
+
+                if (snap.TryGetValue("currentPot", out string? potImg) && !string.IsNullOrWhiteSpace(potImg))
+                {
+                    PotImage = potImg;
+                    Console.WriteLine($"StarterViewModel: Loaded pot: {PotImage}");
+                }
+                else
+                {
+                    PotImage = "pot.png";
+                    Console.WriteLine("StarterViewModel: No currentPot, using pot.png");
+                }
+
+                // Load inventory (for debugging)
+                if (snap.TryGetValue("inventory", out object? invObj))
+                {
+                    Console.WriteLine($"StarterViewModel: Inventory field type: {invObj?.GetType().Name}");
+                    if (invObj is List<object> invList)
+                    {
+                        Console.WriteLine($"StarterViewModel: Inventory items: {string.Join(", ", invList)}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("StarterViewModel: No inventory field found");
+                }
+
+                Console.WriteLine($"StarterViewModel: Final state - Coin: {Coin}, Plant: {PlantImage}, Pot: {PotImage}");
             }
             else
             {
+                Console.WriteLine("StarterViewModel: User document does NOT exist");
                 Coin = 0;
+                PlantImage = "empty.png";
+                PotImage = "pot.png";
             }
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine($"StarterViewModel RefreshCoinAsync Error: {ex.Message}");
+            Console.WriteLine($"StackTrace: {ex.StackTrace}");
             Coin = 0;
+            PlantImage = "empty.png";
+            PotImage = "pot.png";
         }
     }
 

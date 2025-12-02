@@ -7,39 +7,40 @@
     Shell.NavBarIsVisible="False"
     BackgroundColor="#D9F8CF">
 
-  
 
-    <Grid RowDefinitions="3*,7*"
-                    Padding="0">
-                <!-- Top illustration matches Sign In: full-bleed image -->
-                <Grid Grid.Row="0"
-                            Padding="0"
-                            VerticalOptions="Fill">
-                        <Image Source="openbadge.jpg"
-                                     Aspect="AspectFill"
-                                     HorizontalOptions="Fill"
-                                     VerticalOptions="Fill"/>
-                </Grid>
 
-        <!-- Bottom card -->
-                <Grid Grid.Row="1"
-                            Padding="0,0,0,10">
-            <Border BackgroundColor="White"
-                    StrokeThickness="0"
-                    StrokeShape="RoundRectangle 40,40,0,0"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
-                                <VerticalStackLayout Padding="20,24,20,12"
-                                  Spacing="12"
-                                  VerticalOptions="Fill">
+    <Grid>
+        <Grid RowDefinitions="3*,7*"
+              Padding="0">
+            <!-- Top illustration matches Sign In: full-bleed image -->
+            <Grid Grid.Row="0"
+                  Padding="0"
+                  VerticalOptions="Fill">
+                <Image Source="openbadge.jpg"
+                       Aspect="AspectFill"
+                       HorizontalOptions="Fill"
+                       VerticalOptions="Fill"/>
+            </Grid>
+
+            <!-- Bottom card -->
+            <Grid Grid.Row="1"
+                  Padding="0,0,0,40">
+                <Border BackgroundColor="White"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 40,40,0,0"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
+                    <VerticalStackLayout Padding="20,24,20,12"
+                                         Spacing="12"
+                                         VerticalOptions="Fill">
                         <Label Text="Sign Up"
                                FontAttributes="Bold"
                                FontSize="22"
                                TextColor="#4A5F52"/>
 
                         <Label Text="Create an account to unlock a safe space for your feelings and memories"
-                                 FontSize="12"
-                                 LineBreakMode="WordWrap"
+                               FontSize="12"
+                               LineBreakMode="WordWrap"
                                TextColor="#555555"/>
 
                         <!-- Email -->
@@ -117,7 +118,9 @@
                         </VerticalStackLayout>
 
                         <!-- Terms & Privacy -->
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" VerticalOptions="Center">
+                        <Grid ColumnDefinitions="Auto,*"
+                              ColumnSpacing="8"
+                              VerticalOptions="Center">
                             <CheckBox Grid.Column="0"
                                       IsChecked="{Binding IsTermsAccepted}"
                                       VerticalOptions="Center"/>
@@ -129,9 +132,11 @@
                                 <Label.FormattedText>
                                     <FormattedString>
                                         <Span Text="I agree to the "/>
-                                        <Span Text="Terms &amp; Conditions" TextDecorations="Underline"/>
+                                        <Span Text="Terms &amp; Conditions"
+                                              TextDecorations="Underline"/>
                                         <Span Text=" and "/>
-                                        <Span Text="Privacy Policy" TextDecorations="Underline"/>
+                                        <Span Text="Privacy Policy"
+                                              TextDecorations="Underline"/>
                                     </FormattedString>
                                 </Label.FormattedText>
                             </Label>
@@ -148,7 +153,7 @@
 
                         <!-- Bottom Sign In link -->
                         <HorizontalStackLayout HorizontalOptions="Center"
-                                Margin="0,8,0,0">
+                                               Margin="0,8,0,0">
                             <Label Text="Already have an account? "
                                    FontSize="13"
                                    TextColor="#8A8A8A"/>
@@ -162,7 +167,15 @@
                             </Label>
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
-            </Border>
+                </Border>
+            </Grid>
+
         </Grid>
+
+        <!-- Bottom white bar overlay covering entire bottom -->
+        <BoxView BackgroundColor="White"
+                 HeightRequest="40"
+                 VerticalOptions="End"
+                 HorizontalOptions="Fill"/>
     </Grid>
 </ContentPage>

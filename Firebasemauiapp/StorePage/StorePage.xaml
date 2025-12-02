@@ -1,31 +1,209 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Firebasemauiapp.StorePage"
              x:Class="Firebasemauiapp.StorePage.StorePage"
-             BackgroundColor="Green"
+             Shell.NavBarIsVisible="False"
              Title="StorePage">
-    <Grid RowDefinitions="*,32">
-        <Grid Grid.Row="0">
-            <VerticalStackLayout>
-                <Label
-                    Text="Welcome to .NET MAUI!"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Center"/>
-            </VerticalStackLayout>
+
+    <Grid>
+        <!-- Main Grid with 2 sections: 60% plant area, 40% store area -->
+        <Grid RowDefinitions="4*,6*,60"
+              BackgroundColor="#8FB78F">
+
+            <!-- Grid 1: Plant Display Area (60%) with main_bg background -->
+            <Grid Grid.Row="0">
+                <Image Source="main_bg.png"
+                       Aspect="AspectFill"
+                       VerticalOptions="Fill"
+                       HorizontalOptions="Fill"/>
+
+                <Grid RowDefinitions="Auto,*">
+                    <!-- Header with hamburger and coins -->
+                    <Grid Grid.Row="0"
+                          Padding="20,10"
+                          ColumnDefinitions="Auto,*,Auto">
+
+                        <!-- Help Icon -->
+                        <Border Grid.Column="1"
+                                WidthRequest="32"
+                                HeightRequest="32"
+                                StrokeThickness="2"
+                                Stroke="Black"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                BackgroundColor="White">
+                            <Border.StrokeShape>
+                                <Ellipse/>
+                            </Border.StrokeShape>
+                            <Label Text="?"
+                                   FontFamily="AppFont"
+                                   FontSize="20"
+                                   TextColor="Black"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
+
+                        <!-- Coins Display -->
+                        <Border Grid.Column="2"
+                                Padding="12,6"
+                                StrokeThickness="2"
+                                Stroke="Black"
+                                BackgroundColor="White">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16"/>
+                            </Border.StrokeShape>
+                            <HorizontalStackLayout Spacing="8">
+                                <Label Text="{Binding UserCoins}"
+                                       FontFamily="AppFont"
+                                       FontSize="18"
+                                       TextColor="Black"
+                                       VerticalOptions="Center"/>
+                                <Ellipse Fill="#FFD700"
+                                         WidthRequest="20"
+                                         HeightRequest="20"
+                                         VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </Border>
+                    </Grid>
+
+                    <!-- Plant Display with overlapping images -->
+                    <Grid Grid.Row="1"
+                          VerticalOptions="Center"
+                          Padding="20">
+                        <!-- Pot (bottom layer) -->
+                        <Image Source="{Binding CurrentPotImage}"
+                               WidthRequest="180"
+                               HeightRequest="180"
+                               Aspect="AspectFit"
+                               HorizontalOptions="Center"
+                               VerticalOptions="End"
+                               Margin="0,0,0,10"/>
+
+                        <!-- Plant (top layer) - overlapping pot -->
+                        <Image Source="{Binding CurrentPlantImage}"
+                               WidthRequest="200"
+                               HeightRequest="200"
+                               Aspect="AspectFit"
+                               TranslationY="-80"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Margin="0,30,0,20"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+            <!-- Grid 2: Store Section (60%) with green background -->
+            <Grid Grid.Row="1"
+                  BackgroundColor="#8FB78F"
+                  Padding="20,16">
+                <Grid RowDefinitions="Auto,*">
+                    <!-- Store Title -->
+                    <Label Grid.Row="0"
+                           Text="Store"
+                           FontFamily="AppFont"
+                           FontSize="32"
+                           TextColor="White"
+                           HorizontalOptions="Center"
+                           Margin="0,0,0,16"/>
+
+                    <!-- Store Items Grid -->
+                    <FlexLayout Grid.Row="1"
+                                BindableLayout.ItemsSource="{Binding StoreItems}"
+                                Wrap="Wrap"
+                                JustifyContent="SpaceEvenly"
+                                AlignItems="Start"
+                                AlignContent="Start">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="10"
+                                        Margin="4"
+                                        StrokeThickness="0"
+                                        BackgroundColor="White"
+                                        WidthRequest="105"
+                                        HeightRequest="120">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:StoreViewModel}}, Path=PurchaseItemCommand}"
+                                                              CommandParameter="{Binding .}"/>
+                                    </Border.GestureRecognizers>
+                                    <Grid RowDefinitions="60,25,*">
+                                        <!-- Item Image -->
+                                        <Image Grid.Row="0"
+                                               Source="{Binding ImageSource}"
+                                               WidthRequest="50"
+                                               HeightRequest="50"
+                                               Aspect="AspectFit"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"/>
+
+                                        <!-- Item Name -->
+                                        <Label Grid.Row="1"
+                                               Text="{Binding Name}"
+                                               FontFamily="contextfont"
+                                               FontSize="11"
+                                               TextColor="Black"
+                                               HorizontalOptions="Center"
+                                               HorizontalTextAlignment="Center"
+                                               LineBreakMode="WordWrap"
+                                               MaxLines="1"
+                                               VerticalOptions="Center"/>
+
+                                        <!-- Price or Sold Out -->
+                                        <HorizontalStackLayout Grid.Row="2"
+                                                               Spacing="4"
+                                                               HorizontalOptions="Center"
+                                                               VerticalOptions="Center"
+                                                               IsVisible="{Binding IsSoldOut, Converter={StaticResource InvertedBoolConverter}}">
+                                            <Label Text="{Binding Price}"
+                                                   FontFamily="AppFont"
+                                                   FontSize="14"
+                                                   TextColor="Black"
+                                                   VerticalOptions="Center"/>
+                                            <Ellipse Fill="#FFD700"
+                                                     WidthRequest="14"
+                                                     HeightRequest="14"
+                                                     VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
+
+                                        <Label Grid.Row="2"
+                                               Text="Sold Out"
+                                               FontFamily="AppFont"
+                                               FontSize="12"
+                                               TextColor="Red"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center"
+                                               IsVisible="{Binding IsSoldOut}"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </Grid>
+            </Grid>
+
+            <!-- Bottom Navigation Shadow -->
+            <Border Grid.Row="2"
+                    BackgroundColor="White"
+                    StrokeThickness="0"
+                    TranslationY="5">
+                <Border.Shadow>
+                    <Shadow Brush="Black"
+                            Opacity="0.18"
+                            Radius="14"
+                            Offset="0,-2"/>
+                </Border.Shadow>
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="28,28,0,0"/>
+                </Border.StrokeShape>
+            </Border>
         </Grid>
-        <Border Grid.Row="1"
-                BackgroundColor="White"
-                StrokeThickness="0"
-                TranslationY="8">
-            <Border.Shadow>
-                <Shadow Brush="Black"
-                        Opacity="0.18"
-                        Radius="14"
-                        Offset="0,-2"/>
-            </Border.Shadow>
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="28,28,0,0"/>
-            </Border.StrokeShape>
-        </Border>
+
+        <!-- Purchase Popup (overlay) -->
+        <local:PurchasePopup x:Name="PurchasePopup"
+                             IsVisible="False"
+                             Grid.RowSpan="3"/>
     </Grid>
 </ContentPage>

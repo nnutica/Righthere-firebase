@@ -59,6 +59,7 @@ public partial class SignInViewModel : ObservableObject
                 var snapshot = await userDocRef.GetSnapshotAsync();
                 if (!snapshot.Exists)
                 {
+                    // Create new user document
                     var displayName = result!.User!.Info?.DisplayName ?? string.Empty;
                     var payload = new Dictionary<string, object>
                     {
@@ -67,9 +68,39 @@ public partial class SignInViewModel : ObservableObject
                         { "username", string.IsNullOrWhiteSpace(displayName) ? Email : displayName },
                         {"role", "user" },
                         { "coin", 0 },
+                        { "inventory", new List<object>() },
+                        { "currentPlant", "empty.png" },
+                        { "currentPot", "pot.png" },
                         { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) }
                     };
                     await userDocRef.SetAsync(payload, SetOptions.Overwrite);
+                }
+                else
+                {
+                    // Check if existing user has required fields
+                    var userData = snapshot.ToDictionary();
+                    var updates = new Dictionary<string, object>();
+
+                    if (!userData.ContainsKey("inventory"))
+                    {
+                        updates["inventory"] = new List<object>();
+                    }
+
+                    if (!userData.ContainsKey("currentPlant"))
+                    {
+                        updates["currentPlant"] = "plant.png";
+                    }
+
+                    if (!userData.ContainsKey("currentPot"))
+                    {
+                        updates["currentPot"] = "pot.png";
+                    }
+
+                    // Update all missing fields at once
+                    if (updates.Count > 0)
+                    {
+                        await userDocRef.UpdateAsync(updates);
+                    }
                 }
             }
 

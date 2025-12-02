@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Border xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        x:Class="Firebasemauiapp.Mainpages.PotSelectionPopup"
+        x:Name="PopupRoot"
+        BackgroundColor="#80000000"
+        HorizontalOptions="Fill"
+        VerticalOptions="Fill"
+        IsVisible="False"
+        ZIndex="100"
+        InputTransparent="False">
+
+    <Border.GestureRecognizers>
+        <TapGestureRecognizer Tapped="OnBackgroundTapped"/>
+    </Border.GestureRecognizers>
+
+    <Border x:Name="PopupContainer"
+            BackgroundColor="White"
+            WidthRequest="340"
+            HeightRequest="480"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            StrokeThickness="0"
+            InputTransparent="False">
+        <Border.StrokeShape>
+            <RoundRectangle CornerRadius="20"/>
+        </Border.StrokeShape>
+        <Border.Shadow>
+            <Shadow Brush="Black"
+                    Opacity="0.3"
+                    Radius="24"
+                    Offset="0,8"/>
+        </Border.Shadow>
+
+        <Border.GestureRecognizers>
+            <TapGestureRecognizer/>
+        </Border.GestureRecognizers>
+
+        <Grid RowDefinitions="Auto,*,Auto"
+              Padding="20">
+            <!-- Header -->
+            <VerticalStackLayout Grid.Row="0"
+                                 Spacing="8"
+                                 Margin="0,0,0,16">
+                <Label Text="🪴"
+                       FontSize="32"
+                       HorizontalOptions="Center"/>
+                <Label Text="Select Your Pot"
+                       FontSize="20"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       TextColor="#333"/>
+                <Label Text="Choose from your collection"
+                       FontSize="14"
+                       HorizontalOptions="Center"
+                       TextColor="#666"/>
+            </VerticalStackLayout>
+
+            <!-- Pots Grid -->
+            <ScrollView Grid.Row="1">
+                <FlexLayout x:Name="PotsFlexLayout"
+                            Direction="Row"
+                            Wrap="Wrap"
+                            JustifyContent="SpaceEvenly"
+                            AlignItems="Start"
+                            AlignContent="Start"
+                            Padding="0">
+                    <!-- Items will be added dynamically -->
+                </FlexLayout>
+            </ScrollView>
+
+            <!-- Close Button -->
+            <Button Grid.Row="2"
+                    Text="Close"
+                    BackgroundColor="#8FB78F"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="12"
+                    HeightRequest="48"
+                    Margin="0,16,0,0"
+                    Clicked="OnCloseClicked"/>
+        </Grid>
+    </Border>
+</Border>

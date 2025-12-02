@@ -12,6 +12,8 @@ public partial class StarterView : ContentPage
 	private readonly FirebaseAuthClient _authClient;
 	private readonly StarterViewModel _viewModel;
 
+	private PotSelectionPopup? _potSelectionPopup;
+
 	public StarterView(StarterViewModel viewModel, DiaryDatabase diaryDatabase, FirebaseAuthClient authClient)
 	{
 		InitializeComponent();
@@ -21,8 +23,21 @@ public partial class StarterView : ContentPage
 		Title = "";
 		_diaryDatabase = diaryDatabase;
 		_authClient = authClient;
+
+		// Create and add popup programmatically
+		_potSelectionPopup = new PotSelectionPopup();
+		var container = (ContentView)this.FindByName("PotSelectionPopupContainer");
+		container.Content = _potSelectionPopup;
+
+		// Setup pot selection popup callback
+		_viewModel.OpenPotSelectionPopup = OpenPotSelectionPopup;
 	}
 
+	private async Task<string?> OpenPotSelectionPopup(string currentPotImage)
+	{
+		if (_potSelectionPopup == null) return null;
+		return await _potSelectionPopup.ShowAsync(currentPotImage);
+	}
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
