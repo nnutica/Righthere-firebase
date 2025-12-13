@@ -255,7 +255,7 @@
                                Margin="0,2,0,0"/>
                         <Label Grid.Row="4"
                                Grid.ColumnSpan="2"
-                               Text="{Binding Content}"
+                               Text="{Binding Emotion}"
                                TextColor="#8FB78F"
                                FontSize="14"
                                FontFamily="contextfont"/>

@@ -12,6 +12,7 @@ Firebasemauiapp/Resources/Raw/*.json
 
 # Ignore entire Config folder
 Firebasemauiapp/Config/
+Righthere.keystore
 
 
 

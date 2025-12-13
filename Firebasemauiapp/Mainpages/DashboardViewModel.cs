@@ -136,18 +136,37 @@ public partial class DashboardViewModel : ObservableObject
 		try
 		{
 			IsLoading = true;
+
+			// Initialize collections if null
+			if (SentimentScores == null) SentimentScores = new ObservableCollection<double>();
+			if (ChartData == null) ChartData = new ObservableCollection<ChartDataPoint>();
+			if (ResonatingThemes == null) ResonatingThemes = new ObservableCollection<ThemeData>();
+
 			SentimentScores.Clear();
 			ChartData.Clear();
 			ResonatingThemes.Clear();
 
-			var user = _authClient.User;
-			if (user == null) return;
+			var user = _authClient?.User;
+			if (user?.Uid == null)
+			{
+				Console.WriteLine("Dashboard: User is null or has no UID");
+				IsLoading = false;
+				return;
+			}
+
+			Console.WriteLine($"Dashboard: Loading diaries for user: {user.Uid}");
 
 			var diaries = (await _diaryDatabase.GetDiariesByUserAsync(user.Uid))
-				.OrderBy(x => x.CreatedAtDateTime)
+				?.OrderBy(x => x.CreatedAtDateTime)
 				.ToList();
 
-			foreach (var d in diaries)
+			if (diaries == null)
+			{
+				Console.WriteLine("Dashboard: GetDiariesByUserAsync returned null");
+				diaries = new List<DiaryData>();
+			}
+
+			Console.WriteLine($"Dashboard: Loaded {diaries.Count} diaries"); foreach (var d in diaries)
 			{
 				SentimentScores.Add(d.SentimentScore);
 			}
@@ -209,6 +228,18 @@ public partial class DashboardViewModel : ObservableObject
 				ChartData.Add(new ChartDataPoint(day, d.SentimentScore));
 			}
 		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Dashboard LoadSentimentScores Error: {ex.Message}");
+			Console.WriteLine($"StackTrace: {ex.StackTrace}");
+
+			// Reset to safe defaults on error
+			MostFrequentMoodImage = "empty.png";
+			MostFrequentMoodName = "No Data";
+			MoodBackgroundColor = Color.FromArgb("#F8FAED");
+			AverageSentimentScore = 0;
+			WeekDateRange = "";
+		}
 		finally
 		{
 			IsLoading = false;
@@ -234,7 +265,7 @@ public partial class DashboardViewModel : ObservableObject
 			.OrderByDescending(x => x.Count)
 			.FirstOrDefault();
 
-		if (moodCounts != null)
+		if (moodCounts != null && !string.IsNullOrEmpty(moodCounts.Mood))
 		{
 			var mood = moodCounts.Mood;
 			MostFrequentMoodName = char.ToUpper(mood[0]) + mood.Substring(1);
@@ -271,30 +302,39 @@ public partial class DashboardViewModel : ObservableObject
 
 	private void CalculateResonatingThemes(List<DiaryData> diaries)
 	{
-		if (!diaries.Any())
+		try
 		{
-			return;
-		}
+			if (ResonatingThemes == null) ResonatingThemes = new ObservableCollection<ThemeData>();
 
-		// Group by Reason (use "ETC" if empty)
-		var reasonGroups = diaries
-			.Select(d => string.IsNullOrWhiteSpace(d.Reason) ? "ETC" : d.Reason)
-			.GroupBy(r => r)
-			.Select(g => new { Reason = g.Key, Count = g.Count() })
-			.OrderByDescending(x => x.Count)
-			.ToList();
-
-		var total = reasonGroups.Sum(x => x.Count);
-
-		foreach (var group in reasonGroups)
-		{
-			var percentage = (group.Count / (double)total) * 100;
-			ResonatingThemes.Add(new ThemeData
+			if (!diaries?.Any() ?? true)
 			{
-				ThemeName = group.Reason,
-				Percentage = percentage,
-				BackgroundColor = MoodBackgroundColor // Use same color as mood
-			});
+				return;
+			}
+
+			// Group by Reason (use "ETC" if empty)
+			var reasonGroups = diaries
+				.Select(d => string.IsNullOrWhiteSpace(d.Reason) ? "ETC" : d.Reason)
+				.GroupBy(r => r)
+				.Select(g => new { Reason = g.Key, Count = g.Count() })
+				.OrderByDescending(x => x.Count)
+				.ToList();
+
+			var total = reasonGroups.Sum(x => x.Count);
+
+			foreach (var group in reasonGroups)
+			{
+				var percentage = (group.Count / (double)total) * 100;
+				ResonatingThemes.Add(new ThemeData
+				{
+					ThemeName = group.Reason ?? "Unknown",
+					Percentage = percentage,
+					BackgroundColor = MoodBackgroundColor // Use same color as mood
+				});
+			}
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Dashboard CalculateResonatingThemes Error: {ex.Message}");
 		}
 	}
 
