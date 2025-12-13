@@ -345,8 +345,8 @@
                     </Border.StrokeShape>
                     <Border.Triggers>
                         <DataTrigger TargetType="Border"
-                                Binding="{Binding PageIndex}"
-                                Value="0">
+                                     Binding="{Binding PageIndex}"
+                                     Value="0">
                             <Setter Property="BackgroundColor"
                                     Value="#FFFFFFFF"/>
                             <Setter Property="WidthRequest"
@@ -365,8 +365,8 @@
                     </Border.StrokeShape>
                     <Border.Triggers>
                         <DataTrigger TargetType="Border"
-                                Binding="{Binding PageIndex}"
-                                Value="1">
+                                     Binding="{Binding PageIndex}"
+                                     Value="1">
                             <Setter Property="BackgroundColor"
                                     Value="#FFFFFFFF"/>
                             <Setter Property="WidthRequest"
@@ -385,8 +385,8 @@
                     </Border.StrokeShape>
                     <Border.Triggers>
                         <DataTrigger TargetType="Border"
-                                Binding="{Binding PageIndex}"
-                                Value="2">
+                                     Binding="{Binding PageIndex}"
+                                     Value="2">
                             <Setter Property="BackgroundColor"
                                     Value="#FFFFFFFF"/>
                             <Setter Property="WidthRequest"
@@ -410,8 +410,8 @@
                     Command="{Binding NextPageCommand}">
                 <Button.Triggers>
                     <DataTrigger TargetType="Button"
-                            Binding="{Binding PageIndex}"
-                            Value="0">
+                                 Binding="{Binding PageIndex}"
+                                 Value="0">
                         <Setter Property="IsVisible"
                                 Value="True"/>
                     </DataTrigger>
@@ -431,14 +431,14 @@
                                    VerticalOptions="Center">
                 <HorizontalStackLayout.Triggers>
                     <DataTrigger TargetType="HorizontalStackLayout"
-                            Binding="{Binding PageIndex}"
-                            Value="1">
+                                 Binding="{Binding PageIndex}"
+                                 Value="1">
                         <Setter Property="IsVisible"
                                 Value="True"/>
                     </DataTrigger>
                     <DataTrigger TargetType="HorizontalStackLayout"
-                            Binding="{Binding PageIndex}"
-                            Value="2">
+                                 Binding="{Binding PageIndex}"
+                                 Value="2">
                         <Setter Property="IsVisible"
                                 Value="True"/>
                     </DataTrigger>
