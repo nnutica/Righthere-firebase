@@ -67,6 +67,9 @@ public partial class SignInViewModel : ObservableObject
                         { "username", string.IsNullOrWhiteSpace(displayName) ? Email : displayName },
                         {"role", "user" },
                         { "coin", 0 },
+                        { "inventory", new List<string>() },
+                        { "currentPlant", "empty.png" },
+                        { "currentPot", "pot.png" },
                         { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) }
                     };
                     await userDocRef.SetAsync(payload, SetOptions.Overwrite);
