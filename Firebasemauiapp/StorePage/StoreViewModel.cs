@@ -1,0 +1,301 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Firebase.Auth;
+using Firebasemauiapp.Services;
+using Google.Cloud.Firestore;
+
+namespace Firebasemauiapp.StorePage;
+
+public partial class StoreViewModel : ObservableObject
+{
+    private readonly FirebaseAuthClient _authClient;
+    private readonly FirestoreService _firestoreService;
+
+    [ObservableProperty]
+    private int _coin;
+
+    [ObservableProperty]
+    private ObservableCollection<StoreItem> _storeItems = new();
+
+    [ObservableProperty]
+    private string _plantImage = "plant.png";
+
+    public StoreViewModel(FirebaseAuthClient authClient, FirestoreService firestoreService)
+    {
+        _authClient = authClient;
+        _firestoreService = firestoreService;
+
+        _authClient.AuthStateChanged += OnAuthStateChanged;
+
+        LoadStoreItems();
+        _ = RefreshDataAsync();
+    }
+
+    [RelayCommand]
+    private async Task GoBack()
+    {
+        try
+        {
+            if (Shell.Current != null)
+                await Shell.Current.GoToAsync("//main/starter");
+        }
+        catch (Exception ex)
+        {
+            if (Shell.Current != null)
+                await Shell.Current.DisplayAlert("Navigation error", ex.Message, "OK");
+        }
+    }
+
+    private void OnAuthStateChanged(object? sender, UserEventArgs e)
+    {
+        if (MainThread.IsMainThread)
+            _ = RefreshDataAsync();
+        else
+            MainThread.BeginInvokeOnMainThread(() => _ = RefreshDataAsync());
+    }
+
+    private async Task RefreshDataAsync()
+    {
+        await RefreshCoinAsync();
+        await LoadInventoryAsync();
+    }
+    private void LoadStoreItems()
+    {
+        StoreItems = new ObservableCollection<StoreItem>
+        {
+            new StoreItem
+            {
+                Name = "Starry Nest",
+                Price = 550,
+                Image = "starrynest.png",
+                ItemType = "decoration",
+                ItemId = "starry_nest"
+            },
+            new StoreItem
+            {
+                Name = "Box",
+                Price = 150,
+                Image = "box.png",
+                ItemType = "decoration",
+                ItemId = "box"
+            },
+            new StoreItem
+            {
+                Name = "Bath Blossom",
+                Price = 350,
+                Image = "bathblossom.png",
+                ItemType = "decoration",
+                ItemId = "bath_blossom"
+            }
+        };
+    }
+
+    private async Task RefreshCoinAsync()
+    {
+        try
+        {
+            var user = _authClient.User;
+            if (user?.Uid == null)
+            {
+                Coin = 0;
+                return;
+            }
+
+            var db = await _firestoreService.GetDatabaseAsync();
+            var snap = await db.Collection("users").Document(user.Uid).GetSnapshotAsync();
+            if (snap.Exists && snap.TryGetValue("coin", out int coin))
+            {
+                Coin = coin;
+            }
+            else
+            {
+                Coin = 0;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"RefreshCoinAsync Error: {ex.Message}");
+            Coin = 0;
+        }
+    }
+
+    private async Task LoadInventoryAsync()
+    {
+        try
+        {
+            var user = _authClient.User;
+            if (user?.Uid == null)
+            {
+                // Clear purchased status if not logged in
+                foreach (var item in StoreItems)
+                {
+                    item.IsPurchased = false;
+                }
+                return;
+            }
+
+            var db = await _firestoreService.GetDatabaseAsync();
+            var userDoc = await db.Collection("users").Document(user.Uid).GetSnapshotAsync();
+
+            HashSet<string> purchasedItemIds = new HashSet<string>();
+
+            if (userDoc.Exists)
+            {
+                // Try to read inventory as array field first
+                if (userDoc.TryGetValue("inventory", out object inventoryObj))
+                {
+                    if (inventoryObj is List<object> inventoryList)
+                    {
+                        foreach (var item in inventoryList)
+                        {
+                            if (item != null)
+                            {
+                                purchasedItemIds.Add(item.ToString()!);
+                            }
+                        }
+                        Console.WriteLine($"✅ Loaded inventory (array): {string.Join(", ", purchasedItemIds)}");
+                    }
+                }
+                // Fallback: Try subcollection if array field doesn't exist
+                else
+                {
+                    var inventoryRef = db.Collection("users").Document(user.Uid).Collection("inventory");
+                    var inventorySnap = await inventoryRef.GetSnapshotAsync();
+
+                    purchasedItemIds = inventorySnap.Documents
+                        .Select(doc => doc.Id)
+                        .ToHashSet();
+
+                    Console.WriteLine($"✅ Loaded inventory (subcollection): {purchasedItemIds.Count} items");
+                }
+            }
+
+            // Update purchased status for each store item
+            foreach (var item in StoreItems)
+            {
+                item.IsPurchased = purchasedItemIds.Contains(item.ItemId);
+                Console.WriteLine($"Item: {item.ItemId} - Purchased: {item.IsPurchased}");
+            }
+
+            Console.WriteLine($"✅ Total purchased items: {purchasedItemIds.Count}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"LoadInventoryAsync Error: {ex.Message}");
+            Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task PurchaseItem(StoreItem item)
+    {
+        if (item == null) return;
+
+        try
+        {
+            var user = _authClient.User;
+            if (user?.Uid == null)
+            {
+                await Shell.Current.DisplayAlert("Error", "Please log in first.", "OK");
+                return;
+            }
+
+            // Check if already purchased
+            if (item.IsPurchased)
+            {
+                await Shell.Current.DisplayAlert("Already Purchased",
+                    $"You already own {item.Name}!", "OK");
+                return;
+            }
+
+            // Check if user has enough coins
+            if (Coin < item.Price)
+            {
+                await Shell.Current.DisplayAlert("Insufficient Coins",
+                    $"You need {item.Price} coins but only have {Coin} coins.", "OK");
+                return;
+            }
+
+            // Confirm purchase
+            bool confirm = await Shell.Current.DisplayAlert("Confirm Purchase",
+                $"Do you want to buy {item.Name} for {item.Price} coins?", "Yes", "No");
+
+            if (!confirm) return;
+
+            var db = await _firestoreService.GetDatabaseAsync();
+            var userRef = db.Collection("users").Document(user.Uid);
+
+            // Transaction to deduct coins and add item to inventory array
+            await db.RunTransactionAsync(async tx =>
+            {
+                var userSnap = await tx.GetSnapshotAsync(userRef);
+                if (!userSnap.Exists)
+                {
+                    throw new Exception("User document not found");
+                }
+
+                int currentCoin = userSnap.TryGetValue("coin", out int c) ? c : 0;
+
+                if (currentCoin < item.Price)
+                {
+                    throw new Exception("Insufficient coins");
+                }
+
+                // Get current inventory array
+                List<string> currentInventory = new List<string>();
+                if (userSnap.TryGetValue("inventory", out object inventoryObj))
+                {
+                    if (inventoryObj is List<object> invList)
+                    {
+                        currentInventory = invList.Select(i => i.ToString()!).ToList();
+                    }
+                }
+
+                // Check if already purchased (double-check in transaction)
+                if (currentInventory.Contains(item.ItemId))
+                {
+                    throw new Exception("Item already purchased");
+                }
+
+                // Add item to inventory
+                currentInventory.Add(item.ItemId);
+
+                // Deduct coins and update inventory
+                int newCoin = currentCoin - item.Price;
+                tx.Update(userRef, new Dictionary<string, object>
+                {
+                    { "coin", newCoin },
+                    { "inventory", currentInventory }
+                });
+            });
+
+            await Shell.Current.DisplayAlert("Success", $"You purchased {item.Name}!", "OK");
+
+            // Refresh coin balance and inventory
+            await RefreshDataAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"PurchaseItem Error: {ex.Message}");
+            await Shell.Current.DisplayAlert("Error", $"Purchase failed: {ex.Message}", "OK");
+        }
+    }
+}
+
+public partial class StoreItem : ObservableObject
+{
+    public string Name { get; set; } = string.Empty;
+    public int Price { get; set; }
+    public string Image { get; set; } = string.Empty;
+    public string ItemType { get; set; } = string.Empty;
+    public string ItemId { get; set; } = string.Empty;
+
+    [ObservableProperty]
+    private bool _isPurchased;
+
+    public string PurchaseStatusText => IsPurchased ? "Purchased" : $"{Price}";
+    public Color StatusColor => IsPurchased ? Color.FromArgb("#999999") : Color.FromArgb("#FEAA3A");
+}

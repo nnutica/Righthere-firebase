@@ -4,9 +4,18 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:converters="clr-namespace:Firebasemauiapp.Converters"
     Title="SummaryView"
     Shell.NavBarIsVisible="False"
+    Shell.TabBarIsVisible="False"
     BackgroundColor="#FEAA3A">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+            <converters:TextLengthToFontSizeConverter x:Key="TextLengthToFontSizeConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <!-- Layered root: background image (transparent PNG) over orange, then content -->
     <Grid RowDefinitions="Auto,*,Auto">
@@ -155,40 +164,97 @@
                 </DataTrigger>
             </Grid.Triggers>
 
-            <!-- Centered container that mimics the mock layout -->
+            <!-- Post-it Notes Layout -->
             <Grid VerticalOptions="Center"
                   HorizontalOptions="Center"
-                  Margin="0,70,0,10">
+                  Margin="0,50,0,10">
 
-                <Grid x:Name="CardArea"
-                      WidthRequest="600"
-                      HeightRequest="650"
-                      VerticalOptions="Center"
-                      HorizontalOptions="Center">
+                <AbsoluteLayout WidthRequest="380"
+                                HeightRequest="650">
 
-                    <AbsoluteLayout x:Name="CardContainer"
-                                    VerticalOptions="Fill"
-                                    HorizontalOptions="Fill"
-                                    BindableLayout.ItemsSource="{Binding KeywordCards}">
-                        <BindableLayout.ItemTemplate>
-                            <DataTemplate>
-                                <Border
-                                    AbsoluteLayout.LayoutBounds="{Binding Bounds}"
-                                    AbsoluteLayout.LayoutFlags="PositionProportional"
-                                    BackgroundColor="{Binding Color}"
-                                    Padding="12">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="20"/>
-                                    </Border.StrokeShape>
-                                    <Label Text="{Binding Text}"
-                                           FontSize="18"
-                                           FontAttributes="Bold"
-                                           TextColor="#0E6B5D"/>
-                                </Border>
-                            </DataTemplate>
-                        </BindableLayout.ItemTemplate>
-                    </AbsoluteLayout>
-                </Grid>
+                    <!-- Post-it 1: Blue - ขวาบน -->
+                    <Grid AbsoluteLayout.LayoutBounds="190,-40,220,260"
+                          Padding="5"
+                          Rotation="-1"
+                          IsVisible="{Binding KeywordsList.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=1}">
+                        <Image Source="postit1.png"
+                               Aspect="Fill"/>
+                        <Label Text="{Binding Keyword1}"
+                               FontFamily="contextfont"
+                               FontSize="{Binding Keyword1, Converter={StaticResource TextLengthToFontSizeConverter}}"
+                               FontAttributes="Bold"
+                               TextColor="#2C5F4F"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Margin="0,10,0,0"/>
+                    </Grid>
+
+                    <!-- Post-it 2: Purple - ซ้ายกลาง -->
+                    <Grid AbsoluteLayout.LayoutBounds="-25,80,240,240"
+                          Rotation="-2"
+                          IsVisible="{Binding KeywordsList.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=2}">
+                        <Image Source="postit2.png"
+                               Aspect="Fill"/>
+                        <Label Text="{Binding Keyword2}"
+                               FontFamily="contextfont"
+                               FontSize="{Binding Keyword2, Converter={StaticResource TextLengthToFontSizeConverter}}"
+                               FontAttributes="Bold"
+                               TextColor="#2C3E50"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Grid>
+
+                    <!-- Post-it 3: Pink - ขวากลาง ใหญ่ -->
+                    <Grid AbsoluteLayout.LayoutBounds="180,200,240,240"
+                          Padding="5"
+                          Rotation="3"
+                          IsVisible="{Binding KeywordsList.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=3}">
+                        <Image Source="postit3.png"
+                               Aspect="Fill"/>
+                        <Label Text="{Binding Keyword3}"
+                               FontFamily="contextfont"
+                               FontSize="{Binding Keyword3, Converter={StaticResource TextLengthToFontSizeConverter}}"
+                               FontAttributes="Bold"
+                               TextColor="#2C5F4F"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Grid>
+
+                    <!-- Post-it 4: Light Green - ซ้ายล่าง -->
+                    <Grid AbsoluteLayout.LayoutBounds="-20,300,240,240"
+                          Rotation="-3"
+                          IsVisible="{Binding KeywordsList.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=4}">
+                        <Image Source="postit4.png"
+                               Aspect="Fill"/>
+                        <Label Text="{Binding Keyword4}"
+                               FontFamily="contextfont"
+                               FontSize="{Binding Keyword4, Converter={StaticResource TextLengthToFontSizeConverter}}"
+                               FontAttributes="Bold"
+                               TextColor="#2C5F4F"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Margin="0,0,10,10"/>
+                    </Grid>
+
+                    <!-- Post-it 5: Light Pink - ขวาล่าง -->
+                    <Grid AbsoluteLayout.LayoutBounds="190,420,230,210"
+                          Rotation="2"
+                          IsVisible="{Binding KeywordsList.Count, Converter={StaticResource CountToVisibilityConverter}, ConverterParameter=5}">
+                        <Image Source="postit5.png"
+                               Aspect="Fill"/>
+                        <Label Text="{Binding Keyword5}"
+                               FontFamily="contextfont"
+                               FontSize="{Binding Keyword5, Converter={StaticResource TextLengthToFontSizeConverter}}"
+                               FontAttributes="Bold"
+                               TextColor="#2C3E50"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               LineHeight="1.15"
+                               Margin="0,5,0,0"/>
+                    </Grid>
+
+                </AbsoluteLayout>
             </Grid>
         </Grid>
 

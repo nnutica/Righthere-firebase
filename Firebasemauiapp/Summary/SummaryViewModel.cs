@@ -54,6 +54,22 @@ public partial class SummaryViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<string> _keywordsList = new();
 
+    // Individual keyword properties for Post-it binding
+    [ObservableProperty]
+    private string _keyword1 = string.Empty;
+
+    [ObservableProperty]
+    private string _keyword2 = string.Empty;
+
+    [ObservableProperty]
+    private string _keyword3 = string.Empty;
+
+    [ObservableProperty]
+    private string _keyword4 = string.Empty;
+
+    [ObservableProperty]
+    private string _keyword5 = string.Empty;
+
     // Dynamic positioned keyword cards
     [ObservableProperty]
     private ObservableCollection<KeywordCard> _keywordCards = new();
@@ -113,6 +129,14 @@ public partial class SummaryViewModel : ObservableObject
                 var t = p.Trim();
                 if (!string.IsNullOrWhiteSpace(t)) KeywordsList.Add(t);
             }
+
+            // Update individual keyword properties
+            Keyword1 = KeywordsList.Count > 0 ? KeywordsList[0] : string.Empty;
+            Keyword2 = KeywordsList.Count > 1 ? KeywordsList[1] : string.Empty;
+            Keyword3 = KeywordsList.Count > 2 ? KeywordsList[2] : string.Empty;
+            Keyword4 = KeywordsList.Count > 3 ? KeywordsList[3] : string.Empty;
+            Keyword5 = KeywordsList.Count > 4 ? KeywordsList[4] : string.Empty;
+
             BuildKeywordCards();
         }
         catch { KeywordsList = new ObservableCollection<string>(); }
@@ -124,14 +148,14 @@ public partial class SummaryViewModel : ObservableObject
         if (KeywordsList.Count == 0) return;
 
         // Predefined palette & layout (normalized Rect: X,Y,Width,Height)
-        var colors = new[] {"#A6C9C6","#F0E7DA","#8EB7D1","#25E88C","#F4F3EF","#D7C1FF","#FFD9A1"};
+        var colors = new[] { "#A6C9C6", "#F0E7DA", "#8EB7D1", "#25E88C", "#F4F3EF", "#D7C1FF", "#FFD9A1" };
         var rects = new List<Rect>
         {
             // Reference-style overlapping layout
-            new Rect(0.62, 0.04, 240,240), 
-            new Rect(0.38, 0.18, 240,270), 
-            new Rect(0.62, 0.31, 240,240), 
-            new Rect(0.35, 0.48, 240,240), 
+            new Rect(0.62, 0.04, 240,240),
+            new Rect(0.38, 0.18, 240,270),
+            new Rect(0.62, 0.31, 240,240),
+            new Rect(0.35, 0.48, 240,240),
             new Rect(0.65, 0.63, 240,100) // Card 5 (bottom-right small top layer)
         };
 
@@ -216,10 +240,10 @@ public partial class SummaryViewModel : ObservableObject
                 return;
             }
         }
-        
+
         // เครียร์ข้อมูลทั้งหมดไม่ว่าจะกด Yes หรือ No
         SummaryPageData.Clear();
-        
+
         // ไปหน้า Starter ทั้งหน้าและ Tab พร้อมรีเซ็ตแท็บ Diary
         await ResetDiaryAndGoToStarter();
     }
@@ -279,8 +303,18 @@ public partial class SummaryViewModel : ObservableObject
             return;
         }
 
-        // สมมติไฟล์รูปภาพอยู่ในโฟลเดอร์ Resources/Images ของโปรเจกต์ และชื่อไฟล์ตาม mood เช่น joy.png
-        string imageName = $"{mood.ToLower()}.png";
+        // Map mood names to image filenames
+        string imageName = mood.ToLower() switch
+        {
+            "happiness" => "happiness.png",
+            "love" => "love.png",
+            "angry" => "anger.png",
+            "surprise" => "surprise.png",
+            "sadness" => "sadness.png",
+            "fear" => "fear.png",
+            _ => $"{mood.ToLower()}.png" // fallback
+        };
+
         EmotionImage = ImageSource.FromFile(imageName);
     }
 }

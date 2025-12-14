@@ -1,18 +1,15 @@
 using System;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
+using System.Text.Json.Serialization;
 
 namespace Firebasemauiapp.Services;
 
 public class API
 {
-    private string emotion;
-    private string suggestion;
-    private string emotionalReflection;
-    private string mood;
-    private string keywords;
-    private string score;
+    private string suggestion = string.Empty;
+    private string emotionalReflection = string.Empty;
+    private string keywords = string.Empty;
 
     public async Task SendData(string Diary)
     {
@@ -32,43 +29,45 @@ public class API
             response.EnsureSuccessStatusCode();
             string responseBody = await response.Content.ReadAsStringAsync();
 
-            if (responseBody == null)
+            if (string.IsNullOrWhiteSpace(responseBody))
             {
                 throw new Exception("Failed to parse API response");
             }
 
-            if (!responseBody.Contains("emotion") || !responseBody.Contains("advice"))
+            Console.WriteLine($"📦 Raw Response: {responseBody}");
+
+            // Parse new format with "result" wrapper
+            var options = new JsonSerializerOptions
             {
-                throw new Exception("API response missing required fields (emotion, advice)");
+                PropertyNameCaseInsensitive = true
+            };
+
+            var apiResponse = JsonSerializer.Deserialize<ApiResponse>(responseBody, options);
+
+            if (apiResponse?.Result == null)
+            {
+                throw new Exception("API response missing 'result' field");
             }
 
-            // แปลง JSON เป็น Dictionary
-            var responseData = JsonSerializer.Deserialize<Dictionary<string, string>>(responseBody);
+            // ดึงค่าจาก result object
+            suggestion = apiResponse.Result.Suggestion ?? "";
+            emotionalReflection = apiResponse.Result.EmotionalReflection ?? "";
 
-            if (responseData == null)
+            // Convert keywords array to comma-separated string
+            if (apiResponse.Result.Keywords != null && apiResponse.Result.Keywords.Length > 0)
             {
-                throw new Exception("Failed to deserialize API response");
+                keywords = string.Join(", ", apiResponse.Result.Keywords);
             }
-
-            // ดึงค่าต่างๆ
-            emotion = responseData["emotion"] ?? "";
-            string adviceRaw = responseData["advice"] ?? "";
-
-            // ใช้ Regex แยกค่าต่าง ๆ ออกจาก adviceRaw
-            suggestion = ExtractValue(adviceRaw, "Suggestion");
-            emotionalReflection = ExtractValue(adviceRaw, "Emotional Reflection");
-            mood = ExtractValue(adviceRaw, "Mood");
-            keywords = ExtractValue(adviceRaw, "Keywords");
-            score = ExtractValue(adviceRaw, "Sentiment Score");
+            else
+            {
+                keywords = "";
+            }
 
             // แสดงผลลัพธ์
             Console.WriteLine($"✅ Success with URL: {url}");
-            Console.WriteLine($"Emotion: {emotion}");
             Console.WriteLine($"Suggestion: {suggestion}");
             Console.WriteLine($"Emotional Reflection: {emotionalReflection}");
-            Console.WriteLine($"Mood: {mood}");
             Console.WriteLine($"Keywords: {keywords}");
-            Console.WriteLine($"Score: {score}");
         }
         catch (Exception ex)
         {
@@ -77,32 +76,36 @@ public class API
         }
     }
 
-    private string ExtractValue(string text, string label)
-    {
-        var match = Regex.Match(text, $@"- {label}:\s*(.+?)(?:\s*-|$)");
-        return match.Success ? match.Groups[1].Value.Trim() : "N/A";
-    }
-
-    // ✅ สร้าง Getter สำหรับค่าต่างๆ
-    public string GetEmotion() => emotion;
+    // ✅ Getters สำหรับค่าต่างๆ
     public string GetSuggestion() => suggestion;
     public string GetEmotionalReflection() => emotionalReflection;
-    public string GetMood() => mood;
     public string GetKeywords() => keywords;
-    public double GetScore() => double.TryParse(score, out var result) ? result : 5.0;
+}
 
-    public static async Task Main(string data)
-    {
-        API api = new API();
-        await api.SendData(data);
+// Response models for new API format
+public class ApiResponse
+{
+    [JsonPropertyName("result")]
+    public ResultData? Result { get; set; }
 
-        // ✅ แสดงผลลัพธ์ที่ได้จาก Getter
-        Console.WriteLine("\n--- Results ---");
-        Console.WriteLine("Emotion: " + api.GetEmotion());
-        Console.WriteLine("Suggestion: " + api.GetSuggestion());
-        Console.WriteLine("Emotional Reflection: " + api.GetEmotionalReflection());
-        Console.WriteLine("Mood: " + api.GetMood());
-        Console.WriteLine("Keywords: " + api.GetKeywords());
-        Console.WriteLine("Score: " + api.GetScore());
-    }
+    [JsonPropertyName("raw_model_output")]
+    public string? RawModelOutput { get; set; }
+}
+
+public class ResultData
+{
+    [JsonPropertyName("suggestion")]
+    public string? Suggestion { get; set; }
+
+    [JsonPropertyName("emotional_reflection")]
+    public string? EmotionalReflection { get; set; }
+
+    [JsonPropertyName("keywords")]
+    public string[]? Keywords { get; set; }
+
+    [JsonPropertyName("consistency_check")]
+    public string? ConsistencyCheck { get; set; }
+
+    [JsonPropertyName("safety_note")]
+    public string? SafetyNote { get; set; }
 }
