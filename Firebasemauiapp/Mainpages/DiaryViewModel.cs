@@ -60,14 +60,14 @@ public partial class DiaryViewModel : ObservableObject
         {
             // Ask user to choose between camera or gallery
             var action = await Shell.Current.DisplayActionSheet(
-                "Choose photo source", 
-                "Cancel", 
-                null, 
-                "Take Photo", 
+                "Choose photo source",
+                "Cancel",
+                null,
+                "Take Photo",
                 "Choose from Gallery");
 
             FileResult? result = null;
-            
+
             if (action == "Take Photo")
             {
                 // Camera with potential crop on some devices
@@ -81,11 +81,11 @@ public partial class DiaryViewModel : ObservableObject
                     Title = "Select a photo"
                 });
             }
-            
+
             if (result == null) return;
 
             IsUploadingImage = true;
-            
+
             // Use original image directly
             string finalPath = result.FullPath;
 
@@ -128,6 +128,13 @@ public partial class DiaryViewModel : ObservableObject
             return;
         }
 
+        // Check if Mood and MoodScore are available (from SelectMood and LevelMood pages)
+        if (Mood == null)
+        {
+            await Shell.Current.DisplayAlert("Error", "Mood information is missing. Please select your mood first.", "OK");
+            return;
+        }
+
         IsAnalyzing = true;
         IsLoadingVisible = true;
         AnalyzeButtonText = "Analyzing...";
@@ -137,19 +144,20 @@ public partial class DiaryViewModel : ObservableObject
             var api = new API();
             await api.SendData(DiaryContent);
 
-            string mood = api.GetMood();
             string suggestion = api.GetSuggestion();
             string keyword = api.GetKeywords();
             string emotion = api.GetEmotionalReflection();
-            double score = api.GetScore();
 
-            if (string.IsNullOrWhiteSpace(mood) || string.IsNullOrWhiteSpace(suggestion) || string.IsNullOrWhiteSpace(keyword))
+            if (string.IsNullOrWhiteSpace(suggestion) || string.IsNullOrWhiteSpace(keyword))
             {
                 await Shell.Current.DisplayAlert("Error", "Failed to analyze content. Please try again.", "OK");
                 return;
             }
 
-            SummaryPageData.SetData(DiaryContent, mood, suggestion, keyword, emotion, score.ToString(), ImageUrl);
+            // Use Mood from SelectMood page and MoodScore from LevelMood page
+            string moodName = Mood.Name ?? "Unknown";
+
+            SummaryPageData.SetData(DiaryContent, moodName, suggestion, keyword, emotion, MoodScore.ToString(), ImageUrl);
 
             await Shell.Current.GoToAsync("//summary");
         }
