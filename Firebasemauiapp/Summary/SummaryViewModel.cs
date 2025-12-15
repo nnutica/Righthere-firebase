@@ -283,6 +283,58 @@ public partial class SummaryViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private async Task SaveDiary()
+    {
+        try
+        {
+            var currentUser = _authClient.User;
+            if (currentUser == null)
+            {
+                await Shell.Current.DisplayAlert("Error", "User session expired. Please log in again.", "OK");
+                await Shell.Current.GoToAsync("//signin");
+                return;
+            }
+
+            var diary = new DiaryData
+            {
+                UserId = currentUser.Uid,
+                Content = Content,
+                Mood = Mood,
+                SentimentScore = double.TryParse(Score, out var scoreValue) ? scoreValue : 0.0,
+                Suggestion = Suggestion,
+                Keywords = Keywords,
+                EmotionalReflection = Emotion,
+                ImageUrl = ImageUrl,
+                ImageUrls = string.IsNullOrWhiteSpace(ImageUrl) ? null : new List<string> { ImageUrl },
+                CreatedAtDateTime = DateTime.Now
+            };
+
+            string diaryId = await _diaryDatabase.SaveDiaryAsync(diary);
+            await Shell.Current.DisplayAlert("Saved", "Diary entry saved successfully.", "OK");
+
+            // เครียร์ข้อมูล
+            SummaryPageData.Clear();
+
+            // กลับไปหน้า Starter
+            await ResetDiaryAndGoToStarter();
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Error", $"Failed to save diary: {ex.Message}", "OK");
+        }
+    }
+
+    [RelayCommand]
+    private async Task LeaveWithoutSaving()
+    {
+        // เครียร์ข้อมูลโดยไม่เซฟ
+        SummaryPageData.Clear();
+
+        // กลับไปหน้า Starter
+        await ResetDiaryAndGoToStarter();
+    }
+
     private async Task ResetDiaryAndGoToStarter()
     {
         try

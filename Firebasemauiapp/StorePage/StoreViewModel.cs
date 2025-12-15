@@ -9,10 +9,11 @@ using Google.Cloud.Firestore;
 
 namespace Firebasemauiapp.StorePage;
 
-public partial class StoreViewModel : ObservableObject
+public partial class StoreViewModel : ObservableObject, IDisposable
 {
     private readonly FirebaseAuthClient _authClient;
     private readonly FirestoreService _firestoreService;
+    private bool _disposed;
 
     [ObservableProperty]
     private int _coin;
@@ -23,6 +24,18 @@ public partial class StoreViewModel : ObservableObject
     [ObservableProperty]
     private string _plantImage = "plant.png";
 
+    [ObservableProperty]
+    private string _currentPot = "pot.png";
+
+    [ObservableProperty]
+    private bool _isStoreTabSelected = true;
+
+    [ObservableProperty]
+    private ObservableCollection<StoreItem> _myItems = new();
+
+    [ObservableProperty]
+    private ObservableCollection<StoreItem> _availableStoreItems = new();
+
     public StoreViewModel(FirebaseAuthClient authClient, FirestoreService firestoreService)
     {
         _authClient = authClient;
@@ -32,6 +45,14 @@ public partial class StoreViewModel : ObservableObject
 
         LoadStoreItems();
         _ = RefreshDataAsync();
+    }
+
+    public void Dispose()
+    {
+        if (_disposed) return;
+
+        _authClient.AuthStateChanged -= OnAuthStateChanged;
+        _disposed = true;
     }
 
     [RelayCommand]
@@ -49,8 +70,53 @@ public partial class StoreViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private void SelectStoreTab()
+    {
+        IsStoreTabSelected = true;
+    }
+
+    [RelayCommand]
+    private void SelectMyItemsTab()
+    {
+        IsStoreTabSelected = false;
+    }
+
+    [RelayCommand]
+    private async Task UseItem(StoreItem item)
+    {
+        if (item == null) return;
+
+        try
+        {
+            var user = _authClient.User;
+            if (user?.Uid == null)
+            {
+                await Shell.Current.DisplayAlert("Error", "Please log in first.", "OK");
+                return;
+            }
+
+            var db = await _firestoreService.GetDatabaseAsync();
+            var userDoc = db.Collection("users").Document(user.Uid);
+
+            // Update currentPot in Firestore
+            await userDoc.UpdateAsync(new Dictionary<string, object>
+            {
+                { "currentPot", item.Image }
+            });
+
+            CurrentPot = item.Image;
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlert("Error", $"Failed to use item: {ex.Message}", "OK");
+        }
+    }
+
     private void OnAuthStateChanged(object? sender, UserEventArgs e)
     {
+        if (_disposed) return;
+
         if (MainThread.IsMainThread)
             _ = RefreshDataAsync();
         else
@@ -59,6 +125,8 @@ public partial class StoreViewModel : ObservableObject
 
     private async Task RefreshDataAsync()
     {
+        if (_disposed) return;
+
         await RefreshCoinAsync();
         await LoadInventoryAsync();
     }
@@ -178,6 +246,41 @@ public partial class StoreViewModel : ObservableObject
             {
                 item.IsPurchased = purchasedItemIds.Contains(item.ItemId);
                 Console.WriteLine($"Item: {item.ItemId} - Purchased: {item.IsPurchased}");
+            }
+
+            // Update MyItems collection with purchased items
+            MyItems.Clear();
+
+            // Always add default pot first
+            MyItems.Add(new StoreItem
+            {
+                Name = "Default Pot",
+                Image = "pot.png",
+                ItemType = "pot",
+                ItemId = "pot",
+                IsPurchased = true
+            });
+
+            foreach (var item in StoreItems.Where(i => i.IsPurchased))
+            {
+                MyItems.Add(item);
+            }
+
+            // Update AvailableStoreItems to show only unpurchased items
+            AvailableStoreItems.Clear();
+            foreach (var item in StoreItems.Where(i => !i.IsPurchased))
+            {
+                AvailableStoreItems.Add(item);
+            }
+
+            // Load current pot and plant
+            if (userDoc.TryGetValue("currentPot", out string currentPot))
+            {
+                CurrentPot = currentPot;
+            }
+            if (userDoc.TryGetValue("currentPlant", out string currentPlant))
+            {
+                PlantImage = currentPlant;
             }
 
             Console.WriteLine($"✅ Total purchased items: {purchasedItemIds.Count}");

@@ -11,9 +11,9 @@
               RowDefinitions="Auto,Auto,*,Auto"
               RowSpacing="16">
             <!-- Back Button -->
-            <ImageButton Source="back.png"
-                         WidthRequest="32"
-                         HeightRequest="32"
+            <ImageButton Source="back_green.png"
+                         WidthRequest="60"
+                         HeightRequest="60"
                          HorizontalOptions="Start"
                          VerticalOptions="Start"
                          Margin="0,10,0,0"

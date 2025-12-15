@@ -8,6 +8,7 @@
              Shell.NavBarIsVisible="False">
     <ContentPage.Resources>
         <conv:MoodNameToImageConverter x:Key="MoodNameToImageConverter"/>
+        <conv:ImageUrlToHeightConverter x:Key="ImageUrlToHeightConverter"/>
     </ContentPage.Resources>
     <Grid RowDefinitions="Auto,*"
           Padding="20"
@@ -17,14 +18,11 @@
               RowDefinitions="Auto,Auto"
               ColumnDefinitions="Auto,*"
               Margin="0,0,0,12">
-            <Button Text="←"
-                    Clicked="OnBackClicked"
-                    BackgroundColor="Transparent"
-                    TextColor="White"
-                    FontSize="22"
-                    Padding="0"
-                    WidthRequest="36"
-                    HeightRequest="36"/>
+            <ImageButton Source="back.png"
+                         Clicked="OnBackClicked"
+                         BackgroundColor="Transparent"
+                         WidthRequest="80"
+                         HeightRequest="80"/>
             <Image Source="calendar.png"
                    Grid.Row="1"
                    Grid.Column="0"
@@ -54,12 +52,13 @@
                        Margin="8"
                        Aspect="AspectFit"/>
             </Border>
-            
-            <!-- Diary editor - positioned below mood indicator with margin -->
-            <Border StrokeThickness="0"
+
+            <!-- Diary editor - expanded to fill more space -->
+            <Border x:Name="EditorBorder"
+                    StrokeThickness="0"
                     BackgroundColor="Transparent"
                     Padding="10"
-                    AbsoluteLayout.LayoutBounds="0, 58, 1, 240"
+                    AbsoluteLayout.LayoutBounds="0, 58, 1, 420"
                     AbsoluteLayout.LayoutFlags="WidthProportional">
                 <Editor x:Name="DiaryEntry"
                         BackgroundColor="Transparent"
@@ -70,66 +69,122 @@
                         VerticalOptions="FillAndExpand"
                         VerticalTextAlignment="Start"/>
             </Border>
-            
-            <!-- Rounded image - positioned below editor, enlarged -->
-            <Frame Padding="0"
-                   CornerRadius="20"
-                   HasShadow="False"
-                   BackgroundColor="Transparent"
-                   BorderColor="Transparent"
-                   AbsoluteLayout.LayoutBounds="0, 298, 1, 340"
-                   AbsoluteLayout.LayoutFlags="WidthProportional">
-                <Frame.Triggers>
-                    <DataTrigger TargetType="Frame"
-                                 Binding="{Binding ImageUrl}"
-                                 Value="">
-                        <Setter Property="IsVisible"
-                                Value="False"/>
-                    </DataTrigger>
-                    <DataTrigger TargetType="Frame"
-                                 Binding="{Binding ImageUrl}"
-                                 Value="{x:Null}">
-                        <Setter Property="IsVisible"
-                                Value="False"/>
-                    </DataTrigger>
-                </Frame.Triggers>
-                <Image Source="{Binding ImageUrl}"
-                       Aspect="AspectFill"
-                       HorizontalOptions="Fill"
-                       VerticalOptions="Fill"/>
-            </Frame>
-            
+
+            <!-- White Border Container for Image Area -->
+            <Border x:Name="ImageBorder"
+                    BackgroundColor="White"
+                    StrokeThickness="0"
+                    AbsoluteLayout.LayoutBounds="0, 488, 1, 150"
+                    AbsoluteLayout.LayoutFlags="WidthProportional">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20"/>
+                </Border.StrokeShape>
+                <Grid>
+                    <!-- Upload Image Button - Large circular green button in center (shown when no image) -->
+                    <Border BackgroundColor="#A8D5BA"
+                            WidthRequest="180"
+                            HeightRequest="180"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding ImageUrl}"
+                                         Value="">
+                                <Setter Property="IsVisible"
+                                        Value="True"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding ImageUrl}"
+                                         Value="{x:Null}">
+                                <Setter Property="IsVisible"
+                                        Value="True"/>
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Border.StrokeShape>
+                            <Ellipse/>
+                        </Border.StrokeShape>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding UploadImageCommand}"/>
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center"
+                                             HorizontalOptions="Center"
+                                             Spacing="8">
+                            <Image Source="imgicon.png"
+                                   WidthRequest="48"
+                                   HeightRequest="48"
+                                   HorizontalOptions="Center"/>
+                            <Label Text="May I image (png,only)*"
+                                   FontSize="12"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center"/>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Uploaded Image (shown when image exists) -->
+                    <Image Source="{Binding ImageUrl}"
+                           Aspect="AspectFill"
+                           HorizontalOptions="Fill"
+                           VerticalOptions="Fill">
+                        <Image.Clip>
+                            <RoundRectangleGeometry CornerRadius="20"
+                                                    Rect="0,0,1000,1000"/>
+                        </Image.Clip>
+                        <Image.Triggers>
+                            <DataTrigger TargetType="Image"
+                                         Binding="{Binding ImageUrl}"
+                                         Value="">
+                                <Setter Property="IsVisible"
+                                        Value="False"/>
+                            </DataTrigger>
+                            <DataTrigger TargetType="Image"
+                                         Binding="{Binding ImageUrl}"
+                                         Value="{x:Null}">
+                                <Setter Property="IsVisible"
+                                        Value="False"/>
+                            </DataTrigger>
+                        </Image.Triggers>
+                    </Image>
+                </Grid>
+            </Border>
+
             <!-- Action buttons at bottom -->
-            <Grid ColumnDefinitions="Auto,Auto,*"
+            <Grid ColumnDefinitions="Auto,*"
+                  ColumnSpacing="12"
                   AbsoluteLayout.LayoutBounds="0, 640, 1, 70"
                   AbsoluteLayout.LayoutFlags="WidthProportional"
                   Margin="0,0,0,10">
-                <ImageButton Grid.Column="0"
-                             Source="imgicon.png"
-                             BackgroundColor="White"
-                             CornerRadius="12"
-                             Padding="8"
-                             WidthRequest="48"
-                             HeightRequest="48"
-                             Margin="0,0,10,0"
-                             Command="{Binding UploadImageCommand}">
-                    <ImageButton.Shadow>
+                <!-- Cancel/Close Button -->
+                <Border Grid.Column="0"
+                        BackgroundColor="White"
+                        WidthRequest="56"
+                        HeightRequest="56"
+                        VerticalOptions="Center">
+                    <Border.StrokeShape>
+                        <Ellipse/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
                         <Shadow Brush="#40000000"
                                 Radius="12"
                                 Offset="0,4"
                                 Opacity="0.35"/>
-                    </ImageButton.Shadow>
-                </ImageButton>
-                <ActivityIndicator Grid.Column="1"
-                                   Margin="10,0,0,0"
-                                   Color="#50A65D"
-                                   IsRunning="{Binding IsUploadingImage}"
-                                   IsVisible="{Binding IsUploadingImage}"/>
-                <Button Grid.Column="2"
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCancelClicked"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="✕"
+                           FontSize="24"
+                           TextColor="#FEAA3A"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+                </Border>
+
+                <!-- Next Button -->
+                <Button Grid.Column="1"
                         x:Name="AnalyzeButton"
                         BackgroundColor="White"
                         TextColor="#FEAA3A"
-                        Text="{Binding AnalyzeButtonText}"
+                        Text="Next"
                         Command="{Binding AnalyzeContentCommand}"
                         IsEnabled="{Binding IsAnalyzing, Converter={StaticResource InvertedBoolConverter}}"
                         CornerRadius="28"
@@ -146,7 +201,7 @@
                     </Button.Shadow>
                 </Button>
             </Grid>
-            
+
             <!-- Loading indicator -->
             <ActivityIndicator Margin="10"
                                Color="White"
@@ -154,6 +209,13 @@
                                IsVisible="{Binding IsLoadingVisible}"
                                AbsoluteLayout.LayoutBounds="0.5, 0.5, 50, 50"
                                AbsoluteLayout.LayoutFlags="PositionProportional"/>
+
+            <!-- Upload Activity Indicator -->
+            <ActivityIndicator Color="#50A65D"
+                               IsRunning="{Binding IsUploadingImage}"
+                               IsVisible="{Binding IsUploadingImage}"
+                               AbsoluteLayout.LayoutBounds="0.5, 360, 50, 50"
+                               AbsoluteLayout.LayoutFlags="XProportional"/>
         </AbsoluteLayout>
     </Grid>
 </ContentPage>

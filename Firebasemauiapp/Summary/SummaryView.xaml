@@ -317,7 +317,7 @@
                                Grid.ColumnSpan="2"
                                Text="Reflection&#10;Summary"
                                TextColor="#FEAA3A"
-                               FontSize="20"
+                               FontSize="22"
                                FontAttributes="Bold"
                                LineHeight="0.95"
                                Margin="0,2,0,0"/>
@@ -325,8 +325,8 @@
                                Grid.ColumnSpan="2"
                                Text="{Binding Emotion}"
                                TextColor="#8FB78F"
-                               FontSize="14"
-                               FontFamily="contextfont"/>
+                               FontSize="18"
+                               FontFamily="lightfont"/>
                     </Grid>
                 </Border>
             </VerticalStackLayout>
@@ -492,7 +492,7 @@
                 </Button.Shadow>
             </Button>
 
-            <!-- Right: Arrow controls on pages 2-3 -->
+            <!-- Right: Arrow controls on page 2 only -->
             <HorizontalStackLayout Grid.Column="2"
                                    Spacing="8"
                                    IsVisible="False"
@@ -501,12 +501,6 @@
                     <DataTrigger TargetType="HorizontalStackLayout"
                                  Binding="{Binding PageIndex}"
                                  Value="1">
-                        <Setter Property="IsVisible"
-                                Value="True"/>
-                    </DataTrigger>
-                    <DataTrigger TargetType="HorizontalStackLayout"
-                                 Binding="{Binding PageIndex}"
-                                 Value="2">
                         <Setter Property="IsVisible"
                                 Value="True"/>
                     </DataTrigger>
@@ -539,6 +533,77 @@
                                 Opacity="0.35"/>
                     </Button.Shadow>
                 </Button>
+            </HorizontalStackLayout>
+
+            <!-- Right: Final page controls (Page 3 - PageIndex==2) -->
+            <HorizontalStackLayout Grid.Column="2"
+                                   Spacing="8"
+                                   IsVisible="False"
+                                   VerticalOptions="Center">
+                <HorizontalStackLayout.Triggers>
+                    <DataTrigger TargetType="HorizontalStackLayout"
+                                 Binding="{Binding PageIndex}"
+                                 Value="2">
+                        <Setter Property="IsVisible"
+                                Value="True"/>
+                    </DataTrigger>
+                </HorizontalStackLayout.Triggers>
+
+                <!-- Back button -->
+                <Button Text="◀"
+                        BackgroundColor="White"
+                        TextColor="#FEAA3A"
+                        CornerRadius="16"
+                        WidthRequest="40"
+                        HeightRequest="40"
+                        Command="{Binding PrevPageCommand}">
+                    <Button.Shadow>
+                        <Shadow Brush="#40000000"
+                                Radius="12"
+                                Offset="0,4"
+                                Opacity="0.35"/>
+                    </Button.Shadow>
+                </Button>
+
+                <!-- Leave it button -->
+                <Button Text="Leave it"
+                        BackgroundColor="White"
+                        TextColor="#FEAA3A"
+                        CornerRadius="28"
+                        HeightRequest="40"
+                        Padding="16,0"
+                        FontSize="14"
+                        Command="{Binding LeaveWithoutSavingCommand}">
+                    <Button.Shadow>
+                        <Shadow Brush="#40000000"
+                                Radius="12"
+                                Offset="0,4"
+                                Opacity="0.35"/>
+                    </Button.Shadow>
+                </Button>
+
+                <!-- Save button with icon -->
+                <Border BackgroundColor="#8FB78F"
+                        WidthRequest="40"
+                        HeightRequest="40">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="#40000000"
+                                Radius="12"
+                                Offset="0,4"
+                                Opacity="0.35"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding SaveDiaryCommand}"/>
+                    </Border.GestureRecognizers>
+                    <Image Source="save_icon.png"
+                           WidthRequest="24"
+                           HeightRequest="24"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+                </Border>
             </HorizontalStackLayout>
         </Grid>
     </Grid>

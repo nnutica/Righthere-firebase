@@ -8,7 +8,7 @@
     <!-- Orange card-like area -->
     <Grid Padding="20,24"
           RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto"
-          BackgroundColor="#F8A33A">
+          BackgroundColor="#FFC566">
         <!-- Row 0: Back Button -->
         <ImageButton Grid.Row="0"
                      Source="back.png"
@@ -82,8 +82,8 @@
                 TextColor="#F8A33A"
                 FontAttributes="Bold"
                 FontSize="20"
-                CornerRadius="12"
-                HeightRequest="80"
+                CornerRadius="28"
+                HeightRequest="60"
                 VerticalOptions="End"
                 Margin="0,0,0,60"
                 Command="{Binding SetMoodCommand}">

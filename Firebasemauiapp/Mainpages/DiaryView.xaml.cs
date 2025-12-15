@@ -14,6 +14,33 @@ public partial class DiaryView : ContentPage
 
 		_viewModel = viewModel;
 		BindingContext = _viewModel;
+
+		// Subscribe to ImageUrl changes to adjust layout
+		_viewModel.PropertyChanged += (s, e) =>
+		{
+			if (e.PropertyName == nameof(DiaryViewModel.ImageUrl))
+			{
+				UpdateLayoutForImage();
+			}
+		};
+	}
+
+	private void UpdateLayoutForImage()
+	{
+		var hasImage = !string.IsNullOrEmpty(_viewModel.ImageUrl);
+
+		if (hasImage)
+		{
+			// มีรูป: Editor สั้น, Image Border สูงและขยับขึ้น
+			AbsoluteLayout.SetLayoutBounds(EditorBorder, new Rect(0, 58, 1, 230));
+			AbsoluteLayout.SetLayoutBounds(ImageBorder, new Rect(0, 298, 1, 340));
+		}
+		else
+		{
+			// ไม่มีรูป: Editor ยาว, Image Border เตี้ยและอยู่ล่าง
+			AbsoluteLayout.SetLayoutBounds(EditorBorder, new Rect(0, 58, 1, 420));
+			AbsoluteLayout.SetLayoutBounds(ImageBorder, new Rect(0, 488, 1, 150));
+		}
 	}
 
 	protected override void OnAppearing()
@@ -55,11 +82,36 @@ public partial class DiaryView : ContentPage
 	{
 		try
 		{
-			if (Shell.Current?.Navigation?.NavigationStack?.Count > 0)
-				await Shell.Current.GoToAsync("..", true);
-			else if (Navigation.NavigationStack.Count > 0)
-				await Navigation.PopAsync();
+			// Clear ViewModel data
+			_viewModel.ResetDiaryForm();
+
+			// Clear SummaryPageData
+			Firebasemauiapp.Helpers.SummaryPageData.Clear();
+
+			// Navigate to Starter page
+			await Shell.Current.GoToAsync("//starter");
 		}
-		catch { }
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"OnBackClicked error: {ex.Message}");
+		}
+	}
+
+	private void OnCancelClicked(object? sender, EventArgs e)
+	{
+		try
+		{
+			// ถ้ามีรูป ให้ลบรูปออก (เพื่อเลือกรูปใหม่)
+			if (!string.IsNullOrEmpty(_viewModel.ImageUrl))
+			{
+				_viewModel.ImageUrl = null;
+				System.Diagnostics.Debug.WriteLine("Image cleared");
+			}
+			// ถ้าไม่มีรูป ไม่ทำอะไร (ให้ใช้ปุ่ม Back ด้านบนแทน)
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"OnCancelClicked error: {ex.Message}");
+		}
 	}
 }

@@ -42,8 +42,8 @@
                 StrokeThickness="0"
                 StrokeShape="RoundRectangle 40,40,0,0"
                 HorizontalOptions="Fill"
-                VerticalOptions="End"
-                HeightRequest="480">
+                VerticalOptions="EndAndExpand"
+                HeightRequest="500">
             <Border.Shadow>
                 <Shadow Opacity="0.15"
                         Radius="20"
