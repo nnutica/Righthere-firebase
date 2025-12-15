@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage
+    x:Class="Firebasemauiapp.QuestPage.QuestPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:Firebasemauiapp.Converters;assembly=Firebasemauiapp"
+    x:Name="Root"
+    Title="Quests"
+    BackgroundImageSource="main_bg.png"
+    Shell.NavBarIsVisible="False"
+    Shell.BackgroundColor="Transparent">
+
+    <ContentPage.Resources>
+        <converters:ProgressToDoubleConverter x:Key="ProgressToDoubleConverter"/>
+        <converters:BoolToColorConverter x:Key="BoolToColorConverter"
+                                         TrueColor="#4CAF50"
+                                         FalseColor="Transparent"/>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*,32">
+        <!-- Main content area -->
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="20"
+                                 Spacing="20"
+                                 Margin="0,10,0,40">
+                <!-- Back Button -->
+                <ImageButton Source="back.png"
+                             WidthRequest="32"
+                             HeightRequest="32"
+                             HorizontalOptions="Start"
+                             VerticalOptions="Start"
+                             Clicked="OnBackClicked"/>
+
+                <!-- Header -->
+                <VerticalStackLayout Spacing="8"
+                                     HorizontalOptions="Center">
+                    <Label Text="Daily Quests"
+                           FontAttributes="Bold"
+                           FontSize="32"
+                           HorizontalOptions="Center"
+                           TextColor="White"/>
+
+                    <!-- Coin display -->
+                    <Border BackgroundColor="#66000000"
+                            StrokeThickness="0"
+                            HorizontalOptions="Center">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12"/>
+                        </Border.StrokeShape>
+                        <HorizontalStackLayout Padding="12,8"
+                                               Spacing="8">
+                            <Label Text="Your Coins:"
+                                   FontSize="16"
+                                   TextColor="White"/>
+                            <Label Text="🪙"
+                                   FontSize="18"
+                                   TextColor="Gold"/>
+                            <Label Text="{Binding Coin}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="Gold"/>
+                        </HorizontalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- Daily Check-in Card -->
+                <Border BackgroundColor="#FFFFFF"
+                        StrokeThickness="0"
+                        Padding="16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12"/>
+                    </Border.StrokeShape>
+                    <Grid ColumnDefinitions="*,Auto"
+                          RowDefinitions="Auto,Auto">
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Text="Daily Check In"
+                               FontAttributes="Bold"
+                               FontSize="18"/>
+                        <Label Grid.Row="0"
+                               Grid.Column="1"
+                               Text="Today"
+                               FontSize="12"
+                               TextColor="#666"/>
+                        <HorizontalStackLayout Grid.Row="1"
+                                               Grid.ColumnSpan="2"
+                                               Spacing="8"
+                                               Margin="0,8,0,0">
+                            <Border Padding="10,6"
+                                    BackgroundColor="#E8F5E9"
+                                    StrokeThickness="1"
+                                    Stroke="#4CAF50">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="8"/>
+                                </Border.StrokeShape>
+                                <Label Text="Day"
+                                       FontSize="14"
+                                       TextColor="#4CAF50"/>
+                            </Border>
+                        </HorizontalStackLayout>
+                    </Grid>
+                </Border>
+
+                <!-- Refresh button -->
+                <Button Text="🔄 Refresh Quests"
+                        Command="{Binding RefreshCommand}"
+                        BackgroundColor="#5C6BC0"
+                        TextColor="White"
+                        CornerRadius="12"
+                        Padding="16,12"
+                        HorizontalOptions="Center"/>
+
+                <!-- Quests list -->
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Your Daily Quests"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           Margin="0,8,0,0"/>
+
+                    <CollectionView ItemsSource="{Binding Quests}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BackgroundColor="#FFFFFF"
+                                        StrokeThickness="0"
+                                        Padding="16"
+                                        Margin="0,0,0,12">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="16"/>
+                                    </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="Auto,*,Auto"
+                                          RowDefinitions="Auto,Auto,Auto,Auto">
+                                        <!-- Icon -->
+                                        <Image Grid.Row="0"
+                                               Grid.RowSpan="4"
+                                               Grid.Column="0"
+                                               Source="diary.png"
+                                               WidthRequest="40"
+                                               HeightRequest="40"
+                                               Margin="0,0,16,0"
+                                               VerticalOptions="Center"/>
+
+                                        <!-- Title -->
+                                        <Label Grid.Row="0"
+                                               Grid.Column="1"
+                                               Text="{Binding Title}"
+                                               FontAttributes="Bold"
+                                               FontSize="16"/>
+
+                                        <!-- Reward badge -->
+                                        <Border Grid.Row="0"
+                                                Grid.Column="2"
+                                                BackgroundColor="#FFF3E0"
+                                                Padding="10,6"
+                                                StrokeThickness="0">
+                                            <Border.StrokeShape>
+                                                <RoundRectangle CornerRadius="12"/>
+                                            </Border.StrokeShape>
+                                            <HorizontalStackLayout Spacing="4">
+                                                <Label Text="{Binding Reward}"
+                                                       FontAttributes="Bold"/>
+                                                <Label Text="🪙"/>
+                                            </HorizontalStackLayout>
+                                        </Border>
+
+                                        <!-- Type -->
+                                        <Label Grid.Row="1"
+                                               Grid.Column="1"
+                                               Grid.ColumnSpan="2"
+                                               Text="{Binding Type}"
+                                               FontSize="12"
+                                               TextColor="#666"
+                                               Margin="0,4,0,8"/>
+
+                                        <!-- Progress bar -->
+                                        <ProgressBar Grid.Row="2"
+                                                     Grid.Column="1"
+                                                     Grid.ColumnSpan="2"
+                                                     HeightRequest="10"
+                                                     Progress="{Binding Progress, Converter={StaticResource ProgressToDoubleConverter}}"
+                                                     ProgressColor="#4CAF50"
+                                                     Margin="0,0,0,8"/>
+
+                                        <!-- Status indicator -->
+                                        <Grid Grid.Row="3"
+                                              Grid.Column="1"
+                                              Grid.ColumnSpan="2"
+                                              ColumnDefinitions="*,Auto">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding Progress, StringFormat='{0}% Complete'}"
+                                                   FontSize="12"
+                                                   TextColor="#666"
+                                                   VerticalOptions="Center"/>
+
+                                            <HorizontalStackLayout Grid.Column="1"
+                                                                   Spacing="8"
+                                                                   VerticalOptions="Center">
+                                                <Border WidthRequest="28"
+                                                        HeightRequest="28"
+                                                        StrokeThickness="2"
+                                                        Stroke="#4CAF50"
+                                                        BackgroundColor="{Binding IsClaimed, Converter={StaticResource BoolToColorConverter}}">
+                                                    <Border.StrokeShape>
+                                                        <Ellipse/>
+                                                    </Border.StrokeShape>
+                                                    <Image Source="check_white.png"
+                                                           WidthRequest="16"
+                                                           HeightRequest="16"
+                                                           HorizontalOptions="Center"
+                                                           VerticalOptions="Center"
+                                                           IsVisible="{Binding IsClaimed}"/>
+                                                </Border>
+                                                <Label Text="{Binding IsClaimed, StringFormat='{0}'}"
+                                                       FontSize="12"
+                                                       TextColor="#4CAF50"
+                                                       VerticalOptions="Center">
+                                                    <Label.Triggers>
+                                                        <DataTrigger TargetType="Label"
+                                                                     Binding="{Binding IsClaimed}"
+                                                                     Value="True">
+                                                            <Setter Property="Text"
+                                                                    Value="Claimed ✓"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger TargetType="Label"
+                                                                     Binding="{Binding IsClaimed}"
+                                                                     Value="False">
+                                                            <Setter Property="Text"
+                                                                    Value="Pending"/>
+                                                        </DataTrigger>
+                                                    </Label.Triggers>
+                                                </Label>
+                                            </HorizontalStackLayout>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <!-- Loading indicator -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   Color="White"
+                                   HeightRequest="40"/>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Bottom white rounded strip -->
+        <Border Grid.Row="1"
+                BackgroundColor="White"
+                StrokeThickness="0"
+                Margin="0"
+                TranslationY="8">
+            <Border.Shadow>
+                <Shadow Brush="Black"
+                        Opacity="0.18"
+                        Radius="14"
+                        Offset="0,-2"/>
+            </Border.Shadow>
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="28,28,0,0"/>
+            </Border.StrokeShape>
+        </Border>
+    </Grid>
+</ContentPage>

@@ -6,13 +6,12 @@ namespace Firebasemauiapp.Mainpages;
 
 public partial class SummaryMockView : ContentPage
 {
-    public SummaryMockView()
+    public SummaryMockView(SummaryViewModel vm)
     {
         InitializeComponent();
         NavigationPage.SetHasNavigationBar(this, false);
 
-        // Resolve the real SummaryViewModel via DI and seed mock data
-        var vm = ServiceHelper.Get<SummaryViewModel>();
+        // Use injected SummaryViewModel and seed mock data
         BindingContext = vm;
 
         // Mock data resembling production shape

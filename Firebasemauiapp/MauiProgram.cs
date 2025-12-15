@@ -68,6 +68,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<DashboardViewModel>();
 		builder.Services.AddTransient<CommunityViewModel>();
 		builder.Services.AddTransient<LevelMoodViewModel>();
+		builder.Services.AddTransient<Firebasemauiapp.QuestPage.QuestViewModel>();
+		builder.Services.AddTransient<Firebasemauiapp.StorePage.StoreViewModel>();
 
 		// Views
 		builder.Services.AddTransient<SignInView>();
@@ -80,11 +82,11 @@ public static class MauiProgram
 		builder.Services.AddTransient<DiaryHistory>();
 		builder.Services.AddTransient<Dashboard>();
 		builder.Services.AddTransient<CommunityPage.CommunityPage>();
-		// Removed QuestPage view registration
+		builder.Services.AddTransient<Firebasemauiapp.QuestPage.QuestPage>();
+		builder.Services.AddTransient<Firebasemauiapp.StorePage.StorePage>();
 		builder.Services.AddTransient<LevelMoodPage>();
 
 		var app = builder.Build();
-
 
 		// Expose service provider and start auth-driven routing
 		ServiceHelper.Initialize(app.Services);

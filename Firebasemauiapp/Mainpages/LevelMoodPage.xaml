@@ -41,13 +41,13 @@
             <!-- Use AbsoluteLayout for precise positioning -->
             <AbsoluteLayout Grid.Row="1">
                 <!-- Mood Icon -->
-                <Image Source="{Binding Mood.Icon}"
+                <Image Source="{Binding Mood.Icon, FallbackValue='happiness.png', TargetNullValue='happiness.png'}"
                        HeightRequest="200"
                        WidthRequest="200"
                        Aspect="AspectFit"
                        AbsoluteLayout.LayoutBounds="0.5, 0.25, 200, 200"
                        AbsoluteLayout.LayoutFlags="PositionProportional"/>
-                
+
                 <!-- "I'm Feeling [Mood]" Label -->
                 <Label FontSize="24"
                        TextColor="White"
@@ -61,21 +61,21 @@
                                   TextColor="White"
                                   FontFamily="contextfont"
                                   FontSize="24"/>
-                            <Span Text="{Binding Mood.Name}"
+                            <Span Text="{Binding Mood.Name, FallbackValue='Happy', TargetNullValue='Happy'}"
                                   TextColor="White"
                                   FontFamily="contextfont"
                                   FontSize="24"/>
                         </FormattedString>
                     </Label.FormattedText>
                 </Label>
-                
+
                 <!-- Linear single-row mood slider -->
                 <controls:MoodArcSlider WidthRequest="340"
                                         HeightRequest="50"
                                         Value="{Binding Score}"
                                         AbsoluteLayout.LayoutBounds="0.5, 0.65, 340, 50"
                                         AbsoluteLayout.LayoutFlags="PositionProportional"/>
-                
+
                 <!-- Score Label -->
                 <Label Text="{Binding Score, StringFormat='Score: {0}/10'}"
                        FontSize="16"

@@ -30,20 +30,20 @@
                   ColumnDefinitions="Auto,*,Auto"
                   Margin="0,0,0,20">
                 <!-- Back Button -->
-                <Button Grid.Column="0"
-                        Text="←"
-                        Command="{Binding GoBackCommand}"
-                        BackgroundColor="Transparent"
-                        TextColor="#333333"
-                        FontSize="32"
-                        Padding="0"
-                        WidthRequest="48"
-                        HeightRequest="48"/>
+                <ImageButton Grid.Column="0"
+                             Source="back.png"
+                             WidthRequest="32"
+                             HeightRequest="32"
+                             HorizontalOptions="Start"
+                             VerticalOptions="Center"
+                             BackgroundColor="Transparent"
+                             Clicked="OnBackClicked"/>
                 <!-- Menu Icon -->
                 <Image Grid.Column="0"
                        Source="menu.png"
                        WidthRequest="24"
                        HeightRequest="24"
+                       Margin="40,0,0,0"
                        VerticalOptions="Center"/>
 
                 <!-- Help Icon -->

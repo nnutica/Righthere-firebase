@@ -19,6 +19,7 @@ public partial class DiaryViewModel : ObservableObject
 {
     private readonly DiaryDatabase _diaryDatabase;
     private readonly FirebaseAuthClient _authClient;
+    private readonly GitHubUploadService _uploadService;
 
     [ObservableProperty]
     private string _diaryContent = string.Empty;
@@ -47,10 +48,11 @@ public partial class DiaryViewModel : ObservableObject
     [ObservableProperty]
     private bool _isUploadingImage;
 
-    public DiaryViewModel(DiaryDatabase diaryDatabase, FirebaseAuthClient authClient)
+    public DiaryViewModel(DiaryDatabase diaryDatabase, FirebaseAuthClient authClient, GitHubUploadService uploadService)
     {
         _diaryDatabase = diaryDatabase;
         _authClient = authClient;
+        _uploadService = uploadService;
     }
 
     [RelayCommand]
@@ -90,13 +92,12 @@ public partial class DiaryViewModel : ObservableObject
             string finalPath = result.FullPath;
 
             using var stream = File.OpenRead(finalPath);
-            var uploader = ServiceHelper.Get<GitHubUploadService>();
             // Delete previous image in repo if any
             if (!string.IsNullOrWhiteSpace(ImageUrl))
             {
-                try { await uploader.DeleteImageAsync(ImageUrl); } catch { /* ignore delete failures */ }
+                try { await _uploadService.DeleteImageAsync(ImageUrl); } catch { /* ignore delete failures */ }
             }
-            var url = await uploader.UploadImageAsync(stream, result.FileName);
+            var url = await _uploadService.UploadImageAsync(stream, result.FileName);
             ImageUrl = url;
         }
         catch (Exception ex)

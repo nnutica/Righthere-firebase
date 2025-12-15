@@ -18,5 +18,10 @@ public partial class CommunityPage : ContentPage
 			await vm.LoadUserInfoCommand.ExecuteAsync(null);
 		}
 	}
+
+	private async void OnBackClicked(object sender, EventArgs e)
+	{
+		await Shell.Current.GoToAsync("//starter");
+	}
 }
 

@@ -74,14 +74,38 @@ public partial class MoodViewModel : ObservableObject
     [RelayCommand]
     private async Task Next()
     {
-        if (SelectedMood == null) return;
-        if (Shell.Current == null) return;
-
-        var navParams = new Dictionary<string, object>
+        if (SelectedMood == null)
         {
-            ["Mood"] = SelectedMood,
-            ["Username"] = Username
-        };
-        await Shell.Current.GoToAsync("//main/levelmood", true, navParams);
+            System.Diagnostics.Debug.WriteLine("[MoodViewModel] SelectedMood is null!");
+            return;
+        }
+        if (Shell.Current == null)
+        {
+            System.Diagnostics.Debug.WriteLine("[MoodViewModel] Shell.Current is null!");
+            return;
+        }
+
+        try
+        {
+            System.Diagnostics.Debug.WriteLine($"[MoodViewModel] Navigating with Mood: {SelectedMood.Name}, Icon: {SelectedMood.Icon}");
+
+            var navParams = new Dictionary<string, object>
+            {
+                ["Mood"] = SelectedMood,
+                ["Username"] = Username
+            };
+
+            System.Diagnostics.Debug.WriteLine($"[MoodViewModel] NavParams count: {navParams.Count}");
+
+            // Navigate using relative route (registered in AppShell.xaml.cs)
+            await Shell.Current.GoToAsync("levelmood", false, navParams);
+
+            System.Diagnostics.Debug.WriteLine("[MoodViewModel] Navigation completed");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[MoodViewModel] Navigation error: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[MoodViewModel] Stack trace: {ex.StackTrace}");
+        }
     }
 }

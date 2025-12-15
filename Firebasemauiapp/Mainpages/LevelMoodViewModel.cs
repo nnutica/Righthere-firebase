@@ -19,10 +19,10 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
     private string _username = "Daniel";
 
     [ObservableProperty]
-    private MoodOption? _mood;
+    private MoodOption? _mood = new MoodOption("Happiness", "", "happiness.png"); // Default value to prevent null crash
 
     [ObservableProperty]
-    private int? _score = 0;
+    private int? _score = 5;
 
     public LevelMoodViewModel(FirebaseAuthClient authClient)
     {
@@ -33,17 +33,50 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
     // Receive navigation parameters reliably
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.TryGetValue("Username", out var username) && username is string u)
-            Username = u;
+        try
+        {
+            System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] ApplyQueryAttributes called with {query.Count} parameters");
 
-        if (query.TryGetValue("Mood", out var mood) && mood is MoodOption m)
-            Mood = m;
+            if (query.TryGetValue("Username", out var username) && username is string u)
+            {
+                Username = u;
+                System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] Username set to: {u}");
+            }
 
-        // Accept either 'Score' or 'MoodScore' if provided
-        if (query.TryGetValue("Score", out var s) && s is int si)
-            Score = si;
-        else if (query.TryGetValue("MoodScore", out var ms) && ms is int msi)
-            Score = msi;
+            if (query.TryGetValue("Mood", out var mood))
+            {
+                System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] Mood parameter found, type: {mood?.GetType().Name}");
+                if (mood is MoodOption m)
+                {
+                    Mood = m;
+                    System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] Mood set to: {m.Name} with icon: {m.Icon}");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] WARNING: Mood is not MoodOption type!");
+                }
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] WARNING: No Mood parameter in query!");
+            }
+
+            // Accept either 'Score' or 'MoodScore' if provided
+            if (query.TryGetValue("Score", out var s) && s is int si)
+            {
+                Score = si;
+                System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] Score set to: {si}");
+            }
+            else if (query.TryGetValue("MoodScore", out var ms) && ms is int msi)
+            {
+                Score = msi;
+                System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] MoodScore set to: {msi}");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] ApplyQueryAttributes error: {ex.Message}");
+        }
     }
 
     private void LoadUser()
@@ -79,6 +112,7 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
             ["Mood"] = Mood!,
             ["MoodScore"] = Score ?? 0
         };
-        await Shell.Current.GoToAsync("//main/write", true, navParams);
+        // Use relative route (registered in AppShell.xaml.cs)
+        await Shell.Current.GoToAsync("write", true, navParams);
     }
 }

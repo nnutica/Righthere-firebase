@@ -7,4 +7,9 @@ public partial class SelectMoodPage : ContentPage
 		InitializeComponent();
 		BindingContext = viewModel;
 	}
+
+	private async void OnBackClicked(object sender, EventArgs e)
+	{
+		await Shell.Current.GoToAsync("//starter");
+	}
 }

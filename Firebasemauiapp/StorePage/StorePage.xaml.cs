@@ -18,4 +18,9 @@ public partial class StorePage : ContentPage
 			await Task.CompletedTask;
 		}
 	}
+
+	private async void OnBackClicked(object sender, EventArgs e)
+	{
+		await Shell.Current.GoToAsync("//starter");
+	}
 }

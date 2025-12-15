@@ -9,6 +9,7 @@ namespace Firebasemauiapp.Services
     {
         private readonly FirebaseAuthClient _auth;
         private bool _started;
+        private bool _disposed;
 
         public AuthRoutingService(FirebaseAuthClient auth)
         {
@@ -28,18 +29,24 @@ namespace Firebasemauiapp.Services
 
         private async void OnAuthStateChanged(object? sender, UserEventArgs e)
         {
+            if (_disposed) return;
             await RouteForCurrentStateAsync();
         }
 
         private async Task RouteForCurrentStateAsync()
         {
+            if (_disposed) return;
+
             try
             {
                 // Ensure Shell is ready
                 for (int i = 0; i < 40 && Shell.Current == null; i++)
+                {
+                    if (_disposed) return;
                     await Task.Delay(50);
+                }
 
-                if (Shell.Current != null)
+                if (Shell.Current != null && !_disposed)
                 {
                     var current = Shell.Current.CurrentState?.Location?.ToString() ?? string.Empty;
 
@@ -47,14 +54,32 @@ namespace Firebasemauiapp.Services
                     if (_auth.User != null && current.Contains("signup", StringComparison.OrdinalIgnoreCase))
                         return;
 
-                    var route = _auth.User != null ? "//main/starter" : "//signin";
-                    await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync(route));
+                    var route = _auth.User != null ? "//starter" : "//signin";
+
+                    if (!_disposed && Shell.Current != null)
+                    {
+                        await MainThread.InvokeOnMainThreadAsync(async () =>
+                        {
+                            if (!_disposed && Shell.Current != null)
+                                await Shell.Current.GoToAsync(route);
+                        });
+                    }
                 }
+            }
+            catch (ObjectDisposedException)
+            {
+                _disposed = true;
             }
             catch
             {
                 // no-op
             }
+        }
+
+        public void Dispose()
+        {
+            _disposed = true;
+            _auth.AuthStateChanged -= OnAuthStateChanged;
         }
     }
 }

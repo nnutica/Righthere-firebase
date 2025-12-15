@@ -278,21 +278,19 @@ public partial class SummaryViewModel : ObservableObject
     {
         try
         {
-            // รีเซ็ตแท็บ Diary ให้กลับไปที่ SelectMood (root ของแท็บ)
-            await Shell.Current.GoToAsync("//main/diary", false);
-            // แล้วกลับไปหน้า Starter บนแท็บ Home
-            await Shell.Current.GoToAsync("//main/home/starter", false);
+            // กลับไปหน้า Starter (absolute path ไปที่ root)
+            await Shell.Current.GoToAsync("//starter", false);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error navigating to starter: {ex.Message}");
-            await Shell.Current.GoToAsync("//main/home/starter");
+            await Shell.Current.GoToAsync("//starter");
         }
     }
 
     private async void GoToStarter()
     {
-        await Shell.Current.GoToAsync("//main/home/starter");
+        await Shell.Current.GoToAsync("//starter");
     }
 
     private void SetEmotionImage(string mood)

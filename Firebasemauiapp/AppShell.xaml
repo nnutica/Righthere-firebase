@@ -7,6 +7,7 @@
     xmlns:main="clr-namespace:Firebasemauiapp.Mainpages"
     xmlns:community="clr-namespace:Firebasemauiapp.CommunityPage"
     xmlns:store="clr-namespace:Firebasemauiapp.StorePage"
+    xmlns:quest="clr-namespace:Firebasemauiapp.QuestPage"
     Title="Firebasemauiapp"
     FlyoutBehavior="Disabled">
 
@@ -31,76 +32,43 @@
         ContentTemplate="{DataTemplate main:SummaryMockView}"
         Route="summarymock"/>
 
+    <!-- Main Pages (No TabBar) -->
 
-    <!-- Main App with TabBar -->
-    <TabBar Route="main"
-            CurrentItem="{x:Reference homeTab}">
+    <!-- Starter/Home Page -->
+    <ShellContent
+        Title="Home"
+        ContentTemplate="{DataTemplate main:StarterView}"
+        Route="starter"/>
 
-        <!-- Home -->
-        <Tab x:Name="homeTab"
-             Route="home"
-             Title="Home"
-             Icon="home.png">
-            <ShellContent
-                Title="Home"
-                ContentTemplate="{DataTemplate main:StarterView}"
-                Route="starter"/>
-        </Tab>
+    <!-- Quest Page -->
+    <ShellContent
+        Title="Quest"
+        ContentTemplate="{DataTemplate quest:QuestPage}"
+        Route="quest"/>
 
-        <!-- Diary: route to SelectMoodPage instead of DiaryView -->
-        <Tab Title="Diary"
-             Icon="diary.png">
-            <ShellContent
-                Title="Diary"
-                ContentTemplate="{DataTemplate main:SelectMoodPage}"
-                Route="diary"/>
+    <!-- Diary Page -->
+    <ShellContent
+        Title="Diary"
+        ContentTemplate="{DataTemplate main:SelectMoodPage}"
+        Route="diary"/>
 
-        </Tab>
+    <!-- Community Page -->
+    <ShellContent
+        Title="Community"
+        ContentTemplate="{DataTemplate community:CommunityPage}"
+        Route="community"/>
 
-        <!-- Mind Pot (Community) -->
-        <Tab Title="Mind Pot"
-             Icon="mindpot.png">
-            <ShellContent
-                Title="Mind Pot"
-                ContentTemplate="{DataTemplate community:CommunityPage}"
-                Route="community"/>
-        </Tab>
+    <!-- Store Page -->
+    <ShellContent
+        Title="Store"
+        ContentTemplate="{DataTemplate store:StorePage}"
+        Route="store"/>
 
-        <!-- Store -->
-        <Tab Title="Store"
-             Icon="store.png">
-            <ShellContent
-                Title="Store"
-                ContentTemplate="{DataTemplate store:StorePage}"
-                Route="store"/>
-        </Tab>
+    <!-- Dashboard Page -->
+    <ShellContent
+        Title="Dashboard"
+        ContentTemplate="{DataTemplate main:Dashboard}"
+        Route="dashboard"/>
 
-        <!-- Dashboard -->
-        <Tab Title="Dashboard"
-             Icon="dashboard.png">
-            <ShellContent
-                Title="Dashboard"
-                ContentTemplate="{DataTemplate main:Dashboard}"
-                Route="dashboard"/>
-        </Tab>
-
-    </TabBar>
-
-    <!-- Custom Flyout: only a bottom Logout button -->
-    <Shell.FlyoutContent>
-        <Grid Padding="16">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Button Grid.Row="1"
-                    Text="Logout"
-                    Clicked="OnLogoutClicked"
-                    BackgroundColor="#FF3B30"
-                    TextColor="White"
-                    Padding="16,12"
-                    CornerRadius="12"/>
-        </Grid>
-    </Shell.FlyoutContent>
 
 </Shell>

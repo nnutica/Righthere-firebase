@@ -11,6 +11,16 @@
                Aspect="AspectFill"
                Opacity="1"/>
 
+        <!-- Back Button -->
+        <ImageButton Source="back.png"
+                     WidthRequest="32"
+                     HeightRequest="32"
+                     HorizontalOptions="Start"
+                     VerticalOptions="Start"
+                     Margin="20,50,0,0"
+                     Clicked="OnBackClicked"
+                     ZIndex="100"/>
+
         <AbsoluteLayout>
             <Grid AbsoluteLayout.LayoutBounds="0,0,1,1"
                   AbsoluteLayout.LayoutFlags="All"
@@ -61,7 +71,7 @@
                            HorizontalOptions="Center"
                            VerticalOptions="Center"/>
                     <Grid Padding="20"
-                            BackgroundColor="Transparent">
+                          BackgroundColor="Transparent">
                         <Button Text="✕"
                                 HorizontalOptions="End"
                                 VerticalOptions="Start"
@@ -125,7 +135,7 @@
                            VerticalOptions="Fill"/>
 
                     <Grid BackgroundColor="Transparent"
-                            Padding="30">
+                          Padding="30">
                         <!-- Close button -->
                         <Button Text="✕"
                                 HorizontalOptions="End"
@@ -145,7 +155,7 @@
 
                             <!-- White box with pencil at bottom-right corner -->
                             <Grid WidthRequest="260"
-                                    HeightRequest="220">
+                                  HeightRequest="220">
                                 <Border BackgroundColor="White"
                                         StrokeThickness="1"
                                         Stroke="#DDD"
