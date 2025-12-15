@@ -16,30 +16,18 @@
                            RowSpacing="16">
                             <!-- Header -->
                             <Grid Grid.Row="0"
-                                  RowDefinitions="Auto,Auto"
-                                  Padding="24,20,24,16">
-                                   <!-- Back Button Row -->
-                                   <ImageButton Grid.Row="0"
-                                                Source="back.png"
-                                                WidthRequest="60"
-                                                HeightRequest="60"
-                                                HorizontalOptions="Start"
-                                                BackgroundColor="Transparent"
-                                                Margin="0,0,0,12"
-                                                Clicked="OnBackClicked"/>
-
+                                  RowDefinitions="Auto"
+                                  Padding="24,80,24,16">
                                    <!-- Title Row -->
-                                   <Label Grid.Row="1"
+                                   <Label Grid.Row="0"
                                           Text="Embracing the&#x0a;echoes of your&#x0a;week."
                                           FontSize="48"
                                           FontAttributes="Bold"
                                           TextColor="White"
                                           HorizontalOptions="Center"
-                                          LineBreakMode="WordWrap"/>
+                                          LineBreakMode="WordWrap"
+                                          TranslationX="-5"/>
                             </Grid>
-
-
-
 
                             <!-- Overall Wellness Pulse Card -->
                             <Border Grid.Row="1"
@@ -336,19 +324,17 @@
                             </VerticalStackLayout>
                      </Grid>
               </ScrollView>
-              <Border Grid.Row="1"
-                      BackgroundColor="White"
-                      StrokeThickness="0"
-                      TranslationY="8">
-                     <Border.Shadow>
-                            <Shadow Brush="Black"
-                                    Opacity="0.18"
-                                    Radius="14"
-                                    Offset="0,-2"/>
-                     </Border.Shadow>
-                     <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="28,28,0,0"/>
-                     </Border.StrokeShape>
-              </Border>
+
+
+              <!-- Back Button - Fixed position outside ScrollView -->
+              <ImageButton Grid.Row="0"
+                           Source="back.png"
+                           WidthRequest="80"
+                           HeightRequest="80"
+                           HorizontalOptions="Start"
+                           VerticalOptions="Start"
+                           BackgroundColor="Transparent"
+                           Margin="10,20,0,0"
+                           Clicked="OnBackClicked"/>
        </Grid>
 </ContentPage>

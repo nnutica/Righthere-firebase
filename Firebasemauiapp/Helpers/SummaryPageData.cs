@@ -9,9 +9,10 @@ public static class SummaryPageData
     public static string? Emotion { get; private set; }
     public static string? Score { get; private set; }
     public static string? ImageUrl { get; private set; }
+    public static string? IntensityText { get; private set; }
 
     public static void SetData(string content, string mood, string suggestion,
-                              string keywords, string emotion, string score, string? imageUrl = null)
+                              string keywords, string emotion, string score, string? imageUrl = null, string? intensityText = null)
     {
         Content = content;
         Mood = mood;
@@ -20,6 +21,7 @@ public static class SummaryPageData
         Emotion = emotion;
         Score = score;
         ImageUrl = imageUrl;
+        IntensityText = intensityText;
     }
 
     public static void Clear()
@@ -31,5 +33,6 @@ public static class SummaryPageData
         Emotion = null;
         Score = null;
         ImageUrl = null;
+        IntensityText = null;
     }
 }

@@ -24,6 +24,12 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
     [ObservableProperty]
     private int? _score = 5;
 
+    [ObservableProperty]
+    private string _intensityText = "A Little Bit";
+
+    [ObservableProperty]
+    private string _intensityQuote = "\"Just a little bit\"";
+
     public LevelMoodViewModel(FirebaseAuthClient authClient)
     {
         _authClient = authClient;
@@ -100,6 +106,48 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
         catch { }
     }
 
+    partial void OnScoreChanged(int? value)
+    {
+        UpdateIntensityText();
+    }
+
+    private void UpdateIntensityText()
+    {
+        if (!Score.HasValue || Score.Value == 0)
+        {
+            IntensityText = "A Little Bit";
+            IntensityQuote = "\"Just a little bit\"";
+            return;
+        }
+
+        int score = Score.Value;
+        if (score >= 1 && score <= 2)
+        {
+            IntensityText = "A Little Bit";
+            IntensityQuote = "\"Just a little bit\"";
+        }
+        else if (score >= 3 && score <= 4)
+        {
+            IntensityText = "Somewhat";
+            IntensityQuote = "\"Somewhat\"";
+        }
+        else if (score >= 5 && score <= 6)
+        {
+            IntensityText = "Quite a Bit";
+            IntensityQuote = "\"Quite a bit\"";
+        }
+        else if (score >= 7 && score <= 8)
+        {
+            IntensityText = "A Lot";
+            IntensityQuote = "\"A lot\"";
+        }
+        else // 9-10
+        {
+            IntensityText = "Overwhelming";
+            IntensityQuote = "\"Overwhelming\"";
+        }
+    }
+
     [RelayCommand]
     private async Task SetMood()
     {
@@ -110,7 +158,8 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
         {
             ["Username"] = Username,
             ["Mood"] = Mood!,
-            ["MoodScore"] = Score ?? 0
+            ["MoodScore"] = Score ?? 0,
+            ["IntensityText"] = IntensityText
         };
         // Use relative route (registered in AppShell.xaml.cs)
         await Shell.Current.GoToAsync("write", true, navParams);

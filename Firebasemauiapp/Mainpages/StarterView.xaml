@@ -19,20 +19,21 @@
         <!-- Main Content -->
         <ScrollView>
             <VerticalStackLayout Padding="20"
-                                 Spacing="20"
-                                 VerticalOptions="Center"
-                                 HorizontalOptions="Center">
+                                 Spacing="16"
+                                 VerticalOptions="Start"
+                                 HorizontalOptions="Center"
+                                 Margin="0,80,0,0">
                 <!-- Logo -->
                 <Image Source="logo.png"
-                       WidthRequest="200"
-                       HeightRequest="200"
+                       WidthRequest="320"
+                       HeightRequest="320"
                        HorizontalOptions="Center"
-                       Margin="0,40,0,20"/>
+                       Margin="0,0,0,12"/>
 
                 <!-- Diary Button (Full Width) -->
                 <Border BackgroundColor="White"
                         HeightRequest="60"
-                        WidthRequest="320"
+                        WidthRequest="340"
                         Padding="20,0"
                         StrokeThickness="0">
                     <Border.StrokeShape>
@@ -44,21 +45,22 @@
                     <HorizontalStackLayout Spacing="12"
                                            HorizontalOptions="Center"
                                            VerticalOptions="Center">
-                        <Image Source="diary.png"
-                               WidthRequest="40"
-                               HeightRequest="40"/>
+
                         <Label Text="Diary"
-                               FontSize="18"
+                               FontSize="24"
                                FontAttributes="Bold"
                                TextColor="#6B8E6B"
                                VerticalOptions="Center"/>
+                        <Image Source="diary.png"
+                               WidthRequest="40"
+                               HeightRequest="40"/>
                     </HorizontalStackLayout>
                 </Border>
 
                 <!-- Forest Button (Full Width) -->
                 <Border BackgroundColor="White"
                         HeightRequest="60"
-                        WidthRequest="320"
+                        WidthRequest="340"
                         Padding="20,0"
                         StrokeThickness="0">
                     <Border.StrokeShape>
@@ -70,21 +72,22 @@
                     <HorizontalStackLayout Spacing="12"
                                            HorizontalOptions="Center"
                                            VerticalOptions="Center">
-                        <Image Source="forest.png"
-                               WidthRequest="40"
-                               HeightRequest="40"/>
+
                         <Label Text="Forest"
-                               FontSize="18"
+                               FontSize="24"
                                FontAttributes="Bold"
                                TextColor="#6B8E6B"
                                VerticalOptions="Center"/>
+                        <Image Source="forest.png"
+                               WidthRequest="40"
+                               HeightRequest="40"/>
                     </HorizontalStackLayout>
                 </Border>
 
                 <!-- Row 3: Quest and Store -->
                 <Grid ColumnDefinitions="*,*"
-                      ColumnSpacing="12"
-                      WidthRequest="320">
+                      ColumnSpacing="8"
+                      WidthRequest="340">
                     <!-- Quest Button -->
                     <Border Grid.Column="0"
                             BackgroundColor="White"
@@ -100,14 +103,15 @@
                         <HorizontalStackLayout Spacing="8"
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center">
-                            <Image Source="quest.png"
-                                   WidthRequest="32"
-                                   HeightRequest="32"/>
+
                             <Label Text="Quest"
-                                   FontSize="16"
+                                   FontSize="24"
                                    FontAttributes="Bold"
                                    TextColor="#6B8E6B"
                                    VerticalOptions="Center"/>
+                            <Image Source="quest.png"
+                                   WidthRequest="32"
+                                   HeightRequest="32"/>
                         </HorizontalStackLayout>
                     </Border>
 
@@ -126,22 +130,23 @@
                         <HorizontalStackLayout Spacing="8"
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center">
-                            <Image Source="store.png"
-                                   WidthRequest="32"
-                                   HeightRequest="32"/>
+
                             <Label Text="Store"
-                                   FontSize="16"
+                                   FontSize="24"
                                    FontAttributes="Bold"
                                    TextColor="#6B8E6B"
                                    VerticalOptions="Center"/>
+                            <Image Source="store.png"
+                                   WidthRequest="32"
+                                   HeightRequest="32"/>
                         </HorizontalStackLayout>
                     </Border>
                 </Grid>
 
                 <!-- Row 4: Dashboard and Sign Out -->
                 <Grid ColumnDefinitions="*,*"
-                      ColumnSpacing="12"
-                      WidthRequest="320">
+                      ColumnSpacing="8"
+                      WidthRequest="340">
                     <!-- Dashboard Button -->
                     <Border Grid.Column="0"
                             BackgroundColor="White"
@@ -157,14 +162,15 @@
                         <HorizontalStackLayout Spacing="8"
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center">
-                            <Image Source="dashboard.png"
-                                   WidthRequest="32"
-                                   HeightRequest="32"/>
+
                             <Label Text="Dashboard"
-                                   FontSize="15"
+                                   FontSize="22"
                                    FontAttributes="Bold"
                                    TextColor="#6B8E6B"
                                    VerticalOptions="Center"/>
+                            <Image Source="dashboard.png"
+                                   WidthRequest="32"
+                                   HeightRequest="32"/>
                         </HorizontalStackLayout>
                     </Border>
 
@@ -183,14 +189,15 @@
                         <HorizontalStackLayout Spacing="8"
                                                HorizontalOptions="Center"
                                                VerticalOptions="Center">
-                            <Image Source="logout.png"
-                                   WidthRequest="32"
-                                   HeightRequest="32"/>
+
                             <Label Text="Sign Out"
                                    FontSize="15"
                                    FontAttributes="Bold"
                                    TextColor="White"
                                    VerticalOptions="Center"/>
+                            <Image Source="logout.png"
+                                   WidthRequest="32"
+                                   HeightRequest="32"/>
                         </HorizontalStackLayout>
                     </Border>
                 </Grid>

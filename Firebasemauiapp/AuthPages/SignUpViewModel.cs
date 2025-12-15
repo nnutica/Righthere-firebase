@@ -28,6 +28,24 @@ public partial class SignUpViewModel : ObservableObject
     [ObservableProperty]
     private bool _isTermsAccepted;
 
+    [ObservableProperty]
+    private bool _isPasswordVisible = false;
+
+    [ObservableProperty]
+    private bool _isConfirmPasswordVisible = false;
+
+    [RelayCommand]
+    private void TogglePasswordVisibility()
+    {
+        IsPasswordVisible = !IsPasswordVisible;
+    }
+
+    [RelayCommand]
+    private void ToggleConfirmPasswordVisibility()
+    {
+        IsConfirmPasswordVisible = !IsConfirmPasswordVisible;
+    }
+
     public SignUpViewModel(FirebaseAuthClient authClient, FirestoreService firestoreService)
     {
         _authClient = authClient;

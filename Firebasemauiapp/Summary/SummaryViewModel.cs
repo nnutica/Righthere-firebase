@@ -39,6 +39,12 @@ public partial class SummaryViewModel : ObservableObject
     [ObservableProperty]
     private string? _imageUrl;
 
+    [ObservableProperty]
+    private string _intensityText = "A Little Bit";
+
+    [ObservableProperty]
+    private string _moodIntensityLabel = "Happiness A Little Bit";
+
 
     [ObservableProperty]
     private ImageSource? _emotionImage;
@@ -93,14 +99,15 @@ public partial class SummaryViewModel : ObservableObject
                     SummaryPageData.Suggestion!,
                     SummaryPageData.Keywords!,
                     SummaryPageData.Emotion!,
-                    SummaryPageData.Score!);
+                    SummaryPageData.Score!,
+                    SummaryPageData.IntensityText);
             ImageUrl = SummaryPageData.ImageUrl;
         }
         return Task.CompletedTask;
     }
 
     public void SetData(string content, string mood, string suggestion,
-                        string keywords, string emotion, string score)
+                        string keywords, string emotion, string score, string? intensityText = null)
     {
 
         Content = content;
@@ -109,6 +116,8 @@ public partial class SummaryViewModel : ObservableObject
         Keywords = keywords;
         Emotion = emotion;
         Score = score;
+        IntensityText = intensityText ?? "A Little Bit";
+        MoodIntensityLabel = $"{mood}\n{IntensityText}";
         ImageUrl = SummaryPageData.ImageUrl;
         SetEmotionImage(mood);
 

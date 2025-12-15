@@ -23,7 +23,16 @@ public partial class SignInViewModel : ObservableObject
     [ObservableProperty]
     private bool _hasError = false;
 
+    [ObservableProperty]
+    private bool _isPasswordVisible = false;
+
     public string? Username => _authClient.User?.Info?.DisplayName;
+
+    [RelayCommand]
+    private void TogglePasswordVisibility()
+    {
+        IsPasswordVisible = !IsPasswordVisible;
+    }
 
 
     public SignInViewModel(FirebaseAuthClient authClient, FirestoreService firestoreService)

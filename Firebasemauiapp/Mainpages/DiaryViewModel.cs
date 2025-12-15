@@ -15,6 +15,7 @@ namespace Firebasemauiapp.Mainpages;
 [QueryProperty(nameof(Username), nameof(Username))]
 [QueryProperty(nameof(Mood), nameof(Mood))]
 [QueryProperty(nameof(MoodScore), nameof(MoodScore))]
+[QueryProperty(nameof(IntensityText), nameof(IntensityText))]
 public partial class DiaryViewModel : ObservableObject
 {
     private readonly DiaryDatabase _diaryDatabase;
@@ -41,6 +42,9 @@ public partial class DiaryViewModel : ObservableObject
 
     [ObservableProperty]
     private int _moodScore;
+
+    [ObservableProperty]
+    private string _intensityText = "A Little Bit";
 
     [ObservableProperty]
     private string? _imageUrl;
@@ -158,7 +162,7 @@ public partial class DiaryViewModel : ObservableObject
             // Use Mood from SelectMood page and MoodScore from LevelMood page
             string moodName = Mood.Name ?? "Unknown";
 
-            SummaryPageData.SetData(DiaryContent, moodName, suggestion, keyword, emotion, MoodScore.ToString(), ImageUrl);
+            SummaryPageData.SetData(DiaryContent, moodName, suggestion, keyword, emotion, MoodScore.ToString(), ImageUrl, IntensityText);
 
             await Shell.Current.GoToAsync("//summary");
         }

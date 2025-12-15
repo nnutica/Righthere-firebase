@@ -18,4 +18,9 @@ public partial class LevelMoodPage : ContentPage
 			throw;
 		}
 	}
+
+	private async void OnBackClicked(object sender, EventArgs e)
+	{
+		await Shell.Current.GoToAsync("..");
+	}
 }

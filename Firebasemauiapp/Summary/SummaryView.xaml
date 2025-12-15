@@ -287,9 +287,11 @@
                                HeightRequest="120"
                                Margin="0,0,20,0"/>
                         <Label Grid.Column="1"
-                               Text="Wellness Score"
+                               Text="{Binding MoodIntensityLabel}"
                                TextColor="#50A65D"
-                               FontSize="32"/>
+                               FontSize="26"
+                               FontAttributes="Bold"
+                               LineBreakMode="WordWrap"/>
                         <HorizontalStackLayout Grid.Row="1"
                                                Grid.Column="1"
                                                Spacing="4"
