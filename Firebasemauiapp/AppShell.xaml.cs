@@ -18,6 +18,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("summary", typeof(SummaryView));
 		Routing.RegisterRoute("levelmood", typeof(LevelMoodPage));
 		Routing.RegisterRoute("write", typeof(DiaryView));
+		Routing.RegisterRoute("createpost", typeof(CommunityPage.CommunityCreatPostPage));
 
 	}
 

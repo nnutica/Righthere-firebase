@@ -14,9 +14,17 @@ public class PostData
 
     [FirestoreProperty]
     public string Author { get; set; }
+
     [FirestoreProperty]
     public int Likes { get; set; }
 
     [FirestoreProperty]
     public DateTime CreatedAt { get; set; }
+
+    // Post-it appearance properties
+    [FirestoreProperty]
+    public string PostItColor { get; set; }
+
+    [FirestoreProperty]
+    public string TextColor { get; set; }
 }

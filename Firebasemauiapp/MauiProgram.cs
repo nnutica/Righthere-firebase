@@ -30,6 +30,21 @@ public static class MauiProgram
 				fonts.AddFont("LeagueSpartan-light.ttf", "lightfont");
 
 			})
+			.ConfigureMauiHandlers(handlers =>
+			{
+#if ANDROID
+				Microsoft.Maui.Handlers.ButtonHandler.Mapper.AppendToMapping("NoUppercase", (handler, view) =>
+				{
+					handler.PlatformView.SetAllCaps(false);
+				});
+
+				Microsoft.Maui.Handlers.EditorHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
+				{
+					handler.PlatformView.BackgroundTintList = 
+						global::Android.Content.Res.ColorStateList.ValueOf(global::Android.Graphics.Color.Transparent);
+				});
+#endif
+			})
 			.ConfigureSyncfusionCore();
 
 #if DEBUG
@@ -68,6 +83,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<DiaryHistoryViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
 		builder.Services.AddTransient<CommunityViewModel>();
+		builder.Services.AddTransient<CreatePostViewModel>();
 		builder.Services.AddTransient<LevelMoodViewModel>();
 		builder.Services.AddTransient<Firebasemauiapp.QuestPage.QuestViewModel>();
 		builder.Services.AddTransient<Firebasemauiapp.StorePage.StoreViewModel>();
@@ -83,6 +99,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<DiaryHistory>();
 		builder.Services.AddTransient<Dashboard>();
 		builder.Services.AddTransient<CommunityPage.CommunityPage>();
+		builder.Services.AddTransient<CommunityPage.CommunityCreatPostPage>();
 		builder.Services.AddTransient<Firebasemauiapp.QuestPage.QuestPage>();
 		builder.Services.AddTransient<Firebasemauiapp.StorePage.StorePage>();
 		builder.Services.AddTransient<LevelMoodPage>();

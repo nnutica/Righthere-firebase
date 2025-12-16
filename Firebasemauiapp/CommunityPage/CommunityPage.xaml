@@ -7,7 +7,7 @@
              Title="CommunityPage">
     <!-- Background image layer + content -->
     <Grid RowDefinitions="*">
-        <Image Source="commubg.png"
+        <Image Source="commu_treebg.png"
                Aspect="AspectFill"
                Opacity="1"/>
 
@@ -21,179 +21,67 @@
                      Clicked="OnBackClicked"
                      ZIndex="100"/>
 
-        <AbsoluteLayout>
-            <Grid AbsoluteLayout.LayoutBounds="0,0,1,1"
-                  AbsoluteLayout.LayoutFlags="All"
-                  RowDefinitions="*">
+        <!-- Main Content -->
+        <VerticalStackLayout HorizontalOptions="Center"
+                             VerticalOptions="Start"
+                             Margin="40,80,40,0"
+                             Spacing="10">
 
-                <Grid Grid.Row="0">
-                    <VerticalStackLayout>
-                    </VerticalStackLayout>
+            <!-- Title -->
+            <Label Text="Echoes of &#10; Kindness"
+                   FontSize="36"
+                   FontAttributes="Bold"
+                   TextColor="#2F6B4F"
+                   HorizontalTextAlignment="Start"/>
 
-                    <ImageButton Source="addpost.png"
-                                 WidthRequest="60"
-                                 HeightRequest="60"
-                                 HorizontalOptions="End"
-                                 VerticalOptions="End"
-                                 Margin="20,20,20,80"
-                                 Command="{Binding ShowCreatePostOverlayCommand}"
-                                 ZIndex="10">
-                    </ImageButton>
-                </Grid>
+            <!-- Subtitle -->
+            <Label Text="A safe space to rest and grow."
+                   FontSize="16"
+                   TextColor="#2F6B4F"
+                   HorizontalTextAlignment="Start"
+                   Margin="0,0,0,20"/>
+        </VerticalStackLayout>
 
-            </Grid>
+        <!-- Buttons at bottom -->
+        <HorizontalStackLayout HorizontalOptions="Center"
+                               VerticalOptions="End"
+                               Margin="0,0,0,120"
+                               Spacing="15">
 
-            <Image Source="commuboard.png"
-                   WidthRequest="240"
-                   HeightRequest="240"
-                   BackgroundColor="Transparent"
-                   ZIndex="5"
-                   AbsoluteLayout.LayoutBounds="0.5, 0.75, 240, 240"
-                   AbsoluteLayout.LayoutFlags="PositionProportional">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding ShowPostOverlayCommand}"/>
-                </Image.GestureRecognizers>
-            </Image>
+            <!-- Feel Loved Button -->
+            <Button Text="Feel Loved"
+                    TextTransform="None"
+                    BackgroundColor="#8FB78F"
+                    TextColor="White"
+                    FontSize="18"
+                    CornerRadius="20"
+                    WidthRequest="180"
+                    HeightRequest="60">
+                <Button.Shadow>
+                    <Shadow Brush="#40000000"
+                            Offset="0,4"
+                            Radius="8"
+                            Opacity="0.5"/>
+                </Button.Shadow>
+            </Button>
 
-            <!-- Overlay replacing popup -->
-            <Grid AbsoluteLayout.LayoutBounds="0,0,1,1"
-                  AbsoluteLayout.LayoutFlags="All"
-                  IsVisible="{Binding IsPostOverlayVisible}"
-                  ZIndex="20"
-                  BackgroundColor="#66000000"
-                  Padding="0">
-                <Grid HorizontalOptions="Center"
-                      VerticalOptions="Center"
-                      Padding="0"
-                      BackgroundColor="Transparent">
-                    <Image Source="Commupost"
-                           Aspect="Fill"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"/>
-                    <Grid Padding="20"
-                          BackgroundColor="Transparent">
-                        <Button Text="✕"
-                                HorizontalOptions="End"
-                                VerticalOptions="Start"
-                                Margin="0,10,50,0"
-                                BackgroundColor="Transparent"
-                                TextColor="Black"
-                                FontSize="24"
-                                Padding="0"
-                                Command="{Binding ClosePostOverlayCommand}"/>
-                        <ScrollView IsVisible="{Binding HasPost}"
-                                    HorizontalOptions="Center"
-                                    VerticalOptions="Center"
-                                    Margin="0,50,0,60">
-                            <Label Text="{Binding RandomPost.Content}"
-                                   FontSize="14"
-                                   TextColor="#222"
-                                   HorizontalTextAlignment="Center"
-                                   WidthRequest="260"/>
-                        </ScrollView>
-                        <ContentView IsVisible="{Binding NoPost}"
-                                     HorizontalOptions="Center"
-                                     VerticalOptions="Center"
-                                     Margin="0,50,0,60">
-                        </ContentView>
-                        <Grid ColumnDefinitions="Auto,Auto"
-                              ColumnSpacing="4"
-                              HorizontalOptions="End"
-                              VerticalOptions="End"
-                              Margin="0,0,40,25">
-                            <Label Text="{Binding RandomPost.Likes}"
-                                   VerticalOptions="Center"
-                                   FontSize="14"
-                                   FontAttributes="Bold"
-                                   TextColor="#222"/>
-                            <Button Text="👍"
-                                    BackgroundColor="Transparent"
-                                    FontSize="28"
-                                    Padding="0"
-                                    Command="{Binding LikeCommand}"/>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </Grid>
-
-            <!-- Create Post Overlay -->
-            <Grid AbsoluteLayout.LayoutBounds="0,0,1,1"
-                  AbsoluteLayout.LayoutFlags="All"
-                  IsVisible="{Binding IsCreatePostOverlayVisible}"
-                  ZIndex="30"
-                  BackgroundColor="#66000000"
-                  Padding="0">
-                <Grid HorizontalOptions="Center"
-                      VerticalOptions="Center"
-                      WidthRequest="360"
-                      HeightRequest="420"
-                      BackgroundColor="Transparent">
-                    <!-- Paper background -->
-                    <Image Source="Commupost"
-                           Aspect="Fill"
-                           HorizontalOptions="Fill"
-                           VerticalOptions="Fill"/>
-
-                    <Grid BackgroundColor="Transparent"
-                          Padding="30">
-                        <!-- Close button -->
-                        <Button Text="✕"
-                                HorizontalOptions="End"
-                                VerticalOptions="Start"
-                                Margin="0,5,0,0"
-                                BackgroundColor="Transparent"
-                                TextColor="Black"
-                                FontSize="24"
-                                Padding="0"
-                                Command="{Binding CloseCreatePostOverlayCommand}"/>
-
-                        <!-- Content area with white box -->
-                        <VerticalStackLayout HorizontalOptions="Center"
-                                             VerticalOptions="Center"
-                                             Spacing="12"
-                                             Margin="0,-10,0,0">
-
-                            <!-- White box with pencil at bottom-right corner -->
-                            <Grid WidthRequest="260"
-                                  HeightRequest="220">
-                                <Border BackgroundColor="White"
-                                        StrokeThickness="1"
-                                        Stroke="#DDD"
-                                        Padding="12">
-                                    <Border.StrokeShape>
-                                        <RoundRectangle CornerRadius="8"/>
-                                    </Border.StrokeShape>
-                                    <Editor Text="{Binding NewPostContent}"
-                                            Placeholder="Share your thoughts..."
-                                            BackgroundColor="White"
-                                            TextColor="Black"
-                                            VerticalOptions="Fill"
-                                            HorizontalOptions="Fill"/>
-                                </Border>
-
-                                <!-- Pencil at bottom-right corner of white box -->
-                                <Image Source="pencil.png"
-                                       WidthRequest="45"
-                                       HeightRequest="45"
-                                       HorizontalOptions="End"
-                                       VerticalOptions="End"
-                                       Margin="0,0,-8,-8"/>
-                            </Grid>
-
-                            <!-- Post button inside paper -->
-                            <Button Text="Post"
-                                    BackgroundColor="#D9D9D9"
-                                    TextColor="Black"
-                                    FontSize="14"
-                                    Padding="24,10"
-                                    CornerRadius="8"
-                                    HorizontalOptions="End"
-                                    Margin="0,8,20,0"
-                                    Command="{Binding CreatePostCommand}"/>
-                        </VerticalStackLayout>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </AbsoluteLayout>
+            <!-- Share Love Button -->
+            <Button Text="Share Love"
+                    TextTransform="None"
+                    BackgroundColor="#FEAA3A"
+                    TextColor="White"
+                    FontSize="18"
+                    CornerRadius="20"
+                    WidthRequest="180"
+                    HeightRequest="60"
+                    Clicked="OnShareLoveClicked">
+                <Button.Shadow>
+                    <Shadow Brush="#40000000"
+                            Offset="0,4"
+                            Radius="8"
+                            Opacity="0.5"/>
+                </Button.Shadow>
+            </Button>
+        </HorizontalStackLayout>
     </Grid>
 </ContentPage>
