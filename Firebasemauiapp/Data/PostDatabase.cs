@@ -208,4 +208,23 @@ public class PostDatabase
         var docRef = db.Collection(_collectionName).Document(postId);
         await docRef.DeleteAsync();
     }
+
+    // CHECK if user has posted today
+    public async Task<bool> HasUserPostedTodayAsync(string userId)
+    {
+        var db = await GetDatabaseAsync();
+        var todayStart = DateTime.UtcNow.Date;
+        var todayEnd = todayStart.AddDays(1).AddTicks(-1);
+        var todayStartTimestamp = Timestamp.FromDateTime(todayStart);
+        var todayEndTimestamp = Timestamp.FromDateTime(todayEnd);
+
+        var query = db.Collection(_collectionName)
+            .WhereEqualTo(nameof(PostData.Author), userId)
+            .WhereGreaterThanOrEqualTo(nameof(PostData.CreatedAt), todayStartTimestamp)
+            .WhereLessThanOrEqualTo(nameof(PostData.CreatedAt), todayEndTimestamp)
+            .Limit(1);
+
+        var snapshot = await query.GetSnapshotAsync();
+        return snapshot.Count > 0;
+    }
 }

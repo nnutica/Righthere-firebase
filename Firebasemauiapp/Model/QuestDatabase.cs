@@ -38,6 +38,62 @@ namespace Firebasemauiapp.Model
         [ObservableProperty]
         private bool isClaimed; // UI-only: whether reward claimed
 
+        [ObservableProperty]
+        private int currentProgress = 0; // e.g., 1
+
+        [ObservableProperty]
+        private int maxProgress = 1; // e.g., 1
+
+        [ObservableProperty]
+        private string buttonText = "Go To";
+
+        [ObservableProperty]
+        private string buttonColor = "#7CB97C";
+
+        [ObservableProperty]
+        private string buttonTextColor = "#FFFFFF";
+
+        [ObservableProperty]
+        private string borderColor = "#ACE889";
+
+        [ObservableProperty]
+        private double borderOpacity = 1.0;
+
+        [ObservableProperty]
+        private string icon = "diary.png"; // Default icon
+
         public bool IsCompleted => string.Equals(Status, "completed", StringComparison.OrdinalIgnoreCase);
+
+        public string ProgressText => $"{CurrentProgress}/{MaxProgress}";
+
+        public int SortOrder => IsClaimed ? 1 : 0; // Claimed quests go to bottom
+
+        public void UpdateButtonState()
+        {
+            if (IsClaimed)
+            {
+                ButtonText = "✓";
+                ButtonColor = "#CCCCCC";
+                ButtonTextColor = "#FFFFFF";
+                BorderColor = "#ACE889";
+                BorderOpacity = 0.5; // Faded when claimed
+            }
+            else if (IsCompleted || CurrentProgress >= MaxProgress)
+            {
+                ButtonText = "Claim";
+                ButtonColor = "#8FB78F";
+                ButtonTextColor = "#FFFFFF";
+                BorderColor = "#ACE889";
+                BorderOpacity = 1.0;
+            }
+            else
+            {
+                ButtonText = "Go To";
+                ButtonColor = "#FFFFFF";
+                ButtonTextColor = "#8FB78F";
+                BorderColor = "#ACE889";
+                BorderOpacity = 1.0;
+            }
+        }
     }
 }

@@ -370,7 +370,7 @@ public partial class DashboardViewModel : ObservableObject
 	private async Task GoToDiaryHistory()
 	{
 		if (Shell.Current != null)
-			await Shell.Current.GoToAsync("//main/history");
+			await Shell.Current.GoToAsync("//history");
 	}
 
 	private async Task PreviousWeek()
