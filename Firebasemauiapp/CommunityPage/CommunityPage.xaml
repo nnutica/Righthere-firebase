@@ -12,7 +12,7 @@
                Opacity="1"/>
 
         <!-- Back Button -->
-        <ImageButton Source="back.png"
+        <ImageButton Source="back_green.png"
                      WidthRequest="32"
                      HeightRequest="32"
                      HorizontalOptions="Start"
@@ -22,14 +22,14 @@
                      ZIndex="100"/>
 
         <!-- Main Content -->
-        <VerticalStackLayout HorizontalOptions="Center"
+        <VerticalStackLayout HorizontalOptions="Start"
                              VerticalOptions="Start"
-                             Margin="40,80,40,0"
-                             Spacing="10">
+                             Margin="45,90,40,0"
+                             Spacing="5">
 
             <!-- Title -->
-            <Label Text="Echoes of &#10; Kindness"
-                   FontSize="36"
+            <Label Text="Echoes of&#10;Kindness"
+                   FontSize="52"
                    FontAttributes="Bold"
                    TextColor="#2F6B4F"
                    HorizontalTextAlignment="Start"/>
@@ -38,8 +38,9 @@
             <Label Text="A safe space to rest and grow."
                    FontSize="16"
                    TextColor="#2F6B4F"
+                   FontFamily="lightfont"
                    HorizontalTextAlignment="Start"
-                   Margin="0,0,0,20"/>
+                   Margin="0,5,0,0"/>
         </VerticalStackLayout>
 
         <!-- Buttons at bottom -->
@@ -56,7 +57,8 @@
                     FontSize="18"
                     CornerRadius="20"
                     WidthRequest="180"
-                    HeightRequest="60">
+                    HeightRequest="60"
+                    Clicked="OnFeelLovedClicked">
                 <Button.Shadow>
                     <Shadow Brush="#40000000"
                             Offset="0,4"
@@ -83,5 +85,78 @@
                 </Button.Shadow>
             </Button>
         </HorizontalStackLayout>
+
+        <!-- Post-it Popup Overlay -->
+        <Grid IsVisible="{Binding IsPostOverlayVisible}"
+              BackgroundColor="#80000000"
+              ZIndex="200">
+
+            <!-- Post-it Card -->
+            <Border BackgroundColor="Transparent"
+                    StrokeThickness="0"
+                    WidthRequest="320"
+                    HeightRequest="380"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Padding="0"
+                    Shadow="0,8,16,#40000000">
+
+                <Grid RowDefinitions="50,*,Auto">
+                    <!-- Post-it Background Image -->
+                    <Image Grid.RowSpan="3"
+                           Source="{Binding RandomPost.PostItColor}"
+                           Aspect="Fill"/>
+
+
+
+                    <!-- Close Button -->
+                    <ImageButton Grid.Row="0"
+                                 Source="close.png"
+                                 WidthRequest="32"
+                                 HeightRequest="32"
+                                 BackgroundColor="White"
+                                 CornerRadius="16"
+                                 HorizontalOptions="End"
+                                 VerticalOptions="Start"
+                                 Margin="0,10,10,0"
+                                 Command="{Binding ClosePostOverlayCommand}"/>
+
+                    <!-- Content Area -->
+                    <VerticalStackLayout Grid.Row="1"
+                                         Padding="35,0,35,0"
+                                         Spacing="0"
+                                         VerticalOptions="Center"
+                                         Margin="0,0,0,60">
+                        <Label Text="{Binding RandomPost.Content}"
+                               TextColor="{Binding RandomPost.TextColor}"
+                               FontSize="16"
+                               FontAttributes="Italic"
+                               FontFamily="lightfont"
+                               HorizontalTextAlignment="Start"
+                               VerticalTextAlignment="Center"
+                               LineBreakMode="WordWrap"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Navigation Arrows - Separate layer -->
+            <HorizontalStackLayout HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Spacing="360">
+                <!-- Left Arrow -->
+                <ImageButton Source="left_arrow.png"
+                             WidthRequest="36"
+                             HeightRequest="36"
+                             BackgroundColor="Transparent"
+                             Clicked="OnPreviousPostClicked"/>
+
+                <!-- Right Arrow -->
+                <ImageButton Source="right_arrow.png"
+                             WidthRequest="36"
+                             HeightRequest="36"
+                             BackgroundColor="Transparent"
+                             Clicked="OnNextPostClicked"/>
+            </HorizontalStackLayout>
+        </Grid>
     </Grid>
 </ContentPage>

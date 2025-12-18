@@ -31,21 +31,21 @@ public class PostItColorOption
             {
                 ColorName = "Cyan",
                 PostItImage = "postit_cyan.png",
-                TextColor = "#f379e3ff",
+                TextColor = "#1F3A3A",
                 CircleColor = "#70D6E8"
             },
             new PostItColorOption
             {
                 ColorName = "Gray",
                 PostItImage = "postit_grey.png",
-                TextColor = "#0c50daff",
+                TextColor = "#2E3440",
                 CircleColor = "#B0C4D8"
             },
             new PostItColorOption
             {
                 ColorName = "Green",
                 PostItImage = "postit_green.png",
-                TextColor = "#14ff86ff",
+                TextColor = "#2E4F3E",
                 CircleColor = "#A8D5BA"
             }
         };

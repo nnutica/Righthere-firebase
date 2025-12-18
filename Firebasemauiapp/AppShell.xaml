@@ -11,6 +11,13 @@
     Title="Firebasemauiapp"
     FlyoutBehavior="Disabled">
 
+    <Shell.Resources>
+        <Style TargetType="ShellContent">
+            <Setter Property="Shell.TabBarIsVisible"
+                    Value="False"/>
+        </Style>
+    </Shell.Resources>
+
     <!-- Authentication Pages (No Tabs) -->
     <ShellContent
         x:Name="signin"

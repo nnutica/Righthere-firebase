@@ -24,6 +24,30 @@ public partial class CommunityPage : ContentPage
 		await Shell.Current.GoToAsync("//starter");
 	}
 
+	private async void OnFeelLovedClicked(object sender, EventArgs e)
+	{
+		if (BindingContext is CommunityViewModel vm)
+		{
+			await vm.ShowPostOverlayCommand.ExecuteAsync(null);
+		}
+	}
+
+	private async void OnNextPostClicked(object sender, EventArgs e)
+	{
+		if (BindingContext is CommunityViewModel vm)
+		{
+			await vm.RefreshPostCommand.ExecuteAsync(null);
+		}
+	}
+
+	private async void OnPreviousPostClicked(object sender, EventArgs e)
+	{
+		if (BindingContext is CommunityViewModel vm)
+		{
+			await vm.RefreshPostCommand.ExecuteAsync(null);
+		}
+	}
+
 	private async void OnShareLoveClicked(object sender, EventArgs e)
 	{
 		await Shell.Current.GoToAsync("createpost");
