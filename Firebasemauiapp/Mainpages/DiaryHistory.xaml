@@ -3,121 +3,254 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:converters="clr-namespace:Firebasemauiapp.Converters"
              x:Class="Firebasemauiapp.Mainpages.DiaryHistory"
-             Title="Diary History"
-             BackgroundColor="#edf6e4">
+             Title="My Memory"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#F5F5F5">
 
     <ContentPage.Resources>
-        <converters:SeeMoreLinesConverter x:Key="SeeMoreLinesConverter" />
-        <converters:SeeMoreTextConverter x:Key="SeeMoreTextConverter" />
+        <converters:SeeMoreLinesConverter x:Key="SeeMoreLinesConverter"/>
+        <converters:SeeMoreTextConverter x:Key="SeeMoreTextConverter"/>
     </ContentPage.Resources>
-    
-    <Grid>
-        <!-- Loading Indicator -->
-        <ActivityIndicator IsVisible="{Binding IsLoading}" 
-                          IsRunning="{Binding IsLoading}"
-                          Color="Blue"
-                          VerticalOptions="Center"
-                          HorizontalOptions="Center" />
-        
-        <!-- Empty State -->
-        <StackLayout IsVisible="{Binding IsEmpty}" 
-                    VerticalOptions="Center" 
-                    HorizontalOptions="Center"
-                    Padding="20">
-            <Image Source="empty.png" 
-                  HeightRequest="100" 
-                  WidthRequest="100"/>
-            <Label Text="No diary entries found" 
-                  FontSize="18" 
-                  HorizontalOptions="Center" 
-                  TextColor="Gray"/>
-            <Label Text="Start writing your first diary!" 
-                  FontSize="14" 
-                  HorizontalOptions="Center" 
-                  TextColor="Gray"/>
-        </StackLayout>
-        
-        <!-- Diary List -->
-        <RefreshView Command="{Binding LoadDiaryHistoryCommand}" 
-                    IsRefreshing="{Binding IsLoading}"
-                    IsVisible="{Binding IsEmpty, Converter={StaticResource InvertedBoolConverter}}">
-            
-            <CollectionView ItemsSource="{Binding DiaryGroups}"
-                           BackgroundColor="Transparent">
-                
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Padding="0,10,0,10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <!-- Date Header -->
-                            <Label Grid.Row="0"
-                                  Text="{Binding DateString}"
-                                  FontSize="16"
-                                  FontAttributes="Bold"
-                                  TextColor="DarkBlue"
-                                  Margin="10,0,0,10"/>
-                            <!-- Diaries for this date -->
-                            <CollectionView Grid.Row="1"
-                                            ItemsSource="{Binding Diaries}"
-                                            SelectionMode="None">
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border BackgroundColor="#F8FAED"
-                                               Stroke="#50A65D"
-                                               StrokeThickness="1"
-                                               Margin="0,0,0,20"
-                                               Padding="18,16,18,12">
-                                            <Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="14"/>
-                                            </Border.StrokeShape>
-                                            <Grid RowSpacing="8">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="*"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                <!-- Content -->
-                                <Label Grid.Row="0"
-                                    Text="{Binding Content}"
-                                    FontSize="15"
-                                    TextColor="Black"
-                                    LineBreakMode="WordWrap"
-                                    Margin="0,0,0,8"
-                                    MaxLines="{Binding IsExpanded, Converter={StaticResource SeeMoreLinesConverter}}"/>
-                                                <!-- Bottom row: icon, score, see more -->
-                                                <Grid Grid.Row="2" ColumnSpacing="8">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <!-- Icon (left) -->
-                                                    <Image Grid.Column="0" Source="{Binding MoodImage}" HeightRequest="48" WidthRequest="48" VerticalOptions="End"/>
-                                                    <!-- Score (center) -->
-                                                    <Border Grid.Column="1" BackgroundColor="#E6F4EA" Stroke="#50A65D" StrokeThickness="1" Padding="8,2" HorizontalOptions="Center" VerticalOptions="End" StrokeShape="RoundRectangle 8">
-                                                        <Label Text="{Binding SentimentScore, StringFormat='Mental Wellness Score : {0}'}" FontSize="14" TextColor="#50A65D" HorizontalOptions="Center"/>
-                                                    </Border>
-                                                    <!-- See more/less (right) -->
-                            <Button Grid.Column="2"
-                                Text="{Binding IsExpanded, Converter={StaticResource SeeMoreTextConverter}}"
-                                FontSize="13"
+
+    <Grid RowDefinitions="Auto,Auto,*"
+          Padding="0,40,0,0">
+
+        <!-- Row 0: Header with Back button and Title -->
+        <Grid Grid.Row="0"
+              ColumnDefinitions="Auto,*"
+              Margin="16,0,16,20">
+            <ImageButton Grid.Column="0"
+                         Source="back_green.png"
+                         WidthRequest="60"
+                         HeightRequest="60"
+                         BackgroundColor="Transparent"
+                         Clicked="OnBackClicked"/>
+            <Label Grid.Column="1"
+                   Text="My Memory"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   TextColor="#8FBC8F"
+                   VerticalOptions="Center"
+                   Margin="12,0,0,0"/>
+        </Grid>
+
+        <!-- Row 1: Everything in one big white border -->
+        <ScrollView Grid.Row="1"
+                    Grid.RowSpan="2">
+            <Border BackgroundColor="White"
+                    StrokeThickness="0"
+                    Padding="16"
+                    Margin="0,10,0,0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="24,24,0,0"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="#40000000"
+                            Radius="8"
+                            Offset="0,2"
+                            Opacity="0.15"/>
+                </Border.Shadow>
+                <VerticalStackLayout Spacing="16">
+                    <!-- Month/Year Dropdown -->
+                    <HorizontalStackLayout HorizontalOptions="Center"
+                                           Spacing="8">
+                        <Label Text="{Binding MonthYearDisplay}"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#8FBC8F"
+                               VerticalOptions="Center"/>
+                        <Label Text="▼"
+                               FontSize="12"
+                               TextColor="#8FBC8F"
+                               VerticalOptions="Center"/>
+                        <HorizontalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ShowMonthPickerCommand}"/>
+                        </HorizontalStackLayout.GestureRecognizers>
+                    </HorizontalStackLayout>
+
+                    <!-- Calendar Days with Arrow Navigation -->
+                    <Grid ColumnDefinitions="Auto,*,Auto"
+                          HeightRequest="90">
+                        <!-- Left Arrow -->
+                        <Button Grid.Column="0"
+                                Text="&lt;"
+                                FontSize="18"
+                                TextColor="#999"
                                 BackgroundColor="Transparent"
-                                TextColor="#50A65D"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ToggleExpandCommand}"
-                                CommandParameter="{Binding .}"/>
+                                WidthRequest="20"
+                                VerticalOptions="Center"
+                                Command="{Binding PreviousWeekCommand}"/>
+
+                        <!-- Calendar Days -->
+                        <CollectionView Grid.Column="1"
+                                        ItemsSource="{Binding CalendarDays}"
+                                        SelectionMode="None">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal"
+                                                   ItemSpacing="3"/>
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border StrokeThickness="0"
+                                            WidthRequest="43"
+                                            HeightRequest="85"
+                                            Padding="0">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="26"/>
+                                        </Border.StrokeShape>
+                                        <Border.BackgroundColor>
+                                            <MultiBinding Converter="{StaticResource CalendarDayColorConverter}">
+                                                <Binding Path="IsSelected"/>
+                                                <Binding Path="Date"/>
+                                            </MultiBinding>
+                                        </Border.BackgroundColor>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}"
+                                                                  CommandParameter="{Binding .}"/>
+                                        </Border.GestureRecognizers>
+                                        <VerticalStackLayout Spacing="4"
+                                                             HorizontalOptions="Center"
+                                                             VerticalOptions="Center">
+                                            <Label Text="{Binding Day}"
+                                                   FontSize="26"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=White|#666}"
+                                                   HorizontalOptions="Center"/>
+                                            <Label Text="{Binding DayOfWeek}"
+                                                   FontSize="11"
+                                                   TextColor="{Binding IsSelected, Converter={StaticResource BoolToColorConverter}, ConverterParameter=White|#999}"
+                                                   HorizontalOptions="Center"/>
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <!-- Right Arrow -->
+                        <Button Grid.Column="2"
+                                Text="&gt;"
+                                FontSize="18"
+                                TextColor="#999"
+                                BackgroundColor="Transparent"
+                                WidthRequest="20"
+                                VerticalOptions="Center"
+                                Command="{Binding NextWeekCommand}"/>
+                    </Grid>
+
+                    <VerticalStackLayout Spacing="16">
+                        <!-- Section Title -->
+                        <Label Text="Echoes from this day"
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               TextColor="#2C2C2C"
+                               Margin="0,0,0,8"/>
+
+                        <!-- Loading Indicator -->
+                        <ActivityIndicator IsVisible="{Binding IsLoading}"
+                                           IsRunning="{Binding IsLoading}"
+                                           Color="#FFA726"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           Margin="0,40,0,0"/>
+
+                        <!-- Empty State -->
+                        <VerticalStackLayout IsVisible="{Binding IsEmpty}"
+                                             Spacing="12"
+                                             HorizontalOptions="Center"
+                                             Margin="0,40,0,0">
+                            <Image Source="empty.png"
+                                   HeightRequest="80"
+                                   WidthRequest="80"/>
+                            <Label Text="No memories for this day"
+                                   FontSize="16"
+                                   HorizontalOptions="Center"
+                                   TextColor="#999"/>
+                        </VerticalStackLayout>
+
+                        <!-- Diary Cards -->
+                        <CollectionView ItemsSource="{Binding DiariesForSelectedDate}"
+                                        SelectionMode="None"
+                                        IsVisible="{Binding IsEmpty, Converter={StaticResource InvertedBoolConverter}}">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <VerticalStackLayout Margin="0,0,0,16"
+                                                         Padding="0">
+                                        <Grid ColumnDefinitions="Auto,*"
+                                              ColumnSpacing="16">
+                                            <!-- Left Column: Large Mood Icon -->
+                                            <Image Grid.Column="0"
+                                                   Source="{Binding MoodImage}"
+                                                   HeightRequest="100"
+                                                   WidthRequest="100"
+                                                   VerticalOptions="Start"/>
+
+                                            <!-- Right Column: Content -->
+                                            <VerticalStackLayout Grid.Column="1"
+                                                                 Spacing="10">
+                                                <!-- Date/Time -->
+                                                <Label Text="{Binding FormattedDateTime}"
+                                                       FontSize="14"
+                                                       TextColor="#8FBC8F"
+                                                       FontAttributes="Bold"/>
+
+                                                <!-- Keywords/Tags -->
+                                                <FlexLayout BindableLayout.ItemsSource="{Binding KeywordsList}"
+                                                            Wrap="Wrap"
+                                                            JustifyContent="Start"
+                                                            AlignItems="Start">
+                                                    <BindableLayout.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border BackgroundColor="#ACE889"
+                                                                    StrokeThickness="0"
+                                                                    StrokeShape="RoundRectangle 14"
+                                                                    Padding="12,6"
+                                                                    Margin="0,0,6,6">
+                                                                <Label Text="{Binding .}"
+                                                                       FontSize="13"
+                                                                       TextColor="White"
+                                                                       FontAttributes="Bold"/>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </BindableLayout.ItemTemplate>
+                                                </FlexLayout>
+
+                                                <!-- Wellness Score with Arrow -->
+                                                <Grid ColumnDefinitions="*,Auto"
+                                                      Margin="0,4,0,0">
+                                                    <Label Grid.Column="0"
+                                                           Text="{Binding SentimentScore, StringFormat='Wellness Pulse : {0}'}"
+                                                           FontSize="14"
+                                                           TextColor="#8FBC8F"
+                                                           FontAttributes="Bold"
+                                                           VerticalOptions="Center"/>
+                                                    <Border Grid.Column="1"
+                                                            BackgroundColor="#FFD89C"
+                                                            StrokeThickness="0"
+                                                            StrokeShape="RoundRectangle 20"
+                                                            WidthRequest="40"
+                                                            HeightRequest="40"
+                                                            Padding="0">
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ViewDiaryCommand}"
+                                                                                  CommandParameter="{Binding .}"/>
+                                                        </Border.GestureRecognizers>
+                                                        <Label Text="→"
+                                                               FontSize="20"
+                                                               TextColor="White"
+                                                               FontAttributes="Bold"
+                                                               HorizontalOptions="Center"
+                                                               VerticalOptions="Center"/>
+                                                    </Border>
                                                 </Grid>
-                                            </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </RefreshView>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+        </ScrollView>
     </Grid>
 </ContentPage>

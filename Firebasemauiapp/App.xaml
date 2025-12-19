@@ -14,10 +14,13 @@
             <!-- Converters -->
             <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
             <converters:ScoreToHeightConverter x:Key="ScoreToHeightConverter"/>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+            <converters:CalendarDayColorConverter x:Key="CalendarDayColorConverter"/>
 
             <!-- Make Shell navigation bar transparent and remove shadow globally -->
             <Style TargetType="ContentPage"
-                    ApplyToDerivedTypes="True">
+                   ApplyToDerivedTypes="True">
                 <Setter Property="Shell.BackgroundColor"
                         Value="Transparent"/>
                 <Setter Property="Shell.NavBarHasShadow"

@@ -81,6 +81,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<MoodViewModel>();
 		builder.Services.AddTransient<SummaryViewModel>();
 		builder.Services.AddTransient<DiaryHistoryViewModel>();
+		builder.Services.AddTransient<HistoryDetailViewModel>();
 		builder.Services.AddTransient<DashboardViewModel>();
 		builder.Services.AddTransient<CommunityViewModel>();
 		builder.Services.AddTransient<CreatePostViewModel>();
@@ -97,6 +98,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<SummaryView>();
 		builder.Services.AddTransient<SummaryMockView>();
 		builder.Services.AddTransient<DiaryHistory>();
+		builder.Services.AddTransient<HistoryDetailPage>();
 		builder.Services.AddTransient<Dashboard>();
 		builder.Services.AddTransient<CommunityPage.CommunityPage>();
 		builder.Services.AddTransient<CommunityPage.CommunityCreatPostPage>();

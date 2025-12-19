@@ -21,8 +21,8 @@
             <ImageButton Source="back.png"
                          Clicked="OnBackClicked"
                          BackgroundColor="Transparent"
-                         WidthRequest="80"
-                         HeightRequest="80"/>
+                         WidthRequest="60"
+                         HeightRequest="60"/>
             <Image Source="calendar.png"
                    Grid.Row="1"
                    Grid.Column="0"
@@ -41,16 +41,18 @@
         <AbsoluteLayout Grid.Row="1">
             <!-- Mood indicator - Fixed at top -->
             <Border BackgroundColor="White"
-                    WidthRequest="70"
-                    HeightRequest="70"
-                    AbsoluteLayout.LayoutBounds="0, 0, 70, 70"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    AbsoluteLayout.LayoutBounds="0, 0, 50, 50"
                     AbsoluteLayout.LayoutFlags="None">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="12"/>
                 </Border.StrokeShape>
                 <Image Source="{Binding Mood.Name, Converter={StaticResource MoodNameToImageConverter}}"
                        Margin="8"
-                       Aspect="AspectFit"/>
+                       Aspect="AspectFit"
+                       WidthRequest="40"
+                       HeightRequest="40"/>
             </Border>
 
             <!-- Diary editor - expanded to fill more space -->
@@ -82,8 +84,8 @@
                 <Grid>
                     <!-- Upload Image Button - Large circular green button in center (shown when no image) -->
                     <Border BackgroundColor="#A8D5BA"
-                            WidthRequest="180"
-                            HeightRequest="180"
+                            WidthRequest="100"
+                            HeightRequest="100"
                             HorizontalOptions="Center"
                             VerticalOptions="Center">
                         <Border.Triggers>

@@ -29,4 +29,9 @@ public partial class DiaryHistory : ContentPage
 			await DisplayAlert("Error", $"Failed to initialize diary history: {ex.Message}", "OK");
 		}
 	}
+
+	private async void OnBackClicked(object sender, EventArgs e)
+	{
+		await Shell.Current.GoToAsync("//dashboard");
+	}
 }

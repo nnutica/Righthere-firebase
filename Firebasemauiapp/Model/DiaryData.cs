@@ -66,7 +66,8 @@ namespace Firebasemauiapp.Model
             {
                 return Mood?.ToLower() switch
                 {
-                    "joy" => "joy.png",
+                    "happiness" => "happiness.png",
+                    "joy" => "happiness.png",
                     "anger" => "anger.png",
                     "sadness" => "sadness.png",
                     "fear" => "fear.png",
@@ -76,5 +77,23 @@ namespace Firebasemauiapp.Model
                 };
             }
         }
+
+        // Helper property to get keywords as a list
+        public List<string> KeywordsList
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(Keywords))
+                    return new List<string>();
+
+                return Keywords.Split(new[] { ',', ';', '|' }, StringSplitOptions.RemoveEmptyEntries)
+                               .Select(k => k.Trim())
+                               .Where(k => !string.IsNullOrWhiteSpace(k))
+                               .ToList();
+            }
+        }
+
+        // Helper property for formatted date and time
+        public string FormattedDateTime => CreatedAtDateTime.ToString("ddd, dd MMM - HH:mm");
     }
 }
