@@ -5,110 +5,110 @@
              x:Class="Firebasemauiapp.Mainpages.LevelMoodPage"
              Shell.NavBarIsVisible="False"
              Title="Level of Mood">
-    <!-- Orange card-like area -->
-    <Grid Padding="20,24"
-          RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto"
-          BackgroundColor="#FFC566">
-        <!-- Row 0: Back Button -->
-        <ImageButton Grid.Row="0"
-                     Source="back.png"
-                     WidthRequest="40"
-                     HeightRequest="40"
-                     HorizontalOptions="Start"
-                     BackgroundColor="Transparent"
-                     Margin="0,0,0,12"
-                     Clicked="OnBackClicked"/>
+        <!-- Orange card-like area -->
+        <Grid Padding="20,24"
+              RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto"
+              BackgroundColor="#FFC566">
+                <!-- Row 0: Back Button -->
+                <ImageButton Grid.Row="0"
+                             Source="back.png"
+                             WidthRequest="40"
+                             HeightRequest="40"
+                             HorizontalOptions="Start"
+                             BackgroundColor="Transparent"
+                             Margin="0,0,0,12"
+                             Clicked="OnBackClicked"/>
 
-        <!-- Row 1: Header Text -->
-        <Label Grid.Row="1"
-               Text="Where does&#10;this feeling&#10;sit for you&#10;right now?"
-               FontFamily="AppFont"
-               FontSize="44"
-               FontAttributes="Bold"
-               TextColor="White"
-               LineHeight="1.0"
-               Margin="0,0,0,20"/>
+                <!-- Row 1: Header Text -->
+                <Label Grid.Row="1"
+                       Text="Where does&#10;this feeling&#10;sit for you&#10;right now?"
+                       FontFamily="AppFont"
+                       FontSize="44"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       LineHeight="1.0"
+                       Margin="0,0,0,20"/>
 
-        <!-- Row 2: Mood Icon -->
-        <Image Grid.Row="2"
-               Source="{Binding Mood.Icon, FallbackValue='happiness.png', TargetNullValue='happiness.png'}"
-               HeightRequest="240"
-               WidthRequest="240"
-               Aspect="AspectFit"
-               HorizontalOptions="Center"
-               Margin="0,0,0,8"/>
+                <!-- Row 2: Mood Icon -->
+                <Image Grid.Row="2"
+                       Source="{Binding Mood.Icon, FallbackValue='happiness.png', TargetNullValue='happiness.png'}"
+                       HeightRequest="240"
+                       WidthRequest="240"
+                       Aspect="AspectFit"
+                       HorizontalOptions="Center"
+                       Margin="0,0,0,8"/>
 
-        <!-- Row 3: Quote Label -->
-        <Label Grid.Row="3"
-               Text="{Binding IntensityQuote}"
-               FontSize="32"
-               TextColor="White"
-               FontAttributes="Italic"
-               FontFamily="lightfont"
-               HorizontalTextAlignment="Center"
-               Margin="0,0,0,16"/>
+                <!-- Row 3: Quote Label -->
+                <Label Grid.Row="3"
+                       Text="{Binding IntensityQuote}"
+                       FontSize="32"
+                       TextColor="White"
+                       FontAttributes="Italic"
+                       FontFamily="lightfont"
+                       HorizontalTextAlignment="Center"
+                       Margin="0,0,0,16"/>
 
-        <!-- Row 4: Scale Labels (ซ้าย-ขวา) -->
-        <Grid Grid.Row="4"
-              ColumnDefinitions="*,*"
-              Margin="0,0,0,4">
-            <Label Grid.Column="0"
-                   Text="0 = Just a bit"
-                   FontSize="18"
-                   FontFamily="lightfont"
-                   TextColor="White"
-                   HorizontalTextAlignment="Start"/>
-            <Label Grid.Column="1"
-                   Text="10 = Overwhelming"
-                   FontSize="18"
-                   TextColor="White"
-                   FontFamily="lightfont"
-                   HorizontalTextAlignment="End"/>
+                <!-- Row 4: Scale Labels (ซ้าย-ขวา) -->
+                <Grid Grid.Row="4"
+                      ColumnDefinitions="*,*"
+                      Margin="0,0,0,4">
+                        <Label Grid.Column="0"
+                               Text="0 = Just a bit"
+                               FontSize="18"
+                               FontFamily="lightfont"
+                               TextColor="White"
+                               HorizontalTextAlignment="Start"/>
+                        <Label Grid.Column="1"
+                               Text="10 = Overwhelming"
+                               FontSize="18"
+                               TextColor="White"
+                               FontFamily="lightfont"
+                               HorizontalTextAlignment="End"/>
+                </Grid>
+
+                <!-- Row 5: Mood Slider -->
+                <controls:MoodArcSlider Grid.Row="5"
+                                        WidthRequest="360"
+                                        HeightRequest="60"
+                                        Value="{Binding Score}"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Start"
+                                        Margin="0,0,0,20"/>
+
+                <!-- Row 6: Button -->
+                <Button Grid.Row="6"
+                        Text="Let's Express&#10;Your Mood!"
+                        BackgroundColor="White"
+                        TextColor="#F8A33A"
+                        FontAttributes="Bold"
+                        FontSize="20"
+                        CornerRadius="28"
+                        HeightRequest="60"
+                        VerticalOptions="End"
+                        Margin="0,0,0,20"
+                        Command="{Binding SetMoodCommand}">
+                        <Button.Triggers>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding Score}"
+                                             Value="{x:Null}">
+                                        <Setter Property="IsEnabled"
+                                                Value="False"/>
+                                        <Setter Property="BackgroundColor"
+                                                Value="#D3D3D3"/>
+                                        <Setter Property="TextColor"
+                                                Value="#808080"/>
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button"
+                                             Binding="{Binding Score}"
+                                             Value="0">
+                                        <Setter Property="IsEnabled"
+                                                Value="False"/>
+                                        <Setter Property="BackgroundColor"
+                                                Value="#D3D3D3"/>
+                                        <Setter Property="TextColor"
+                                                Value="#808080"/>
+                                </DataTrigger>
+                        </Button.Triggers>
+                </Button>
         </Grid>
-
-        <!-- Row 5: Mood Slider -->
-        <controls:MoodArcSlider Grid.Row="5"
-                                WidthRequest="360"
-                                HeightRequest="60"
-                                Value="{Binding Score}"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Start"
-                                Margin="0,0,0,20"/>
-
-        <!-- Row 6: Button -->
-        <Button Grid.Row="6"
-                Text="Let's Express&#10;Your Mood!"
-                BackgroundColor="White"
-                TextColor="#F8A33A"
-                FontAttributes="Bold"
-                FontSize="20"
-                CornerRadius="28"
-                HeightRequest="60"
-                VerticalOptions="End"
-                Margin="0,0,0,60"
-                Command="{Binding SetMoodCommand}">
-            <Button.Triggers>
-                <DataTrigger TargetType="Button"
-                             Binding="{Binding Score}"
-                             Value="{x:Null}">
-                    <Setter Property="IsEnabled"
-                            Value="False"/>
-                    <Setter Property="BackgroundColor"
-                            Value="#D3D3D3"/>
-                    <Setter Property="TextColor"
-                            Value="#808080"/>
-                </DataTrigger>
-                <DataTrigger TargetType="Button"
-                             Binding="{Binding Score}"
-                             Value="0">
-                    <Setter Property="IsEnabled"
-                            Value="False"/>
-                    <Setter Property="BackgroundColor"
-                            Value="#D3D3D3"/>
-                    <Setter Property="TextColor"
-                            Value="#808080"/>
-                </DataTrigger>
-            </Button.Triggers>
-        </Button>
-    </Grid>
 </ContentPage>

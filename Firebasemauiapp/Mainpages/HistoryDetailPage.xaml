@@ -508,7 +508,7 @@
         <!-- Row 3: Bottom controls fixed at bottom -->
         <Grid Grid.Row="3"
               Padding="20"
-              Margin="0,0,0,20"
+              Margin="0,0,0,0"
               VerticalOptions="End">
 
             <!-- Page 0: Only Next button (no indicators) -->

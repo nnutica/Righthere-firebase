@@ -94,7 +94,7 @@
             <!-- Post-it Card -->
             <Border BackgroundColor="Transparent"
                     StrokeThickness="0"
-                    WidthRequest="320"
+                    WidthRequest="300"
                     HeightRequest="380"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
@@ -140,23 +140,28 @@
             </Border>
 
             <!-- Navigation Arrows - Separate layer -->
-            <HorizontalStackLayout HorizontalOptions="Center"
-                                   VerticalOptions="Center"
-                                   Spacing="360">
+            <Grid ColumnDefinitions="*,*"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Center"
+                  Padding="20,0">
                 <!-- Left Arrow -->
                 <ImageButton Source="left_arrow.png"
                              WidthRequest="36"
                              HeightRequest="36"
                              BackgroundColor="Transparent"
-                             Clicked="OnPreviousPostClicked"/>
+                             Clicked="OnPreviousPostClicked"
+                             Grid.Column="0"
+                             HorizontalOptions="Start"/>
 
                 <!-- Right Arrow -->
                 <ImageButton Source="right_arrow.png"
                              WidthRequest="36"
                              HeightRequest="36"
                              BackgroundColor="Transparent"
-                             Clicked="OnNextPostClicked"/>
-            </HorizontalStackLayout>
+                             Clicked="OnNextPostClicked"
+                             Grid.Column="1"
+                             HorizontalOptions="End"/>
+            </Grid>
         </Grid>
     </Grid>
 </ContentPage>

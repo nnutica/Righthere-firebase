@@ -131,6 +131,23 @@ public partial class DashboardViewModel : ObservableObject
 		_ = LoadSentimentScores();
 	}
 
+	private async Task<string?> WaitForUidAsync(int timeoutMs = 2500)
+	{
+		var start = Environment.TickCount;
+
+		while (Environment.TickCount - start < timeoutMs)
+		{
+			var uid = _authClient?.User?.Uid;
+			if (!string.IsNullOrWhiteSpace(uid))
+				return uid;
+
+			await Task.Delay(150);
+		}
+
+		return null;
+	}
+
+
 	private async Task LoadSentimentScores()
 	{
 		try
@@ -146,17 +163,16 @@ public partial class DashboardViewModel : ObservableObject
 			ChartData.Clear();
 			ResonatingThemes.Clear();
 
-			var user = _authClient?.User;
-			if (user?.Uid == null)
+			var uid = await WaitForUidAsync();
+			if (string.IsNullOrWhiteSpace(uid))
 			{
-				Console.WriteLine("Dashboard: User is null or has no UID");
-				IsLoading = false;
+				Console.WriteLine("Dashboard: UID still null after waiting.");
 				return;
 			}
 
-			Console.WriteLine($"Dashboard: Loading diaries for user: {user.Uid}");
 
-			var diaries = (await _diaryDatabase.GetDiariesByUserAsync(user.Uid))
+			Console.WriteLine($"Dashboard: Loading diaries for user: {uid}");
+			var diaries = (await _diaryDatabase.GetDiariesByUserAsync(uid))
 				?.OrderBy(x => x.CreatedAtDateTime)
 				.ToList();
 

@@ -45,20 +45,22 @@
                 <Grid WidthRequest="300"
                       HeightRequest="280"
                       HorizontalOptions="Center"
-                      Margin="0,20,0,0">
-                    <!-- Plant (render first, behind pot) -->
+                      Margin="0,10,0,0">
+                    <!-- Plant (render first, front of pot) -->
                     <Image Source="{Binding CurrentPlant}"
                            WidthRequest="240"
                            HeightRequest="240"
-                           VerticalOptions="Center"
+                           VerticalOptions="Start"
                            HorizontalOptions="Center"
-                           TranslationY="-40"/>
-                    <!-- Pot (render second, in front of plant) -->
+                           TranslationY="-30"
+                           ZIndex="1"/>
+                    <!-- Pot (render second, in behind plant) -->
                     <Image Source="{Binding CurrentPot}"
                            WidthRequest="240"
                            HeightRequest="160"
                            VerticalOptions="End"
-                           HorizontalOptions="Center"/>
+                           HorizontalOptions="Center"
+                           ZIndex="0"/>
                 </Grid>
 
                 <!-- Daily Goals Progress Bar -->
