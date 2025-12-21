@@ -52,19 +52,24 @@ public partial class DiaryViewModel : ObservableObject
     [ObservableProperty]
     private bool _isUploadingImage;
 
+
+    private bool _allowUpload = false;
+
     public DiaryViewModel(DiaryDatabase diaryDatabase, FirebaseAuthClient authClient, GitHubUploadService uploadService)
     {
         _diaryDatabase = diaryDatabase;
         _authClient = authClient;
         _uploadService = uploadService;
+        _allowUpload = true; // ให้ผู้ใช้กดเพิ่มรูปได้ทันที
     }
 
     [RelayCommand]
+
     private async Task UploadImage()
     {
+
         try
         {
-            // Ask user to choose between camera or gallery
             var action = await Shell.Current.DisplayActionSheet(
                 "Choose photo source",
                 "Cancel",
@@ -75,34 +80,22 @@ public partial class DiaryViewModel : ObservableObject
             FileResult? result = null;
 
             if (action == "Take Photo")
-            {
-                // Camera with potential crop on some devices
                 result = await MediaPicker.Default.CapturePhotoAsync();
-            }
             else if (action == "Choose from Gallery")
-            {
-                // Gallery picker
-                result = await MediaPicker.Default.PickPhotoAsync(new MediaPickerOptions
-                {
-                    Title = "Select a photo"
-                });
-            }
+                result = await MediaPicker.Default.PickPhotoAsync();
 
             if (result == null) return;
 
             IsUploadingImage = true;
 
-            // Use original image directly
-            string finalPath = result.FullPath;
+            using var stream = File.OpenRead(result.FullPath);
 
-            using var stream = File.OpenRead(finalPath);
-            // Delete previous image in repo if any
             if (!string.IsNullOrWhiteSpace(ImageUrl))
             {
-                try { await _uploadService.DeleteImageAsync(ImageUrl); } catch { /* ignore delete failures */ }
+                try { await _uploadService.DeleteImageAsync(ImageUrl); } catch { }
             }
-            var url = await _uploadService.UploadImageAsync(stream, result.FileName);
-            ImageUrl = url;
+
+            ImageUrl = await _uploadService.UploadImageAsync(stream, result.FileName);
         }
         catch (Exception ex)
         {
@@ -113,6 +106,7 @@ public partial class DiaryViewModel : ObservableObject
             IsUploadingImage = false;
         }
     }
+
 
     // Crop function removed
 
@@ -197,5 +191,6 @@ public partial class DiaryViewModel : ObservableObject
         IsLoadingVisible = false;
         AnalyzeButtonText = "Next";
         ImageUrl = null;
+        _allowUpload = true; // reset ให้กดเพิ่มรูปใหม่ได้
     }
 }

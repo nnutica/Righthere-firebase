@@ -321,12 +321,17 @@
                                FontAttributes="Bold"
                                LineHeight="0.95"
                                Margin="0,2,0,0"/>
-                        <Label Grid.Row="4"
-                               Grid.ColumnSpan="2"
-                               Text="{Binding Emotion}"
-                               TextColor="#8FB78F"
-                               FontSize="18"
-                               FontFamily="lightfont"/>
+                        <ScrollView Grid.Row="4"
+                                    Grid.ColumnSpan="2"
+                                    HeightRequest="200"
+                                    Padding="0"
+                                    VerticalOptions="FillAndExpand">
+                            <Label Text="{Binding Emotion}"
+                                   TextColor="#8FB78F"
+                                   FontSize="18"
+                                   FontFamily="lightfont"
+                                   LineBreakMode="WordWrap"/>
+                        </ScrollView>
                     </Grid>
                 </Border>
             </VerticalStackLayout>

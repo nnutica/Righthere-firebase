@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Firebasemauiapp.Data;
 using Firebase.Auth;
 using Firebasemauiapp.Model;
+using Microsoft.Maui.Storage; // ✅ [A] added
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -131,23 +132,33 @@ public partial class DashboardViewModel : ObservableObject
 		_ = LoadSentimentScores();
 	}
 
+	// ✅ [A] only: wait for uid, but fallback to Preferences("AUTH_UID")
 	private async Task<string?> WaitForUidAsync(int timeoutMs = 2500)
 	{
 		var start = Environment.TickCount;
 
 		while (Environment.TickCount - start < timeoutMs)
 		{
+			// 1) Primary: from auth client
 			var uid = _authClient?.User?.Uid;
 			if (!string.IsNullOrWhiteSpace(uid))
 				return uid;
 
+			// 2) Fallback: from cached uid (saved at sign-in)
+			var cachedUid = Preferences.Get("AUTH_UID", null);
+			if (!string.IsNullOrWhiteSpace(cachedUid))
+				return cachedUid;
+
 			await Task.Delay(150);
 		}
 
-		return null;
+		// Final fallback
+		var lastCached = Preferences.Get("AUTH_UID", null);
+		return string.IsNullOrWhiteSpace(lastCached) ? null : lastCached;
 	}
 
-
+	private int _retryCount = 0;
+	private const int MaxRetry = 3;
 	private async Task LoadSentimentScores()
 	{
 		try
@@ -166,10 +177,35 @@ public partial class DashboardViewModel : ObservableObject
 			var uid = await WaitForUidAsync();
 			if (string.IsNullOrWhiteSpace(uid))
 			{
-				Console.WriteLine("Dashboard: UID still null after waiting.");
-				return;
+				_retryCount++;
+				Console.WriteLine($"Dashboard: UID still null after waiting (and no cached UID). Retry {_retryCount}/{MaxRetry}");
+				if (_retryCount <= MaxRetry)
+				{
+					// wait 1s and retry
+					await Task.Delay(1000);
+					await LoadSentimentScores();
+					return;
+				}
+				else
+				{
+					_retryCount = 0;
+					// แจ้งเตือนผู้ใช้ (ต้องรันบน UI thread)
+					try
+					{
+						MainThread.BeginInvokeOnMainThread(async () =>
+						{
+							await Application.Current?.MainPage?.DisplayAlert(
+								"เกิดข้อผิดพลาด",
+								"ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่อีกครั้ง",
+								"ตกลง");
+						});
+					}
+					catch { }
+					IsLoading = false;
+					return;
+				}
 			}
-
+			_retryCount = 0;
 
 			Console.WriteLine($"Dashboard: Loading diaries for user: {uid}");
 			var diaries = (await _diaryDatabase.GetDiariesByUserAsync(uid))
@@ -182,7 +218,8 @@ public partial class DashboardViewModel : ObservableObject
 				diaries = new List<DiaryData>();
 			}
 
-			Console.WriteLine($"Dashboard: Loaded {diaries.Count} diaries"); foreach (var d in diaries)
+			Console.WriteLine($"Dashboard: Loaded {diaries.Count} diaries");
+			foreach (var d in diaries)
 			{
 				SentimentScores.Add(d.SentimentScore);
 			}
@@ -224,7 +261,7 @@ public partial class DashboardViewModel : ObservableObject
 				var targetDate = weekStart.AddDays(i);
 				var diary = weekDiaries.FirstOrDefault(d => d.CreatedAtDateTime.Date == targetDate);
 
-				WeeklyPulseData[i].Day = targetDate.ToString("ddd").Substring(0, 3);
+				WeeklyPulseData[i].Day = targetDate.ToString("ddd");
 				WeeklyPulseData[i].Score = diary?.SentimentScore ?? 0;
 			}
 

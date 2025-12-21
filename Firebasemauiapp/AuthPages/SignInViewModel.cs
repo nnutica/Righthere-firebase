@@ -4,6 +4,7 @@ using Firebase.Auth;
 using Firebasemauiapp.Services;
 using Google.Cloud.Firestore;
 using System.Collections.Generic;
+using Microsoft.Maui.Storage;
 
 namespace Firebasemauiapp.Pages;
 
@@ -63,6 +64,7 @@ public partial class SignInViewModel : ObservableObject
             var uid = result?.User?.Uid;
             if (!string.IsNullOrWhiteSpace(uid))
             {
+                Preferences.Set("AUTH_UID", uid);
                 var db = await _firestoreService.GetDatabaseAsync();
                 var userDocRef = db.Collection("users").Document(uid);
                 var snapshot = await userDocRef.GetSnapshotAsync();

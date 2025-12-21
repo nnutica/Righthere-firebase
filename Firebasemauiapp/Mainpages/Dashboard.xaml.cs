@@ -2,21 +2,31 @@
 
 namespace Firebasemauiapp.Mainpages;
 
+
 public partial class Dashboard : ContentPage
 {
+	private readonly DashboardViewModel viewModel;
+
 	public Dashboard(DashboardViewModel viewModel)
 	{
 		InitializeComponent();
+		this.viewModel = viewModel;
 		BindingContext = viewModel;
 	}
 
 	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		if (BindingContext is DashboardViewModel vm)
-		{
-			await vm.LoadSentimentScoresCommand.ExecuteAsync(null);
-		}
+
+		// 🔒 อย่าโหลด ถ้า AuthRouting ยังไม่ route เสร็จ
+		if (Shell.Current?.CurrentState?.Location?.ToString().Contains("starter") != true)
+			return;
+
+		var uid = Preferences.Get("AUTH_UID", null);
+		if (string.IsNullOrWhiteSpace(uid))
+			return;
+
+		await viewModel.LoadSentimentScoresCommand.ExecuteAsync(null);
 	}
 
 	private async void OnBackClicked(object sender, EventArgs e)

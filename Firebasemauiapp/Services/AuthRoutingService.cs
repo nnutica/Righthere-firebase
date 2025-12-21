@@ -2,14 +2,16 @@ using System;
 using System.Threading.Tasks;
 using Firebase.Auth;
 using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
 
 namespace Firebasemauiapp.Services
 {
-    public class AuthRoutingService
+    public class AuthRoutingService : IDisposable
     {
         private readonly FirebaseAuthClient _auth;
         private bool _started;
         private bool _disposed;
+        private string? _lastRoutedState;
 
         public AuthRoutingService(FirebaseAuthClient auth)
         {
@@ -23,61 +25,74 @@ namespace Firebasemauiapp.Services
 
             _auth.AuthStateChanged += OnAuthStateChanged;
 
-            // Route once on startup based on current state
-            _ = RouteForCurrentStateAsync();
+            // Initial route
+            _ = RouteWhenReadyAsync();
         }
 
-        private async void OnAuthStateChanged(object? sender, UserEventArgs e)
+        private void OnAuthStateChanged(object? sender, UserEventArgs e)
         {
             if (_disposed) return;
-            await RouteForCurrentStateAsync();
+            _ = RouteWhenReadyAsync();
         }
 
-        private async Task RouteForCurrentStateAsync()
+        private async Task RouteWhenReadyAsync()
         {
-            if (_disposed) return;
-
             try
             {
-                // Ensure Shell is ready
-                for (int i = 0; i < 40 && Shell.Current == null; i++)
+                // 1️⃣ รอ Shell พร้อม
+                for (int i = 0; i < 60 && Shell.Current == null; i++)
                 {
                     if (_disposed) return;
                     await Task.Delay(50);
                 }
 
-                if (Shell.Current != null && !_disposed)
+                if (_disposed || Shell.Current == null)
+                    return;
+
+                // 2️⃣ รอ Firebase Auth restore (เครื่องจริงช้ากว่า emulator)
+                for (int i = 0; i < 20; i++)
                 {
-                    var current = Shell.Current.CurrentState?.Location?.ToString() ?? string.Empty;
+                    if (_disposed) return;
 
-                    // Avoid jumping to Starter while user is on SignUp page
-                    if (_auth.User != null && current.Contains("signup", StringComparison.OrdinalIgnoreCase))
-                        return;
+                    if (_auth.User != null || i >= 10)
+                        break;
 
-                    var route = _auth.User != null ? "//starter" : "//signin";
-
-                    if (!_disposed && Shell.Current != null)
-                    {
-                        await MainThread.InvokeOnMainThreadAsync(async () =>
-                        {
-                            if (!_disposed && Shell.Current != null)
-                                await Shell.Current.GoToAsync(route);
-                        });
-                    }
+                    await Task.Delay(100);
                 }
+
+                if (_disposed || Shell.Current == null)
+                    return;
+
+                var isLoggedIn = _auth.User != null;
+                var targetState = isLoggedIn ? "AUTHENTICATED" : "UNAUTHENTICATED";
+
+                // 3️⃣ route เฉพาะตอน state เปลี่ยน
+                if (_lastRoutedState == targetState)
+                    return;
+
+                _lastRoutedState = targetState;
+
+                var route = isLoggedIn ? "//starter" : "//signin";
+
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    if (_disposed || Shell.Current == null) return;
+                    await Shell.Current.GoToAsync(route, animate: false);
+                });
             }
             catch (ObjectDisposedException)
             {
                 _disposed = true;
             }
-            catch
+            catch (Exception ex)
             {
-                // no-op
+                Console.WriteLine($"AuthRoutingService error: {ex.Message}");
             }
         }
 
         public void Dispose()
         {
+            if (_disposed) return;
             _disposed = true;
             _auth.AuthStateChanged -= OnAuthStateChanged;
         }
