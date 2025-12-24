@@ -68,6 +68,7 @@ public partial class SignInViewModel : ObservableObject
                 var db = await _firestoreService.GetDatabaseAsync();
                 var userDocRef = db.Collection("users").Document(uid);
                 var snapshot = await userDocRef.GetSnapshotAsync();
+                var now = Timestamp.FromDateTime(DateTime.UtcNow);
                 if (!snapshot.Exists)
                 {
                     var displayName = result!.User!.Info?.DisplayName ?? string.Empty;
@@ -81,9 +82,18 @@ public partial class SignInViewModel : ObservableObject
                         { "inventory", new List<string>() },
                         { "currentPlant", "empty.png" },
                         { "currentPot", "pot.png" },
-                        { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) }
+                        { "createdAt", now },
+                        { "lastActiveAt", now }
                     };
                     await userDocRef.SetAsync(payload, SetOptions.Overwrite);
+                }
+                else
+                {
+                    await userDocRef.UpdateAsync(new Dictionary<string, object>
+                    {
+                        { "lastActiveAt", now },
+                        { "email", Email }
+                    });
                 }
             }
 
