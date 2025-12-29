@@ -23,17 +23,17 @@
                 <Label Grid.Row="1"
                        Text="Where does&#10;this feeling&#10;sit for you&#10;right now?"
                        FontFamily="AppFont"
-                       FontSize="44"
+                       FontSize="36"
                        FontAttributes="Bold"
                        TextColor="White"
                        LineHeight="1.0"
-                       Margin="0,0,0,20"/>
+                       Margin="0,0,0,12"/>
 
                 <!-- Row 2: Mood Icon -->
                 <Image Grid.Row="2"
                        Source="{Binding Mood.Icon, FallbackValue='happiness.png', TargetNullValue='happiness.png'}"
-                       HeightRequest="240"
-                       WidthRequest="240"
+                       HeightRequest="200"
+                       WidthRequest="200"
                        Aspect="AspectFit"
                        HorizontalOptions="Center"
                        Margin="0,0,0,8"/>
@@ -41,12 +41,12 @@
                 <!-- Row 3: Quote Label -->
                 <Label Grid.Row="3"
                        Text="{Binding IntensityQuote}"
-                       FontSize="32"
+                       FontSize="24"
                        TextColor="White"
                        FontAttributes="Italic"
                        FontFamily="lightfont"
                        HorizontalTextAlignment="Center"
-                       Margin="0,0,0,16"/>
+                       Margin="0,0,0,10"/>
 
                 <!-- Row 4: Scale Labels (ซ้าย-ขวา) -->
                 <Grid Grid.Row="4"
@@ -67,14 +67,15 @@
                 </Grid>
 
                 <!-- Row 5: Mood Slider -->
-                <controls:MoodArcSlider Grid.Row="5"
-                                        WidthRequest="360"
-                                        HeightRequest="60"
-                                        Value="{Binding Score}"
-                                        HorizontalOptions="Center"
-                                        VerticalOptions="Start"
-                                        Margin="0,0,0,20"/>
-
+                <Grid  Grid.Row="5"
+                       Margin="0,0,0,20">
+                        <controls:MoodArcSlider
+                                WidthRequest="320"
+                                HeightRequest="60"
+                                Value="{Binding Score}"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Start"/>
+                </Grid>
                 <!-- Row 6: Button -->
                 <Button Grid.Row="6"
                         Text="Let's Express&#10;Your Mood!"
@@ -84,8 +85,8 @@
                         FontSize="20"
                         CornerRadius="28"
                         HeightRequest="60"
-                        VerticalOptions="End"
-                        Margin="0,0,0,20"
+                        VerticalOptions="FillAndExpand"
+                        Margin="0,0,0,0"
                         Command="{Binding SetMoodCommand}">
                         <Button.Triggers>
                                 <DataTrigger TargetType="Button"

@@ -120,11 +120,7 @@
                                    WidthRequest="48"
                                    HeightRequest="48"
                                    HorizontalOptions="Center"/>
-                            <Label Text="May I image (png,only)*"
-                                   FontSize="12"
-                                   TextColor="White"
-                                   HorizontalOptions="Center"
-                                   HorizontalTextAlignment="Center"/>
+
                         </VerticalStackLayout>
                     </Border>
 

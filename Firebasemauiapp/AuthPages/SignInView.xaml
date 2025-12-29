@@ -11,10 +11,11 @@
         <!-- Woman reading illustration -->
         <Image Source="womanread.png"
                WidthRequest="400"
-               HeightRequest="440"
-               Aspect="AspectFit"
+               HeightRequest="350"
+               Aspect="Center"
                HorizontalOptions="Center"
                VerticalOptions="Start"
+               TranslationY="-60"
                Margin="0,100,0,0"/>
 
         <!-- Mini logo top right with white border -->
@@ -43,7 +44,7 @@
                 StrokeShape="RoundRectangle 40,40,0,0"
                 HorizontalOptions="Fill"
                 VerticalOptions="EndAndExpand"
-                HeightRequest="500">
+                HeightRequest="400">
             <Border.Shadow>
                 <Shadow Opacity="0.15"
                         Radius="20"

@@ -125,7 +125,6 @@ public partial class CommunityViewModel : ObservableObject
     {
         try
         {
-            RandomPost = null;
             var allPosts = await _postDb.GetAllPostsAsync();
             var list = allPosts;
             if (IsLoggedIn && !string.Equals(UserName, "Guest", StringComparison.OrdinalIgnoreCase))
@@ -137,7 +136,17 @@ public partial class CommunityViewModel : ObservableObject
             if (list.Any())
             {
                 var random = new Random();
-                RandomPost = list[random.Next(list.Count)];
+                var currentId = RandomPost?.PostId;
+                var filtered = list;
+                if (list.Count > 1 && currentId != null)
+                {
+                    filtered = list.Where(p => p.PostId != currentId).ToList();
+                }
+                RandomPost = filtered[random.Next(filtered.Count)];
+            }
+            else
+            {
+                RandomPost = null;
             }
         }
         catch (Exception ex)
@@ -168,7 +177,7 @@ public partial class CommunityViewModel : ObservableObject
         {
             var userId = GetCurrentUserId();
             var hasLiked = await _postDb.HasUserLikedAsync(RandomPost.PostId, userId);
-            
+
             if (hasLiked)
             {
                 // Unlike: remove like
