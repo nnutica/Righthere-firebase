@@ -65,7 +65,7 @@ public partial class MoodViewModel : ObservableObject
             new(name: "Happiness", emoji: string.Empty, icon: "happiness.png"),
             new(name: "Love",      emoji: string.Empty, icon: "love.png"),
             new(name: "Angry",     emoji: string.Empty, icon: "anger.png"),
-            new(name: "Surprise",  emoji: string.Empty, icon: "surprise.png"),
+            new(name: "Disgust",  emoji: string.Empty, icon: "disgust.png"),
             new(name: "Sadness",   emoji: string.Empty, icon: "sadness.png"),
             new(name: "Fear",      emoji: string.Empty, icon: "fear.png")
         };
