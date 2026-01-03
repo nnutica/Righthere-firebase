@@ -5,144 +5,95 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     Title="Summary Mock"
-    Shell.NavBarIsVisible="False"
-    BackgroundColor="#FEAA3A">
+    Shell.NavBarIsVisible="False">
+    <ScrollView>
+        <Grid Padding="24"
+              RowSpacing="22"
+              RowDefinitions="Auto,Auto">
 
-    <!-- Fullscreen cards: fill entire page, no title, no buttons -->
-    <Grid RowDefinitions="Auto,*,Auto">
+            <!-- Header -->
+            <VerticalStackLayout Grid.Row="0"
+                    Spacing="10">
+                <Image Source="logo.png"
+                       HeightRequest="56"
+                       WidthRequest="56"/>
 
-        <Image Source="summarybg.png"
-               Grid.RowSpan="3"
-               Aspect="AspectFill"
-               InputTransparent="True"/>
+                <Label Text="Welcome Home,&#10;[Name]."
+                       FontSize="34"
+                       FontAttributes="Bold"
+                       TextColor="#8FAF8B"
+                       LineHeight="1.05"/>
 
-        <!-- Header -->
-        <Label Grid.Row="0"
-               Text="What&#10;You&#10;Shared&#10;Today"
-               TextColor="White"
-               FontSize="44"
-               FontAttributes="Bold"
-               LineHeight="0.95"
-               Margin="30,20,0,0"
-               HeightRequest="200"/>
-
-
-        <!-- Date chip (top-right) -->
-        <Border Grid.Row="0"
-                HorizontalOptions="End"
-                VerticalOptions="Start"
-                HeightRequest="150"
-                WidthRequest="80"
-                Margin="0,70,0,10"
-                BackgroundColor="#FFFFFFFF"
-                Opacity="0.75">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="18,0,18,0"/>
-            </Border.StrokeShape>
-            <Border.Shadow>
-                <Shadow Brush="#40000000"
-                        Radius="16"
-                        Offset="0,6"
-                        Opacity="0.35"/>
-            </Border.Shadow>
-            <VerticalStackLayout Spacing="2"
-                                 HorizontalOptions="Center"
-                                 VerticalOptions="Center">
-                <Label FontFamily="contextfont"
-                       FontSize="28"
-                       TextColor="#FEAA3A"
-                       HorizontalTextAlignment="Center"
-                       Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:MMM}'}"/>
-                <Label FontFamily="contextfont"
-                       FontSize="28"
-                       TextColor="#FEAA3A"
-                       HorizontalTextAlignment="Center"
-                       Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{}{0:dd}'}"/>
+                <Label Text="Your safe space is ready."
+                       FontSize="14"
+                       TextColor="#A9BEA6"/>
             </VerticalStackLayout>
-        </Border>
 
-        <!-- Illustration on the right -->
-        <Image Grid.Row="1"
-               Source="womenhug.png"
-               Aspect="AspectFill"
-               HorizontalOptions="End"
-               VerticalOptions="Center"
-               WidthRequest="300"
-               Margin="0,0,0,0"
-               TranslationY="-40"
-               InputTransparent="True"/>
+            <!-- Buttons (image-only) -->
+            <Grid Grid.Row="1"
+                  ColumnSpacing="16"
+                  RowSpacing="16"
+                  ColumnDefinitions="*,*"
+                  RowDefinitions="Auto,Auto,Auto">
 
-        <!-- Suggestion (translucent card with shadow) -->
-        <Grid Grid.Row="1"
-              Margin="0,0,0,0"
-              HorizontalOptions="Start"
-              VerticalOptions="Start">
-            <Border BackgroundColor="#CCFFFFFF"
-                    HeightRequest="390"
-                    HorizontalOptions="Start"
-                    VerticalOptions="Center"
-                    WidthRequest="270"
-                    Padding="20"
-                    TranslationY="50">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="0,18,0,18"/>
-                </Border.StrokeShape>
-                <Border.Shadow>
-                    <Shadow Brush="#40000000"
-                            Radius="16"
-                            Offset="0,6"
-                            Opacity="0.7"/>
-                </Border.Shadow>
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="A Little Encouragement"
-                           FontFamily="AppFont"
-                           FontSize="24"
-                           FontAttributes="Bold"
-                           TextColor="#FEAA3A"/>
-                    <Label Text="{Binding Suggestion}"
-                           FontFamily="contextfont"
-                           FontSize="14"
-                           TextColor="#8FB78F"
-                           LineHeight="1.2"/>
-                </VerticalStackLayout>
-            </Border>
+                <!-- Emotional Diary (full width) -->
+                <ImageButton Grid.Row="0"
+                             Grid.ColumnSpan="2"
+                             Source="btn_emotional_diary.png"
+                             Aspect="AspectFill"
+                             CornerRadius="20"
+                             HeightRequest="150"
+                             Padding="0"
+                             BackgroundColor="Transparent"/>
+
+                <!-- Quests (left) -->
+                <ImageButton Grid.Row="1"
+                             Grid.Column="0"
+                             Source="btn_quests.png"
+                             Aspect="AspectFill"
+                             CornerRadius="20"
+                             HeightRequest="150"
+                             Padding="0"
+                             BackgroundColor="Transparent"/>
+
+                <!-- Mind Dashboard (right, tall 2 rows) -->
+                <ImageButton Grid.Row="1"
+                             Grid.Column="1"
+                             Grid.RowSpan="2"
+                             Source="btn_dashboard.png"
+                             Aspect="AspectFill"
+                             CornerRadius="20"
+                             HeightRequest="320"
+                             Padding="0"
+                             BackgroundColor="Transparent"/>
+
+                <!-- Kindness Forest (left bottom) -->
+                <ImageButton Grid.Row="2"
+                             Grid.Column="0"
+                             Source="btn_kindness.png"
+                             Aspect="AspectFill"
+                             CornerRadius="20"
+                             HeightRequest="150"
+                             Padding="0"
+                             BackgroundColor="Transparent"/>
+
+                <!-- Optional spacer if you want exact visual balance -->
+                <!-- <BoxView Grid.Row="2" Grid.Column="1" Opacity="0" HeightRequest="1"/> -->
+
+                <!-- Store (if you want it instead of spacer, place it at Grid.Row="2" Grid.Column="1" and remove spacer) -->
+                <ImageButton Grid.Row="2"
+                             Grid.Column="1"
+                             Source="btn_store.png"
+                             Aspect="AspectFill"
+                             CornerRadius="20"
+                             HeightRequest="150"
+                             Padding="0"
+                             BackgroundColor="Transparent"/>
+
+            </Grid>
+
         </Grid>
-        <HorizontalStackLayout Grid.Row="2"
-                               Spacing="12"
-                               HorizontalOptions="Center"
-                               Padding="0,0,0,20">
-            <Button Text="◀"
-                    BackgroundColor="White"
-                    TextColor="#FEAA3A"
-                    CornerRadius="24"
-                    WidthRequest="48"
-                    HeightRequest="48"
-                    IsVisible="{Binding IsFirstPage, Converter={StaticResource InvertedBoolConverter}}"
-                    Command="{Binding PrevPageCommand}">
-                <Button.Shadow>
-                    <Shadow Brush="#40000000"
-                            Radius="12"
-                            Offset="0,4"
-                            Opacity="0.35"/>
-                </Button.Shadow>
-            </Button>
-
-            <Button Text="▶"
-                    BackgroundColor="White"
-                    TextColor="#FEAA3A"
-                    CornerRadius="24"
-                    WidthRequest="48"
-                    HeightRequest="48"
-                    Command="{Binding NextPageCommand}">
-                <Button.Shadow>
-                    <Shadow Brush="#40000000"
-                            Radius="16"
-                            Offset="0,4"
-                            Opacity="0.35"/>
-                </Button.Shadow>
-            </Button>
-        </HorizontalStackLayout>
-    </Grid>
+    </ScrollView>
 
 
 </ContentPage>

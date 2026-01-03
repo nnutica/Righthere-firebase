@@ -6,6 +6,8 @@ using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
 using Firebasemauiapp.Data;
 using Firebasemauiapp.Model;
+using Firebasemauiapp.Services;
+using Microsoft.Maui.Storage;
 
 namespace Firebasemauiapp.CommunityPage;
 
@@ -13,11 +15,13 @@ public partial class CreatePostViewModel : ObservableObject
 {
     private readonly FirebaseAuthClient _authClient;
     private readonly PostDatabase _postDb;
+    private readonly FirestoreService _firestoreService;
 
-    public CreatePostViewModel(FirebaseAuthClient authClient, PostDatabase postDb)
+    public CreatePostViewModel(FirebaseAuthClient authClient, PostDatabase postDb, FirestoreService firestoreService)
     {
         _authClient = authClient;
         _postDb = postDb;
+        _firestoreService = firestoreService;
 
         // Load available colors
         AvailableColors = new ObservableCollection<PostItColorOption>(PostItColorOption.GetAllColors());
@@ -66,13 +70,21 @@ public partial class CreatePostViewModel : ObservableObject
         {
             IsPosting = true;
 
-            var user = _authClient.User;
-            var userId = user?.Uid ?? "Anonymous";
+            // ดึง UID จาก Preferences
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            var userName = "Anonymous";
+
+            // ถ้ามี UID ให้ดึง username จาก Firestore
+            if (!string.IsNullOrEmpty(uid))
+            {
+                var username = await _firestoreService.GetUsernameAsync(uid);
+                userName = string.IsNullOrEmpty(username) ? uid : username;
+            }
 
             var newPost = new PostData
             {
                 Content = PostContent,
-                Author = userId,
+                Author = userName,
                 PostItColor = SelectedColor.PostItImage,
                 TextColor = SelectedColor.TextColor,
                 Likes = 0,

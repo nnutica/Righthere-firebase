@@ -100,50 +100,64 @@ public partial class QuestViewModel : ObservableObject
 
     public void RefreshUserInfo()
     {
-        var user = _authClient.User;
-        if (user != null)
+        _ = LoadUserInfoFromFirestoreAsync();
+    }
+
+    private async Task LoadUserInfoFromFirestoreAsync()
+    {
+        try
         {
-            UserName = user.Info.DisplayName ?? user.Info.Email ?? "Guest";
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            if (string.IsNullOrEmpty(uid))
+            {
+                UserName = "Guest";
+                Coin = 0;
+                CurrentPlant = "empty.png";
+                CurrentPot = "pot.png";
+                return;
+            }
+
+            // ดึง username
+            var username = await _firestoreService.GetUsernameAsync(uid);
+            UserName = string.IsNullOrEmpty(username) ? "Guest" : username;
+
+            // ดึง coin
+            Coin = await _firestoreService.GetCoinAsync(uid);
+
+            // ดึง plant และ pot
+            var (plant, pot) = await _firestoreService.GetPlantAndPotAsync(uid);
+            CurrentPlant = plant;
+            CurrentPot = pot;
         }
-        _ = RefreshCoinAsync();
-        _ = LoadUserPlantAndPotAsync();
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading user info from Firestore: {ex.Message}");
+            UserName = "Guest";
+            Coin = 0;
+            CurrentPlant = "empty.png";
+            CurrentPot = "pot.png";
+        }
     }
 
     private async Task LoadUserPlantAndPotAsync()
     {
         try
         {
-            var user = _authClient.User;
-            if (user?.Uid == null)
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            if (string.IsNullOrEmpty(uid))
             {
-                CurrentPlant = "plant.png";
+                CurrentPlant = "empty.png";
                 CurrentPot = "pot.png";
                 return;
             }
 
-            var db = await _firestoreService.GetDatabaseAsync();
-            var snap = await db.Collection("users").Document(user.Uid).GetSnapshotAsync();
-            if (snap.Exists)
-            {
-                if (snap.TryGetValue("currentPlant", out string plant))
-                    CurrentPlant = plant;
-                else
-                    CurrentPlant = "plant.png";
-
-                if (snap.TryGetValue("currentPot", out string pot))
-                    CurrentPot = pot;
-                else
-                    CurrentPot = "pot.png";
-            }
-            else
-            {
-                CurrentPlant = "plant.png";
-                CurrentPot = "pot.png";
-            }
+            var (plant, pot) = await _firestoreService.GetPlantAndPotAsync(uid);
+            CurrentPlant = plant;
+            CurrentPot = pot;
         }
         catch
         {
-            CurrentPlant = "plant.png";
+            CurrentPlant = "empty.png";
             CurrentPot = "pot.png";
         }
     }
@@ -152,23 +166,14 @@ public partial class QuestViewModel : ObservableObject
     {
         try
         {
-            var user = _authClient.User;
-            if (user?.Uid == null)
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            if (string.IsNullOrEmpty(uid))
             {
                 Coin = 0;
                 return;
             }
 
-            var db = await _firestoreService.GetDatabaseAsync();
-            var snap = await db.Collection("users").Document(user.Uid).GetSnapshotAsync();
-            if (snap.Exists && snap.TryGetValue("coin", out int coin))
-            {
-                Coin = coin;
-            }
-            else
-            {
-                Coin = 0;
-            }
+            Coin = await _firestoreService.GetCoinAsync(uid);
         }
         catch
         {

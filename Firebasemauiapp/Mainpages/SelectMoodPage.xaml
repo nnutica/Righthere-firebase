@@ -12,8 +12,8 @@
               RowSpacing="16">
             <!-- Back Button -->
             <ImageButton Source="back_green.png"
-                         WidthRequest="60"
-                         HeightRequest="60"
+                         WidthRequest="20"
+                         HeightRequest="20  "
                          HorizontalOptions="Start"
                          VerticalOptions="Start"
                          Margin="0,10,0,0"
@@ -21,10 +21,11 @@
 
             <!-- Header -->
             <VerticalStackLayout Spacing="0"
-                                 Grid.Row="1">
+                                 Grid.Row="1"
+                                 Margin="10,10,0,0">
                 <Label FontFamily="AppFont"
                        FontSize="44"
-                       TextColor="#2F6535"
+                       TextColor="#8FB78F"
                        LineHeight="1.0">
                     <Label.Resources>
                         <Style TargetType="Span">
@@ -33,7 +34,7 @@
                             <Setter Property="FontSize"
                                     Value="44"/>
                             <Setter Property="TextColor"
-                                    Value="#2F6535"/>
+                                    Value="#8FB78F"/>
                         </Style>
                     </Label.Resources>
                     <Label.FormattedText>
@@ -131,10 +132,11 @@
             <!-- Next button -->
             <Button Grid.Row="3"
                     Text="Next"
+                    FontSize="20"
                     Command="{Binding NextCommand}"
                     BackgroundColor="#FEAA3A"
                     TextColor="White"
-                    CornerRadius="12"
+                    CornerRadius="16"
                     HeightRequest="48"
                     FontAttributes="Bold"
                     IsEnabled="{Binding IsNextEnabled}"

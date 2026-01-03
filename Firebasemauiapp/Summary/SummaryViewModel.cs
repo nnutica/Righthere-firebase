@@ -49,6 +49,9 @@ public partial class SummaryViewModel : ObservableObject
     [ObservableProperty]
     private ImageSource? _emotionImage;
 
+    [ObservableProperty]
+    private Color _moodBackgroundColor = Color.FromArgb("#FBC30A"); // Default Happiness color
+
     // Paging state for 3-step summary
     [ObservableProperty]
     private int _pageIndex = 0; // 0: KeyThemes, 1: Reflection, 2: Suggestion
@@ -119,10 +122,28 @@ public partial class SummaryViewModel : ObservableObject
         IntensityText = intensityText ?? "A Little Bit";
         MoodIntensityLabel = $"{mood}\n{IntensityText}";
         ImageUrl = SummaryPageData.ImageUrl;
+
+        // Set background color based on mood
+        MoodBackgroundColor = GetMoodColor(mood);
+
         SetEmotionImage(mood);
 
         BuildKeywordsList(keywords);
         OnPropertyChanged(nameof(NextButtonText));
+    }
+
+    private Color GetMoodColor(string moodName)
+    {
+        return moodName switch
+        {
+            "Happiness" => Color.FromArgb("#FBC30A"),
+            "Love" => Color.FromArgb("#FF60A0"),
+            "Angry" => Color.FromArgb("#E4000F"),
+            "Disgust" => Color.FromArgb("#1EA064"),
+            "Sadness" => Color.FromArgb("#2B638D"),
+            "Fear" => Color.FromArgb("#9E9AAB"),
+            _ => Color.FromArgb("#FBC30A")
+        };
     }
 
     private void BuildKeywordsList(string keywords)
@@ -218,8 +239,8 @@ public partial class SummaryViewModel : ObservableObject
         {
             try
             {
-                var currentUser = _authClient.User;
-                if (currentUser == null)
+                var uid = Preferences.Get("AUTH_UID", string.Empty);
+                if (string.IsNullOrEmpty(uid))
                 {
                     await Shell.Current.DisplayAlert("Error", "User session expired. Please log in again.", "OK");
                     await Shell.Current.GoToAsync("//signin");
@@ -228,7 +249,7 @@ public partial class SummaryViewModel : ObservableObject
 
                 var diary = new DiaryData
                 {
-                    UserId = currentUser.Uid,
+                    UserId = uid,
                     Content = Content,
                     Mood = Mood,
                     SentimentScore = double.TryParse(Score, out var scoreValue) ? scoreValue : 0.0,
@@ -288,8 +309,8 @@ public partial class SummaryViewModel : ObservableObject
     {
         try
         {
-            var currentUser = _authClient.User;
-            if (currentUser == null)
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            if (string.IsNullOrEmpty(uid))
             {
                 await Shell.Current.DisplayAlert("Error", "User session expired. Please log in again.", "OK");
                 await Shell.Current.GoToAsync("//signin");
@@ -298,7 +319,7 @@ public partial class SummaryViewModel : ObservableObject
 
             var diary = new DiaryData
             {
-                UserId = currentUser.Uid,
+                UserId = uid,
                 Content = Content,
                 Mood = Mood,
                 SentimentScore = double.TryParse(Score, out var scoreValue) ? scoreValue : 0.0,

@@ -79,4 +79,85 @@ public class FirestoreService
         Console.WriteLine("Firestore database is ready for use");
         return db;
     }
+
+    /// <summary>
+    /// ดึงข้อมูล user จาก Firestore users collection
+    /// </summary>
+    public async Task<DocumentSnapshot> GetUserDataAsync(string uid)
+    {
+        try
+        {
+            var database = await GetDatabaseAsync();
+            var userDocRef = database.Collection("users").Document(uid);
+            var snapshot = await userDocRef.GetSnapshotAsync();
+            return snapshot;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting user data: {ex.Message}");
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// ดึง username จาก Firestore
+    /// </summary>
+    public async Task<string> GetUsernameAsync(string uid)
+    {
+        try
+        {
+            var snapshot = await GetUserDataAsync(uid);
+            if (snapshot.Exists && snapshot.TryGetValue<string>("username", out var username))
+            {
+                return username;
+            }
+            return string.Empty;
+        }
+        catch
+        {
+            return string.Empty;
+        }
+    }
+
+    /// <summary>
+    /// ดึง coin จาก Firestore
+    /// </summary>
+    public async Task<int> GetCoinAsync(string uid)
+    {
+        try
+        {
+            var snapshot = await GetUserDataAsync(uid);
+            if (snapshot.Exists && snapshot.TryGetValue<int>("coin", out var coin))
+            {
+                return coin;
+            }
+            return 0;
+        }
+        catch
+        {
+            return 0;
+        }
+    }
+
+    /// <summary>
+    /// ดึง plant และ pot จาก Firestore
+    /// </summary>
+    public async Task<(string plant, string pot)> GetPlantAndPotAsync(string uid)
+    {
+        try
+        {
+            var snapshot = await GetUserDataAsync(uid);
+            if (snapshot.Exists)
+            {
+                var plant = snapshot.TryGetValue<string>("currentPlant", out var p) ? p : "empty.png";
+                var pot = snapshot.TryGetValue<string>("currentPot", out var pt) ? pt : "pot.png";
+                return (plant, pot);
+            }
+            return ("empty.png", "pot.png");
+        }
+        catch
+        {
+            return ("empty.png", "pot.png");
+        }
+    }
 }

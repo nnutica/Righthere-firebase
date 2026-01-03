@@ -89,15 +89,15 @@ public partial class StoreViewModel : ObservableObject, IDisposable
 
         try
         {
-            var user = _authClient.User;
-            if (user?.Uid == null)
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            if (string.IsNullOrEmpty(uid))
             {
                 await Shell.Current.DisplayAlert("Error", "Please log in first.", "OK");
                 return;
             }
 
             var db = await _firestoreService.GetDatabaseAsync();
-            var userDoc = db.Collection("users").Document(user.Uid);
+            var userDoc = db.Collection("users").Document(uid);
 
             // Update currentPot in Firestore
             await userDoc.UpdateAsync(new Dictionary<string, object>
@@ -165,23 +165,14 @@ public partial class StoreViewModel : ObservableObject, IDisposable
     {
         try
         {
-            var user = _authClient.User;
-            if (user?.Uid == null)
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            if (string.IsNullOrEmpty(uid))
             {
                 Coin = 0;
                 return;
             }
 
-            var db = await _firestoreService.GetDatabaseAsync();
-            var snap = await db.Collection("users").Document(user.Uid).GetSnapshotAsync();
-            if (snap.Exists && snap.TryGetValue("coin", out int coin))
-            {
-                Coin = coin;
-            }
-            else
-            {
-                Coin = 0;
-            }
+            Coin = await _firestoreService.GetCoinAsync(uid);
         }
         catch (Exception ex)
         {
@@ -194,8 +185,8 @@ public partial class StoreViewModel : ObservableObject, IDisposable
     {
         try
         {
-            var user = _authClient.User;
-            if (user?.Uid == null)
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            if (string.IsNullOrEmpty(uid))
             {
                 // Clear purchased status if not logged in
                 foreach (var item in StoreItems)
@@ -206,7 +197,7 @@ public partial class StoreViewModel : ObservableObject, IDisposable
             }
 
             var db = await _firestoreService.GetDatabaseAsync();
-            var userDoc = await db.Collection("users").Document(user.Uid).GetSnapshotAsync();
+            var userDoc = await db.Collection("users").Document(uid).GetSnapshotAsync();
 
             HashSet<string> purchasedItemIds = new HashSet<string>();
 
@@ -230,7 +221,7 @@ public partial class StoreViewModel : ObservableObject, IDisposable
                 // Fallback: Try subcollection if array field doesn't exist
                 else
                 {
-                    var inventoryRef = db.Collection("users").Document(user.Uid).Collection("inventory");
+                    var inventoryRef = db.Collection("users").Document(uid).Collection("inventory");
                     var inventorySnap = await inventoryRef.GetSnapshotAsync();
 
                     purchasedItemIds = inventorySnap.Documents
@@ -299,8 +290,8 @@ public partial class StoreViewModel : ObservableObject, IDisposable
 
         try
         {
-            var user = _authClient.User;
-            if (user?.Uid == null)
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            if (string.IsNullOrEmpty(uid))
             {
                 await Shell.Current.DisplayAlert("Error", "Please log in first.", "OK");
                 return;
@@ -329,7 +320,7 @@ public partial class StoreViewModel : ObservableObject, IDisposable
             if (!confirm) return;
 
             var db = await _firestoreService.GetDatabaseAsync();
-            var userRef = db.Collection("users").Document(user.Uid);
+            var userRef = db.Collection("users").Document(uid);
 
             // Transaction to deduct coins and add item to inventory array
             await db.RunTransactionAsync(async tx =>

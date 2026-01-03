@@ -27,7 +27,9 @@ public static class MauiProgram
 			{
 				fonts.AddFont("LeagueSpartan-ExtraBold.ttf", "AppFont");
 				fonts.AddFont("LeagueSpartan-Bold.ttf", "contextfont");
-				fonts.AddFont("LeagueSpartan-light.ttf", "lightfont");
+				fonts.AddFont("LeagueSpartan-Light.ttf", "lightfont");
+				fonts.AddFont("LeagueSpartan-Regular.ttf", "regularfont");
+				fonts.AddFont("LeagueSpartan-Medium.ttf", "mediumfont");
 
 			})
 			.ConfigureMauiHandlers(handlers =>

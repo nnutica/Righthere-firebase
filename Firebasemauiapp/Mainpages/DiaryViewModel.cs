@@ -55,6 +55,8 @@ public partial class DiaryViewModel : ObservableObject
     [ObservableProperty]
     private bool _isUploadingImage;
 
+    [ObservableProperty]
+    private Color _moodBackgroundColor = Color.FromArgb("#FBC30A"); // Default Happiness color
 
     private bool _allowUpload = false;
 
@@ -64,6 +66,28 @@ public partial class DiaryViewModel : ObservableObject
         _authClient = authClient;
         _uploadService = uploadService;
         _allowUpload = true; // ให้ผู้ใช้กดเพิ่มรูปได้ทันที
+    }
+
+    partial void OnMoodChanged(MoodOption? value)
+    {
+        if (value != null)
+        {
+            MoodBackgroundColor = GetMoodColor(value.Name);
+        }
+    }
+
+    private Color GetMoodColor(string moodName)
+    {
+        return moodName switch
+        {
+            "Happiness" => Color.FromArgb("#FBC30A"),
+            "Love" => Color.FromArgb("#FF60A0"),
+            "Angry" => Color.FromArgb("#E4000F"),
+            "Disgust" => Color.FromArgb("#1EA064"),
+            "Sadness" => Color.FromArgb("#2B638D"),
+            "Fear" => Color.FromArgb("#9E9AAB"),
+            _ => Color.FromArgb("#FBC30A")
+        };
     }
 
     [RelayCommand]
@@ -123,7 +147,9 @@ public partial class DiaryViewModel : ObservableObject
         }
 
         var currentUser = _authClient.User;
-        if (currentUser == null)
+        var uid = Preferences.Get("AUTH_UID", string.Empty);
+
+        if (currentUser == null && string.IsNullOrEmpty(uid))
         {
             await Shell.Current.DisplayAlert("Error", "User session expired. Please log in again.", "OK");
             await Shell.Current.GoToAsync("//signin");
@@ -144,7 +170,16 @@ public partial class DiaryViewModel : ObservableObject
         try
         {
             var api = new API();
-            await api.SendData(DiaryContent);
+
+            // Prepare mood and intensity text to send to AI in specified format
+            string moodName = Mood.Name ?? "Unknown";
+            string moodIntensityLabel = IntensityText ?? "A Little Bit";
+
+            // Format mood data as: APP_MOOD_BEGIN\nmood: {mood}\nmoodIntensityLabel: {moodIntensityLabel}
+            string moodData = $"APP_MOOD_BEGIN\nmood: {moodName}\nmoodIntensityLabel: {moodIntensityLabel}";
+
+            // Send diary content along with mood and intensity info to AI
+            await api.SendData(DiaryContent, moodData);
 
             string suggestion = api.GetSuggestion();
             string keyword = api.GetKeywords();
@@ -155,9 +190,6 @@ public partial class DiaryViewModel : ObservableObject
                 await Shell.Current.DisplayAlert("Error", "Failed to analyze content. Please try again.", "OK");
                 return;
             }
-
-            // Use Mood from SelectMood page and MoodScore from LevelMood page
-            string moodName = Mood.Name ?? "Unknown";
 
             SummaryPageData.SetData(DiaryContent, moodName, suggestion, keyword, emotion, MoodScore.ToString(), ImageUrl, IntensityText);
 
@@ -180,7 +212,8 @@ public partial class DiaryViewModel : ObservableObject
     {
         Console.WriteLine("📍 DiaryPage Appeared");
 
-        if (_authClient.User == null)
+        var uid = Preferences.Get("AUTH_UID", string.Empty);
+        if (string.IsNullOrEmpty(uid) && _authClient.User == null)
         {
             await Shell.Current.DisplayAlert("Error", "User not logged in. Redirecting to login...", "OK");
             await Shell.Current.GoToAsync("//signin");

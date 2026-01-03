@@ -8,7 +8,7 @@
     Title="SummaryView"
     Shell.NavBarIsVisible="False"
     Shell.TabBarIsVisible="False"
-    BackgroundColor="#FEAA3A">
+    BackgroundColor="{Binding MoodBackgroundColor}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -50,12 +50,11 @@
                 </DataTrigger>
             </VerticalStackLayout.Triggers>
             <Label Text="Key"
-                   FontFamily="AppFont"
+                   FontFamily="contextfont"
                    FontSize="44"
-                   FontAttributes="Bold"
                    TextColor="White"/>
             <Label Text="Themes"
-                   FontFamily="AppFont"
+                   FontFamily="contextfont"
                    FontSize="44"
                    FontAttributes="Bold"
                    TextColor="White"/>
@@ -65,7 +64,7 @@
         <Label Grid.Row="0"
                Text="What&#10;You&#10;Shared&#10;Today"
                FontFamily="AppFont"
-               FontSize="44"
+               FontSize="32"
                FontAttributes="Bold"
                TextColor="White"
                Margin="30,20,0,0"
@@ -140,12 +139,13 @@
             </VerticalStackLayout.Triggers>
             <Label Text="What You"
                    FontFamily="AppFont"
-                   FontSize="44"
+                   FontSize="32"
                    FontAttributes="Bold"
                    TextColor="White"/>
             <Label Text="Shared Today"
                    FontFamily="AppFont"
-                   FontSize="44"
+                   FontSize="32"
+                   TranslationY="-8"
                    FontAttributes="Bold"
                    TextColor="White"/>
         </VerticalStackLayout>
@@ -272,9 +272,9 @@
             </Grid.Triggers>
             <VerticalStackLayout Spacing="14">
                 <Border BackgroundColor="#F8FAED"
-                        HeightRequest="500"
+                        HeightRequest="450"
                         Padding="24"
-                        Margin="20,40,20,0">
+                        Margin="20,20,20,40">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="18"/>
                     </Border.StrokeShape>
@@ -289,9 +289,10 @@
                         <Label Grid.Column="1"
                                Text="{Binding MoodIntensityLabel}"
                                TextColor="#50A65D"
-                               FontSize="26"
+                               FontSize="24"
                                FontAttributes="Bold"
                                LineBreakMode="WordWrap"/>
+
                         <HorizontalStackLayout Grid.Row="1"
                                                Grid.Column="1"
                                                Spacing="4"
@@ -300,12 +301,13 @@
                                                Margin="0,4,0,0">
                             <Label Text="{Binding Score}"
                                    TextColor="#50A65D"
-                                   FontSize="44"
-                                   FontFamily="AppFont"
+                                   FontSize="48"
+                                   FontFamily="contextfont"
                                    FontAttributes="Bold"/>
                             <Label Text="/10"
                                    TextColor="#50A65D"
-                                   FontSize="20"
+                                   FontSize="16"
+                                   FontFamily="regularfont"
                                    VerticalOptions="End"/>
                         </HorizontalStackLayout>
                         <BoxView Grid.Row="2"
@@ -349,54 +351,61 @@
                             Value="True"/>
                 </DataTrigger>
             </Grid.Triggers>
-            <!-- New Suggestion layout: right illustration + translucent card -->
-            <Grid>
-                <!-- Illustration on the right -->
-                <Image Grid.Row="0"
-                       Source="womenhug.png"
-                       Aspect="AspectFill"
-                       HorizontalOptions="End"
-                       VerticalOptions="Center"
-                       WidthRequest="300"
-                       TranslationY="-40"
-                       InputTransparent="True"/>
+            <!-- Illustration on the right (behind suggestion, visible only when PageIndex==2) -->
+            <Image Grid.Row="1"
+                   Source="womenhug.png"
+                   Aspect="AspectFill"
+                   HorizontalOptions="End"
+                   VerticalOptions="Center"
+                   WidthRequest="300"
+                   TranslationY="-40"
+                   InputTransparent="True"
+                   IsVisible="False">
+                <Image.Triggers>
+                    <DataTrigger TargetType="Image"
+                                 Binding="{Binding PageIndex}"
+                                 Value="2">
+                        <Setter Property="IsVisible"
+                                Value="True"/>
+                    </DataTrigger>
+                </Image.Triggers>
+            </Image>
 
-                <!-- Suggestion card left -->
-                <Grid Margin="0,0,0,0"
-                      HorizontalOptions="Start"
-                      VerticalOptions="Start">
-                    <Border BackgroundColor="#CCFFFFFF"
-                            HeightRequest="390"
-                            HorizontalOptions="Start"
-                            VerticalOptions="Center"
-                            WidthRequest="270"
-                            Padding="20"
-                            TranslationY="50">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="0,18,0,18"/>
-                        </Border.StrokeShape>
-                        <Border.Shadow>
-                            <Shadow Brush="#40000000"
-                                    Radius="16"
-                                    Offset="0,6"
-                                    Opacity="0.7"/>
-                        </Border.Shadow>
-                        <VerticalStackLayout Spacing="8">
-                            <Label Text="A Little Encouragement"
-                                   FontFamily="AppFont"
-                                   FontSize="24"
-                                   FontAttributes="Bold"
-                                   TextColor="#FEAA3A"/>
-                            <Label Text="{Binding Suggestion}"
-                                   FontFamily="contextfont"
-                                   FontSize="14"
-                                   TextColor="#8FB78F"
-                                   LineHeight="1.2"/>
-                        </VerticalStackLayout>
-                    </Border>
-                </Grid>
+            <!-- Suggestion layout: card centered -->
+            <Grid HorizontalOptions="Start"
+                  VerticalOptions="Center"
+                  Margin="0,0,0,0">
+                <Border BackgroundColor="#CCFFFFFF"
+                        HeightRequest="390"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        WidthRequest="270"
+                        Padding="20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="0,18,0,18"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="#40000000"
+                                Radius="16"
+                                Offset="0,6"
+                                Opacity="0.7"/>
+                    </Border.Shadow>
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="A Little Encouragement"
+                               FontFamily="AppFont"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="#FEAA3A"/>
+                        <Label Text="{Binding Suggestion}"
+                               FontFamily="contextfont"
+                               FontSize="14"
+                               TextColor="#8FB78F"
+                               LineHeight="1.2"/>
+                    </VerticalStackLayout>
+                </Border>
             </Grid>
         </Grid>
+
 
         <!-- Row 2: Bottom controls fixed at bottom -->
         <Grid Grid.Row="2"
@@ -475,10 +484,10 @@
             <Button Grid.Column="2"
                     IsVisible="False"
                     Text="{Binding NextButtonText}"
-                    BackgroundColor="White"
-                    TextColor="#FEAA3A"
-                    CornerRadius="28"
-                    HeightRequest="56"
+                    BackgroundColor="#8FB78F"
+                    TextColor="#FFFFFF"
+                    CornerRadius="12"
+                    HeightRequest="40"
                     Padding="24,0"
                     Command="{Binding NextPageCommand}">
                 <Button.Triggers>
@@ -512,7 +521,7 @@
                 </HorizontalStackLayout.Triggers>
                 <Button Text="◀"
                         BackgroundColor="White"
-                        TextColor="#FEAA3A"
+                        TextColor="#8FB78F"
                         CornerRadius="16"
                         WidthRequest="40"
                         HeightRequest="40"
@@ -525,8 +534,8 @@
                     </Button.Shadow>
                 </Button>
                 <Button Text="▶"
-                        BackgroundColor="White"
-                        TextColor="#FEAA3A"
+                        BackgroundColor="#8FB78F"
+                        TextColor="#FFFFFF"
                         CornerRadius="16"
                         WidthRequest="40"
                         HeightRequest="40"
@@ -588,27 +597,20 @@
                 </Button>
 
                 <!-- Save button with icon -->
-                <Border BackgroundColor="#8FB78F"
-                        WidthRequest="40"
-                        HeightRequest="40">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="16"/>
-                    </Border.StrokeShape>
-                    <Border.Shadow>
+                <Button Text="Save"
+                        BackgroundColor="#8FB78F"
+                        TextColor="#FFFFFF"
+                        CornerRadius="16"
+                        HeightRequest="40"
+                        FontSize="14"
+                        Command="{Binding SaveDiaryCommand}">
+                    <Button.Shadow>
                         <Shadow Brush="#40000000"
                                 Radius="12"
                                 Offset="0,4"
                                 Opacity="0.35"/>
-                    </Border.Shadow>
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding SaveDiaryCommand}"/>
-                    </Border.GestureRecognizers>
-                    <Image Source="save_icon.png"
-                           WidthRequest="24"
-                           HeightRequest="24"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"/>
-                </Border>
+                    </Button.Shadow>
+                </Button>
             </HorizontalStackLayout>
         </Grid>
     </Grid>

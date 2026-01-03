@@ -5,203 +5,126 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Name="Root"
     Title="StarterView"
-    BackgroundImageSource="start_bg.png"
     Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False"
-    Shell.BackgroundColor="Transparent">
+    Shell.BackgroundColor="Transparent"
+    BackgroundColor="White">
 
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False"
                             IsEnabled="False"/>
     </Shell.BackButtonBehavior>
 
-    <Grid>
-        <!-- Main Content -->
-        <ScrollView>
-            <VerticalStackLayout Padding="20"
-                                 Spacing="16"
+    <Grid Padding="16,12,16,0"
+          RowSpacing="10"
+          RowDefinitions="Auto,Auto,*">
+
+        <!-- ===== HEADER ===== -->
+        <VerticalStackLayout Grid.Row="0"
+                             Spacing="6">
+
+            <!-- Logo -->
+            <Image Source="logo.png"
+                   HeightRequest="60"
+                   WidthRequest="84"
+                   Margin="10,0,0,0"
+                   HorizontalOptions="Start"/>
+
+
+            <!-- Welcome Text -->
+            <Label Text="Welcome Home,"
+                   FontSize="32"
+                   FontAttributes="Bold"
+                   FontFamily="contextfont"
+                   TextColor="#8FAF8B"
+                   LineHeight="1.0"/>
+            <Label Text="{Binding WelcomeMessage}"
+                   FontSize="32"
+                   FontAttributes="Bold"
+                   FontFamily="contextfont"
+                   TextColor="#8FAF8B"
+                   LineHeight="1.0"
+                   Margin="0,-8,0,0"/>
+
+            <!-- Subtitle -->
+            <Label Text="Your safe space is ready."
+                   FontSize="16"
+                   FontFamily="regularfont"
+                   TextColor="#A9BEA6"/>
+
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1"
+                    Grid.RowSpan="2">
+            <VerticalStackLayout Spacing="10">
+                <!-- ===== DIARY BUTTON (FULL WIDTH) ===== -->
+                <ImageButton
+                    Source="btn_diary.png"
+                    Aspect="AspectFill"
+                    CornerRadius="28"
+                    HeightRequest="140"
+                    Padding="0"
+                    Margin="0,4,0,0"
+                    BackgroundColor="Transparent"
+                    Command="{Binding GoDiaryCommand}"/>
+
+                <!-- ===== GRID BUTTONS ===== -->
+                <Grid
+                    ColumnSpacing="10"
+                    RowSpacing="6"
+                    ColumnDefinitions="*,*"
+                    RowDefinitions="140,70,140">
+
+                    <!-- Quests (left top) -->
+                    <ImageButton Grid.Row="0"
+                                 Grid.Column="0"
+                                 Source="btn_quest.png"
+                                 Aspect="AspectFill"
+                                 CornerRadius="28"
+                                 HeightRequest="140"
+                                 Padding="0"
                                  VerticalOptions="Start"
-                                 HorizontalOptions="Center"
-                                 Margin="0,80,0,0">
-                <!-- Logo -->
-                <Image Source="logo.png"
-                       WidthRequest="320"
-                       HeightRequest="320"
-                       HorizontalOptions="Center"
-                       Margin="0,0,0,12"/>
+                                 BackgroundColor="Transparent"
+                                 Command="{Binding GoQuestCommand}"/>
 
-                <!-- Diary Button (Full Width) -->
-                <Border BackgroundColor="White"
-                        HeightRequest="60"
-                        WidthRequest="340"
-                        Padding="20,0"
-                        StrokeThickness="0">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="16"/>
-                    </Border.StrokeShape>
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoDiaryCommand}"/>
-                    </Border.GestureRecognizers>
-                    <HorizontalStackLayout Spacing="12"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center">
+                    <!-- Store (Right bottom) -->
+                    <ImageButton Grid.Row="2"
+                                 Grid.Column="1"
+                                 Source="btn_store.png"
+                                 Aspect="AspectFill"
+                                 CornerRadius="28"
+                                 HeightRequest="140"
+                                 Padding="0"
+                                 BackgroundColor="Transparent"
+                                 Command="{Binding GoStoreCommand}"/>
 
-                        <Label Text="Diary"
-                               FontSize="24"
-                               FontAttributes="Bold"
-                               TextColor="#6B8E6B"
-                               VerticalOptions="Center"/>
-                        <Image Source="diary.png"
-                               WidthRequest="40"
-                               HeightRequest="40"/>
-                    </HorizontalStackLayout>
-                </Border>
+                    <!-- Mind Dashboard (right top-middle) -->
+                    <ImageButton Grid.Row="0"
+                                 Grid.Column="1"
+                                 Grid.RowSpan="2"
+                                 Source="btn_dashboard.png"
+                                 Aspect="AspectFill"
+                                 CornerRadius="28"
+                                 HeightRequest="210"
+                                 Padding="0"
+                                 VerticalOptions="Start"
+                                 BackgroundColor="Transparent"
+                                 Command="{Binding GoDashboardCommand}"/>
 
-                <!-- Forest Button (Full Width) -->
-                <Border BackgroundColor="White"
-                        HeightRequest="60"
-                        WidthRequest="340"
-                        Padding="20,0"
-                        StrokeThickness="0">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="16"/>
-                    </Border.StrokeShape>
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoForestCommand}"/>
-                    </Border.GestureRecognizers>
-                    <HorizontalStackLayout Spacing="12"
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center">
-
-                        <Label Text="Forest"
-                               FontSize="24"
-                               FontAttributes="Bold"
-                               TextColor="#6B8E6B"
-                               VerticalOptions="Center"/>
-                        <Image Source="forest.png"
-                               WidthRequest="40"
-                               HeightRequest="40"/>
-                    </HorizontalStackLayout>
-                </Border>
-
-                <!-- Row 3: Quest and Store -->
-                <Grid ColumnDefinitions="*,*"
-                      ColumnSpacing="8"
-                      WidthRequest="340">
-                    <!-- Quest Button -->
-                    <Border Grid.Column="0"
-                            BackgroundColor="White"
-                            HeightRequest="60"
-                            Padding="10,0"
-                            StrokeThickness="0">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="16"/>
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoQuestCommand}"/>
-                        </Border.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="8"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center">
-
-                            <Label Text="Quest"
-                                   FontSize="24"
-                                   FontAttributes="Bold"
-                                   TextColor="#6B8E6B"
-                                   VerticalOptions="Center"/>
-                            <Image Source="quest.png"
-                                   WidthRequest="32"
-                                   HeightRequest="32"/>
-                        </HorizontalStackLayout>
-                    </Border>
-
-                    <!-- Store Button -->
-                    <Border Grid.Column="1"
-                            BackgroundColor="White"
-                            HeightRequest="60"
-                            Padding="10,0"
-                            StrokeThickness="0">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="16"/>
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoStoreCommand}"/>
-                        </Border.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="8"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center">
-
-                            <Label Text="Store"
-                                   FontSize="24"
-                                   FontAttributes="Bold"
-                                   TextColor="#6B8E6B"
-                                   VerticalOptions="Center"/>
-                            <Image Source="store.png"
-                                   WidthRequest="32"
-                                   HeightRequest="32"/>
-                        </HorizontalStackLayout>
-                    </Border>
-                </Grid>
-
-                <!-- Row 4: Dashboard and Sign Out -->
-                <Grid ColumnDefinitions="*,*"
-                      ColumnSpacing="8"
-                      WidthRequest="340">
-                    <!-- Dashboard Button -->
-                    <Border Grid.Column="0"
-                            BackgroundColor="White"
-                            HeightRequest="60"
-                            Padding="10,0"
-                            StrokeThickness="0">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="16"/>
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding GoDashboardCommand}"/>
-                        </Border.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="8"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center">
-
-                            <Label Text="Dashboard"
-                                   FontSize="22"
-                                   FontAttributes="Bold"
-                                   TextColor="#6B8E6B"
-                                   VerticalOptions="Center"/>
-                            <Image Source="dashboard.png"
-                                   WidthRequest="32"
-                                   HeightRequest="32"/>
-                        </HorizontalStackLayout>
-                    </Border>
-
-                    <!-- Sign Out Button -->
-                    <Border Grid.Column="1"
-                            BackgroundColor="#FF9F4A"
-                            HeightRequest="60"
-                            Padding="10,0"
-                            StrokeThickness="0">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="16"/>
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding LogOutCommand}"/>
-                        </Border.GestureRecognizers>
-                        <HorizontalStackLayout Spacing="8"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center">
-
-                            <Label Text="Sign Out"
-                                   FontSize="15"
-                                   FontAttributes="Bold"
-                                   TextColor="White"
-                                   VerticalOptions="Center"/>
-                            <Image Source="logout.png"
-                                   WidthRequest="32"
-                                   HeightRequest="32"/>
-                        </HorizontalStackLayout>
-                    </Border>
+                    <!-- Kindness Forest (left middle-bottom) -->
+                    <ImageButton Grid.Row="1"
+                                 Grid.Column="0"
+                                 Grid.RowSpan="2"
+                                 Source="btn_forest.png"
+                                 Aspect="AspectFill"
+                                 CornerRadius="28"
+                                 HeightRequest="210"
+                                 Padding="0"
+                                 BackgroundColor="Transparent"
+                                 Command="{Binding GoForestCommand}"/>
                 </Grid>
             </VerticalStackLayout>
         </ScrollView>
+
     </Grid>
 </ContentPage>

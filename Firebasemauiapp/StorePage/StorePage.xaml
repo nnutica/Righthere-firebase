@@ -20,10 +20,10 @@
                Aspect="AspectFill"
                Grid.RowSpan="1"/>
 
-        <Grid RowDefinitions="Auto,*,Auto">
+        <Grid RowDefinitions="*,*,Auto">
             <!-- Header Section with forest theme -->
             <Grid Grid.Row="0"
-                  Padding="20,50,20,20">
+                  Padding="20,40,20,15">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -33,12 +33,12 @@
                 <!-- Back button & Coin Display -->
                 <Grid Grid.Row="0"
                       ColumnDefinitions="Auto,*,Auto"
-                      Margin="0,0,0,10">
+                      Margin="0,0,0,8">
                     <!-- Back Button -->
                     <ImageButton Grid.Column="0"
                                  Source="back.png"
-                                 WidthRequest="60"
-                                 HeightRequest="60"
+                                 WidthRequest="50"
+                                 HeightRequest="50"
                                  HorizontalOptions="Start"
                                  VerticalOptions="Center"
                                  BackgroundColor="Transparent"
@@ -47,30 +47,33 @@
                     <!-- My Seeds Label -->
                     <Border Grid.Column="2"
                             BackgroundColor="White"
-                            Padding="12,8"
+                            Padding="10,6"
                             HorizontalOptions="End"
                             VerticalOptions="Center"
-                            TranslationX="30">
+                            TranslationX="20">
                         <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="16"/>
+                            <RoundRectangle CornerRadius="14"/>
                         </Border.StrokeShape>
-                        <VerticalStackLayout Spacing="4"
+                        <VerticalStackLayout Spacing="2"
                                              HorizontalOptions="End">
                             <Label Text="My Seeds"
-                                   FontSize="20"
-                                   TextColor="#50A65D"
-                                   HorizontalOptions="End"/>
-                            <HorizontalStackLayout Spacing="6"
+                                   FontSize="14"
+                                   FontFamily="contextfont"
+                                   TextColor="#8FB78F"
+                                   HorizontalOptions="End"
+                                   Margin="0,0,8,0"/>
+                            <HorizontalStackLayout Spacing="4"
                                                    HorizontalOptions="End">
                                 <Image Source="coin.png"
-                                       WidthRequest="24"
-                                       HeightRequest="24"
+                                       WidthRequest="18"
+                                       HeightRequest="18"
                                        VerticalOptions="Center"/>
                                 <Label Text="{Binding Coin}"
-                                       FontSize="20"
+                                       FontSize="16"
                                        FontAttributes="Bold"
-                                       TextColor="#50A65D"
-                                       VerticalOptions="Center"/>
+                                       TextColor="#8FB78F"
+                                       VerticalOptions="Center"
+                                       Margin="0,0,8,0"/>
                             </HorizontalStackLayout>
                         </VerticalStackLayout>
                     </Border>
@@ -78,25 +81,25 @@
 
                 <!-- Plant with Pot -->
                 <Grid Grid.Row="1"
-                      WidthRequest="200"
-                      HeightRequest="300"
+                      WidthRequest="160"
+                      HeightRequest="180"
                       HorizontalOptions="Center"
-                      Margin="0,10,0,0">
+                      Margin="0,0,0,0">
                     <!-- Pot -->
                     <Image Source="{Binding CurrentPot}"
-                           WidthRequest="220"
-                           HeightRequest="220"
+                           WidthRequest="140"
+                           HeightRequest="140"
                            VerticalOptions="End"
                            HorizontalOptions="Center"
-                           Margin="0,0,0,10"
-                           TranslationY="50"/>
+                           Margin="0,0,0,5"
+                           TranslationY="20"/>
                     <!-- Plant -->
                     <Image Source="{Binding PlantImage}"
-                           WidthRequest="250"
-                           HeightRequest="250"
+                           WidthRequest="160"
+                           HeightRequest="160"
                            VerticalOptions="Start"
                            HorizontalOptions="Center"
-                           TranslationY="20"/>
+                           TranslationY="5"/>
                 </Grid>
             </Grid>
 
@@ -104,14 +107,14 @@
             <Grid Grid.Row="1"
                   ColumnDefinitions="*,*"
                   ColumnSpacing="8"
-                  Margin="0,0,0,0"
-                  Padding="8,0"
+                  Margin="8,8,8,0"
+                  Padding="0"
                   VerticalOptions="Start">
                 <!-- Store Tab -->
                 <Border Grid.Column="0"
                         BackgroundColor="White"
-                        Padding="12,10"
-                        HeightRequest="60">
+                        Padding="10,8"
+                        HeightRequest="50">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="12"/>
                     </Border.StrokeShape>
@@ -180,8 +183,8 @@
                 <!-- My Items Tab -->
                 <Border Grid.Column="1"
                         BackgroundColor="White"
-                        Padding="12,10"
-                        HeightRequest="60">
+                        Padding="10,8"
+                        HeightRequest="50">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="12"/>
                     </Border.StrokeShape>
@@ -249,11 +252,11 @@
             </Grid>
 
             <!-- Content Section -->
-            <Border Grid.Row="1"
+            <Border Grid.Row="2"
                     BackgroundColor="White"
                     StrokeThickness="0"
                     VerticalOptions="FillAndExpand"
-                    Margin="0,50,0,0">
+                    Margin="0,0,0,0">
                 <ScrollView>
                     <VerticalStackLayout Spacing="0"
                                          Padding="20,20,20,20">

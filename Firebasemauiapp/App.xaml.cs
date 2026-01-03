@@ -1,5 +1,6 @@
 ﻿using Firebasemauiapp.Mainpages;
 
+
 namespace Firebasemauiapp;
 
 public partial class App : Application

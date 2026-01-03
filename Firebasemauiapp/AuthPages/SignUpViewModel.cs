@@ -147,8 +147,8 @@ public partial class SignUpViewModel : ObservableObject
         try
         {
             Console.WriteLine("[SignUpViewModel] Starting Google Sign-Up");
-            
-            #if __ANDROID__
+
+#if __ANDROID__
             // Android Google Sign-In using Xamarin.GooglePlayServices.Auth
             // โหลด Web Client ID จาก admin-sdk.json
             var webClientId = await FirebaseConfig.Instance.GetWebClientIdAsync();
@@ -249,7 +249,7 @@ public partial class SignUpViewModel : ObservableObject
 
                         Console.WriteLine("[SignUpViewModel] Navigating to starter page...");
                         if (Shell.Current != null)
-                            await Shell.Current.GoToAsync("//main/starter");
+                            await Shell.Current.GoToAsync("//starter");
                     }
                     else
                     {
@@ -270,10 +270,10 @@ public partial class SignUpViewModel : ObservableObject
                 if (Shell.Current != null)
                     await Shell.Current.DisplayAlertAsync("Error", "Google Sign Up failed: Activity not available", "OK");
             }
-            #else
+#else
             if (Shell.Current != null)
                 await Shell.Current.DisplayAlert("Error", "Google Sign Up is only available on Android", "OK");
-            #endif
+#endif
         }
         catch (Exception ex)
         {

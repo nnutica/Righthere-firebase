@@ -13,8 +13,8 @@
 
             <!-- Back Button -->
             <ImageButton Source="back_green.png"
-                         WidthRequest="32"
-                         HeightRequest="32"
+                         WidthRequest="20"
+                         HeightRequest="20"
                          HorizontalOptions="Start"
                          VerticalOptions="Start"
                          Command="{Binding GoBackCommand}"
@@ -93,6 +93,7 @@
                                 PlaceholderColor="{Binding SelectedColor.TextColor}"
                                 TextColor="{Binding SelectedColor.TextColor}"
                                 FontSize="16"
+                                FontAttributes="Italic"
                                 BackgroundColor="Transparent"
                                 VerticalOptions="Fill"
                                 HorizontalOptions="Fill"
