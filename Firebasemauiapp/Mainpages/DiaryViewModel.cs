@@ -50,6 +50,9 @@ public partial class DiaryViewModel : ObservableObject
     private string? _imageUrl;
 
     [ObservableProperty]
+    private bool _isImageAreaEnabled = false;
+
+    [ObservableProperty]
     private bool _isUploadingImage;
 
 

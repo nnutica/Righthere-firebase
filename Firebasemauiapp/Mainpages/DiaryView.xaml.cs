@@ -101,13 +101,19 @@ public partial class DiaryView : ContentPage
 	{
 		try
 		{
-			// ถ้ามีรูป ให้ลบรูปออก (เพื่อเลือกรูปใหม่)
-			if (!string.IsNullOrEmpty(_viewModel.ImageUrl))
+			if (_viewModel.IsImageAreaEnabled)
 			{
+				// สถานะที่ 2: ปิด Image Area และลบรูป
 				_viewModel.ImageUrl = null;
-				System.Diagnostics.Debug.WriteLine("Image cleared");
+				_viewModel.IsImageAreaEnabled = false;
+				System.Diagnostics.Debug.WriteLine("Image Area disabled and image cleared");
 			}
-			// ถ้าไม่มีรูป ไม่ทำอะไร (ให้ใช้ปุ่ม Back ด้านบนแทน)
+			else
+			{
+				// สถานะที่ 1: เปิด Image Area
+				_viewModel.IsImageAreaEnabled = true;
+				System.Diagnostics.Debug.WriteLine("Image Area enabled");
+			}
 		}
 		catch (Exception ex)
 		{

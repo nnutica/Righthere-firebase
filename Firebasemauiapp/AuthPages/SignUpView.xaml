@@ -8,14 +8,14 @@
     BackgroundImageSource="start_bg.png">
 
     <Grid Padding="0">
-        <!-- Woman reading illustration -->
-        <Image Source="womanread.png"
-               WidthRequest="340"
-               HeightRequest="340"
-               Aspect="AspectFit"
-               HorizontalOptions="Center"
-               VerticalOptions="Start"
-               Margin="0,40,0,0"/>
+            <!-- Woman reading illustration -->
+            <Image Source="womanread.png"
+                   WidthRequest="340"
+                   HeightRequest="340"
+                   Aspect="AspectFit"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Start"
+                   Margin="0,40,0,0"/>
 
         <!-- Mini logo top right with white border -->
         <Border BackgroundColor="White"
@@ -38,21 +38,22 @@
         </Border>
 
         <!-- Bottom card overlapping the woman image -->
-        <Border BackgroundColor="White"
-                StrokeThickness="0"
-                StrokeShape="RoundRectangle 40,40,0,0"
-                HorizontalOptions="Fill"
-                VerticalOptions="End"
-                HeightRequest="650"
-                Margin="0,0,0,0">
-            <Border.Shadow>
-                <Shadow Opacity="0.15"
-                        Radius="20"
-                        Offset="0,-4"/>
-            </Border.Shadow>
-            <VerticalStackLayout Padding="20,24,20,12"
-                                 Spacing="12"
-                                 VerticalOptions="Fill">
+        <ScrollView VerticalOptions="EndAndExpand"
+                   Padding="0,0,0,20">
+            <Border BackgroundColor="White"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 40,40,0,0"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Start"
+                    Margin="0,0,0,0">
+                <Border.Shadow>
+                    <Shadow Opacity="0.15"
+                            Radius="20"
+                            Offset="0,-4"/>
+                </Border.Shadow>
+                <VerticalStackLayout Padding="20,24,20,20"
+                                     Spacing="12"
+                                     VerticalOptions="Start">
                 <Label Text="Sign Up"
                        FontAttributes="Bold"
                        FontSize="22"
@@ -197,6 +198,29 @@
                         TextColor="White"
                         FontAttributes="Bold"/>
 
+                <!-- Google Sign Up Button -->
+                <Border BackgroundColor="#FFFFFF"
+                        Stroke="#E0E0E0"
+                        StrokeShape="RoundRectangle 24"
+                        HeightRequest="44">
+                    <Grid Padding="16,0"
+                          ColumnDefinitions="Auto,*">
+                        <!-- Google Icon -->
+                        <Image Source="google.png"
+                               WidthRequest="24"
+                               HeightRequest="24"
+                               Aspect="AspectFit"
+                               VerticalOptions="Center"
+                               Margin="0,0,12,0"/>
+                        <Button Grid.Column="1"
+                                Text="Sign up with Google"
+                                BackgroundColor="Transparent"
+                                TextColor="#5F6368"
+                                FontSize="13"
+                                Command="{Binding SignUpWithGoogleCommand}"/>
+                    </Grid>
+                </Border>
+
                 <!-- Bottom Sign In link -->
                 <HorizontalStackLayout HorizontalOptions="Center"
                                        Margin="0,8,0,0">
@@ -213,6 +237,8 @@
                     </Label>
                 </HorizontalStackLayout>
             </VerticalStackLayout>
-        </Border>
+            </Border>
+        </ScrollView>
     </Grid>
+
 </ContentPage>

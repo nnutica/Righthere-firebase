@@ -78,7 +78,8 @@
             <Border Grid.Row="2"
                     x:Name="ImageBorder"
                     BackgroundColor="White"
-                    StrokeThickness="0">
+                    StrokeThickness="0"
+                    IsVisible="{Binding IsImageAreaEnabled}">
                 <Border.StrokeShape>
                     <RoundRectangle CornerRadius="20"/>
                 </Border.StrokeShape>
@@ -174,11 +175,24 @@
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnCancelClicked"/>
                     </Border.GestureRecognizers>
-                    <Label Text="✕"
-                           FontSize="24"
-                           TextColor="#FEAA3A"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"/>
+                    
+                    <Grid>
+                        <!-- Image icon (shown when Image Area is disabled) -->
+                        <Image Source="imgicon.png"
+                               WidthRequest="32"
+                               HeightRequest="32"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               IsVisible="{Binding IsImageAreaEnabled, Converter={StaticResource InvertedBoolConverter}}"/>
+                        
+                        <!-- X icon (shown when Image Area is enabled) -->
+                        <Label Text="✕"
+                               FontSize="24"
+                               TextColor="#FEAA3A"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               IsVisible="{Binding IsImageAreaEnabled}"/>
+                    </Grid>
                 </Border>
 
                 <Button Grid.Column="1"

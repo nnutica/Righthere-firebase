@@ -221,11 +221,13 @@ public partial class CommunityViewModel : ObservableObject
 
         try
         {
-            var author = IsLoggedIn ? UserName : "Guest";
+            var user = _authClient.User;
+            var userId = user?.Uid ?? "Guest";
+            
             var newPost = new PostData
             {
                 Content = NewPostContent,
-                Author = author,
+                Author = userId,
                 Likes = 0,
                 CreatedAt = DateTime.UtcNow
             };

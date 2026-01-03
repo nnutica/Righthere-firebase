@@ -58,7 +58,8 @@ public static class MauiProgram
 			AuthDomain = "righthere-backend.firebaseapp.com",
 			Providers =
 			[
-				new EmailProvider()
+				new EmailProvider(),
+				new GoogleProvider()
 			],
 			// Persist the user session securely in the app data directory
 			UserRepository = new FileUserRepository(FileSystem.AppDataDirectory)

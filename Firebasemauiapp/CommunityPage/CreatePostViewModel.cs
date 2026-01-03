@@ -67,12 +67,12 @@ public partial class CreatePostViewModel : ObservableObject
             IsPosting = true;
 
             var user = _authClient.User;
-            var author = user?.Info?.DisplayName ?? user?.Info?.Email ?? "Anonymous";
+            var userId = user?.Uid ?? "Anonymous";
 
             var newPost = new PostData
             {
                 Content = PostContent,
-                Author = author,
+                Author = userId,
                 PostItColor = SelectedColor.PostItImage,
                 TextColor = SelectedColor.TextColor,
                 Likes = 0,

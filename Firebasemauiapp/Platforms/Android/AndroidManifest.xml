@@ -4,6 +4,8 @@
 	<!-- อนุญาตให้แอปใช้ Internet -->
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<!-- Google Sign-In permissions -->
+	<uses-permission android:name="android.permission.GET_ACCOUNTS"/>
 
 	<application
         android:allowBackup="true"
@@ -12,6 +14,12 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/Maui.SplashTheme">
+		
+		<!-- Google Sign-In Web Client ID -->
+		<meta-data
+			android:name="com.google.android.gms.auth.api.signin.ClientId"
+			android:value="272980837213-tcmfri812gvgql2pqlbp5ke96jk4gqia.apps.googleusercontent.com" />
+		
 		<provider
 			android:name="androidx.core.content.FileProvider"
 			android:authorities="${applicationId}.fileprovider"
