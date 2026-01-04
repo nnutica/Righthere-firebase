@@ -17,6 +17,7 @@
        <!-- Add bottom white rounded strip by wrapping content in a two-row Grid -->
        <Grid RowDefinitions="*,32">
               <ScrollView Grid.Row="0"
+                          x:Name="MainScrollView"
                           BackgroundColor="{Binding MoodBackgroundColor}">
                      <!-- Use Grid for structured layout -->
                      <Grid RowDefinitions="Auto,Auto,Auto,Auto"
@@ -38,6 +39,7 @@
 
                             <!-- Overall Wellness Pulse Card -->
                             <Border Grid.Row="1"
+                                    x:Name="WellnessCard"
                                     BackgroundColor="White"
                                     StrokeThickness="0"
                                     StrokeShape="RoundRectangle 18"
@@ -147,132 +149,210 @@
                                                  <!-- Column Chart -->
                                                  <Grid ColumnDefinitions="*,*,*,*,*,*,*"
                                                        ColumnSpacing="8"
-                                                       HeightRequest="140"
-                                                       Margin="0,8,0,0">
-                                                        <VerticalStackLayout Grid.Column="0"
-                                                                             Spacing="4"
-                                                                             VerticalOptions="End">
-                                                               <Label Text="{Binding WeeklyPulseData[0].ScoreText}"
-                                                                      FontSize="12"
-                                                                      TextColor="#7A7A7A"
-                                                                      FontAttributes="Bold"
-                                                                      HorizontalOptions="Center"/>
+                                                       HeightRequest="180"
+                                                       Margin="0,12,0,0">
+                                                        
+                                                        <!-- Sun -->
+                                                        <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="End">
+                                                               <Border BackgroundColor="#8FB8D6"
+                                                                       StrokeThickness="0"
+                                                                       StrokeShape="RoundRectangle 8"
+                                                                       HeightRequest="24"
+                                                                       WidthRequest="36"
+                                                                       HorizontalOptions="Center"
+                                                                       Padding="0">
+                                                                      <Label Text="{Binding WeeklyPulseData[0].ScoreText}"
+                                                                             TextColor="White"
+                                                                             FontSize="13"
+                                                                             FontAttributes="Bold"
+                                                                             HorizontalOptions="Center"
+                                                                             VerticalOptions="Center"/>
+                                                               </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[0].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#90CAF9"
-                                                                        CornerRadius="6,6,0,0"
-                                                                        WidthRequest="35"/>
+                                                                        BackgroundColor="#8FB8D6"
+                                                                        CornerRadius="10,10,10,10"
+                                                                        WidthRequest="36"
+                                                                        HorizontalOptions="Center"/>
                                                                <Label Text="Sun"
-                                                                      FontSize="11"
-                                                                      TextColor="#555"
-                                                                      HorizontalOptions="Center"/>
+                                                                      FontSize="12"
+                                                                      TextColor="#2F5C80"
+                                                                      FontAttributes="Bold"
+                                                                      HorizontalOptions="Center"
+                                                                      Margin="0,6,0,0"/>
                                                         </VerticalStackLayout>
 
-                                                        <VerticalStackLayout Grid.Column="1"
-                                                                             Spacing="4"
-                                                                             VerticalOptions="End">
-                                                               <Label Text="{Binding WeeklyPulseData[1].ScoreText}"
-                                                                      FontSize="12"
-                                                                      TextColor="#7A7A7A"
-                                                                      FontAttributes="Bold"
-                                                                      HorizontalOptions="Center"/>
+                                                        <!-- Mon -->
+                                                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="End">
+                                                               <Border BackgroundColor="#8FB8D6"
+                                                                       StrokeThickness="0"
+                                                                       StrokeShape="RoundRectangle 8"
+                                                                       HeightRequest="24"
+                                                                       WidthRequest="36"
+                                                                       HorizontalOptions="Center"
+                                                                       Padding="0">
+                                                                      <Label Text="{Binding WeeklyPulseData[1].ScoreText}"
+                                                                             TextColor="White"
+                                                                             FontSize="13"
+                                                                             FontAttributes="Bold"
+                                                                             HorizontalOptions="Center"
+                                                                             VerticalOptions="Center"/>
+                                                               </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[1].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#90CAF9"
-                                                                        CornerRadius="6,6,0,0"
-                                                                        WidthRequest="35"/>
+                                                                        BackgroundColor="#8FB8D6"
+                                                                        CornerRadius="10,10,10,10"
+                                                                        WidthRequest="36"
+                                                                        HorizontalOptions="Center"/>
                                                                <Label Text="Mon"
-                                                                      FontSize="11"
-                                                                      TextColor="#555"
-                                                                      HorizontalOptions="Center"/>
+                                                                      FontSize="12"
+                                                                      TextColor="#2F5C80"
+                                                                      FontAttributes="Bold"
+                                                                      HorizontalOptions="Center"
+                                                                      Margin="0,6,0,0"/>
                                                         </VerticalStackLayout>
 
-                                                        <VerticalStackLayout Grid.Column="2"
-                                                                             Spacing="4"
-                                                                             VerticalOptions="End">
-                                                               <Label Text="{Binding WeeklyPulseData[2].ScoreText}"
-                                                                      FontSize="12"
-                                                                      TextColor="#7A7A7A"
-                                                                      FontAttributes="Bold"
-                                                                      HorizontalOptions="Center"/>
+                                                        <!-- Tue -->
+                                                        <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="End">
+                                                               <Border BackgroundColor="#8FB8D6"
+                                                                       StrokeThickness="0"
+                                                                       StrokeShape="RoundRectangle 8"
+                                                                       HeightRequest="24"
+                                                                       WidthRequest="36"
+                                                                       HorizontalOptions="Center"
+                                                                       Padding="0">
+                                                                      <Label Text="{Binding WeeklyPulseData[2].ScoreText}"
+                                                                             TextColor="White"
+                                                                             FontSize="13"
+                                                                             FontAttributes="Bold"
+                                                                             HorizontalOptions="Center"
+                                                                             VerticalOptions="Center"/>
+                                                               </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[2].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#90CAF9"
-                                                                        CornerRadius="6,6,0,0"
-                                                                        WidthRequest="35"/>
+                                                                        BackgroundColor="#8FB8D6"
+                                                                        CornerRadius="10,10,10,10"
+                                                                        WidthRequest="36"
+                                                                        HorizontalOptions="Center"/>
                                                                <Label Text="Tue"
-                                                                      FontSize="11"
-                                                                      TextColor="#555"
-                                                                      HorizontalOptions="Center"/>
+                                                                      FontSize="12"
+                                                                      TextColor="#2F5C80"
+                                                                      FontAttributes="Bold"
+                                                                      HorizontalOptions="Center"
+                                                                      Margin="0,6,0,0"/>
                                                         </VerticalStackLayout>
 
-                                                        <VerticalStackLayout Grid.Column="3"
-                                                                             Spacing="4"
-                                                                             VerticalOptions="End">
-                                                               <Label Text="{Binding WeeklyPulseData[3].ScoreText}"
-                                                                      FontSize="12"
-                                                                      TextColor="#7A7A7A"
-                                                                      FontAttributes="Bold"
-                                                                      HorizontalOptions="Center"/>
+                                                        <!-- Wed -->
+                                                        <VerticalStackLayout Grid.Column="3" Spacing="2" VerticalOptions="End">
+                                                               <Border BackgroundColor="#8FB8D6"
+                                                                       StrokeThickness="0"
+                                                                       StrokeShape="RoundRectangle 8"
+                                                                       HeightRequest="24"
+                                                                       WidthRequest="36"
+                                                                       HorizontalOptions="Center"
+                                                                       Padding="0">
+                                                                      <Label Text="{Binding WeeklyPulseData[3].ScoreText}"
+                                                                             TextColor="White"
+                                                                             FontSize="13"
+                                                                             FontAttributes="Bold"
+                                                                             HorizontalOptions="Center"
+                                                                             VerticalOptions="Center"/>
+                                                               </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[3].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#90CAF9"
-                                                                        CornerRadius="6,6,0,0"
-                                                                        WidthRequest="35"/>
+                                                                        BackgroundColor="#8FB8D6"
+                                                                        CornerRadius="10,10,10,10"
+                                                                        WidthRequest="36"
+                                                                        HorizontalOptions="Center"/>
                                                                <Label Text="Wed"
-                                                                      FontSize="11"
-                                                                      TextColor="#555"
-                                                                      HorizontalOptions="Center"/>
+                                                                      FontSize="12"
+                                                                      TextColor="#2F5C80"
+                                                                      FontAttributes="Bold"
+                                                                      HorizontalOptions="Center"
+                                                                      Margin="0,6,0,0"/>
                                                         </VerticalStackLayout>
 
-                                                        <VerticalStackLayout Grid.Column="4"
-                                                                             Spacing="4"
-                                                                             VerticalOptions="End">
-                                                               <Label Text="{Binding WeeklyPulseData[4].ScoreText}"
-                                                                      FontSize="12"
-                                                                      TextColor="#7A7A7A"
-                                                                      FontAttributes="Bold"
-                                                                      HorizontalOptions="Center"/>
+                                                        <!-- Thu -->
+                                                        <VerticalStackLayout Grid.Column="4" Spacing="2" VerticalOptions="End">
+                                                               <Border BackgroundColor="#8FB8D6"
+                                                                       StrokeThickness="0"
+                                                                       StrokeShape="RoundRectangle 8"
+                                                                       HeightRequest="24"
+                                                                       WidthRequest="36"
+                                                                       HorizontalOptions="Center"
+                                                                       Padding="0">
+                                                                      <Label Text="{Binding WeeklyPulseData[4].ScoreText}"
+                                                                             TextColor="White"
+                                                                             FontSize="13"
+                                                                             FontAttributes="Bold"
+                                                                             HorizontalOptions="Center"
+                                                                             VerticalOptions="Center"/>
+                                                               </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[4].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#90CAF9"
-                                                                        CornerRadius="6,6,0,0"
-                                                                        WidthRequest="35"/>
+                                                                        BackgroundColor="#8FB8D6"
+                                                                        CornerRadius="10,10,10,10"
+                                                                        WidthRequest="36"
+                                                                        HorizontalOptions="Center"/>
                                                                <Label Text="Thu"
-                                                                      FontSize="11"
-                                                                      TextColor="#555"
-                                                                      HorizontalOptions="Center"/>
+                                                                      FontSize="12"
+                                                                      TextColor="#2F5C80"
+                                                                      FontAttributes="Bold"
+                                                                      HorizontalOptions="Center"
+                                                                      Margin="0,6,0,0"/>
                                                         </VerticalStackLayout>
 
-                                                        <VerticalStackLayout Grid.Column="5"
-                                                                             Spacing="4"
-                                                                             VerticalOptions="End">
-                                                               <Label Text="{Binding WeeklyPulseData[5].ScoreText}"
-                                                                      FontSize="12"
-                                                                      TextColor="#7A7A7A"
-                                                                      FontAttributes="Bold"
-                                                                      HorizontalOptions="Center"/>
+                                                        <!-- Fri -->
+                                                        <VerticalStackLayout Grid.Column="5" Spacing="2" VerticalOptions="End">
+                                                               <Border BackgroundColor="#8FB8D6"
+                                                                       StrokeThickness="0"
+                                                                       StrokeShape="RoundRectangle 8"
+                                                                       HeightRequest="24"
+                                                                       WidthRequest="36"
+                                                                       HorizontalOptions="Center"
+                                                                       Padding="0">
+                                                                      <Label Text="{Binding WeeklyPulseData[5].ScoreText}"
+                                                                             TextColor="White"
+                                                                             FontSize="13"
+                                                                             FontAttributes="Bold"
+                                                                             HorizontalOptions="Center"
+                                                                             VerticalOptions="Center"/>
+                                                               </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[5].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#90CAF9"
-                                                                        CornerRadius="6,6,0,0"
-                                                                        WidthRequest="35"/>
+                                                                        BackgroundColor="#8FB8D6"
+                                                                        CornerRadius="10,10,10,10"
+                                                                        WidthRequest="36"
+                                                                        HorizontalOptions="Center"/>
                                                                <Label Text="Fri"
-                                                                      FontSize="11"
-                                                                      TextColor="#555"
-                                                                      HorizontalOptions="Center"/>
+                                                                      FontSize="12"
+                                                                      TextColor="#2F5C80"
+                                                                      FontAttributes="Bold"
+                                                                      HorizontalOptions="Center"
+                                                                      Margin="0,6,0,0"/>
                                                         </VerticalStackLayout>
 
-                                                        <VerticalStackLayout Grid.Column="6"
-                                                                             Spacing="4"
-                                                                             VerticalOptions="End">
-                                                               <Label Text="{Binding WeeklyPulseData[6].ScoreText}"
-                                                                      FontSize="12"
-                                                                      TextColor="#7A7A7A"
-                                                                      FontAttributes="Bold"
-                                                                      HorizontalOptions="Center"/>
+                                                        <!-- Sat -->
+                                                        <VerticalStackLayout Grid.Column="6" Spacing="2" VerticalOptions="End">
+                                                               <Border BackgroundColor="#8FB8D6"
+                                                                       StrokeThickness="0"
+                                                                       StrokeShape="RoundRectangle 8"
+                                                                       HeightRequest="24"
+                                                                       WidthRequest="36"
+                                                                       HorizontalOptions="Center"
+                                                                       Padding="0">
+                                                                      <Label Text="{Binding WeeklyPulseData[6].ScoreText}"
+                                                                             TextColor="White"
+                                                                             FontSize="13"
+                                                                             FontAttributes="Bold"
+                                                                             HorizontalOptions="Center"
+                                                                             VerticalOptions="Center"/>
+                                                               </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[6].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#90CAF9"
-                                                                        CornerRadius="6,6,0,0"
-                                                                        WidthRequest="35"/>
+                                                                        BackgroundColor="#8FB8D6"
+                                                                        CornerRadius="10,10,10,10"
+                                                                        WidthRequest="36"
+                                                                        HorizontalOptions="Center"/>
                                                                <Label Text="Sat"
-                                                                      FontSize="11"
-                                                                      TextColor="#555"
-                                                                      HorizontalOptions="Center"/>
+                                                                      FontSize="12"
+                                                                      TextColor="#2F5C80"
+                                                                      FontAttributes="Bold"
+                                                                      HorizontalOptions="Center"
+                                                                      Margin="0,6,0,0"/>
                                                         </VerticalStackLayout>
                                                  </Grid>
                                           </VerticalStackLayout>
@@ -302,53 +382,55 @@
                                                                <Border StrokeThickness="0"
                                                                        StrokeShape="RoundRectangle 16"
                                                                        Padding="0"
-                                                                       HeightRequest="80"
-                                                                       Margin="0,6"
-                                                                       BackgroundColor="{Binding BackgroundColor}">
-                                                                      <!-- Combined Grid with progress bar background and content overlay -->
-                                                                      <Grid RowDefinitions="*"
-                                                                            ColumnDefinitions="*">
-                                                                             <!-- Progress bar background with opacity -->
-                                                                             <BoxView Grid.Row="0"
-                                                                                      Grid.Column="0"
-                                                                                      BackgroundColor="{Binding BackgroundColor}"
-                                                                                      Opacity="0.7"
-                                                                                      WidthRequest="{Binding Percentage, Converter={StaticResource ProgressToDoubleConverter}}"
-                                                                                      HorizontalOptions="Start"
-                                                                                      VerticalOptions="Fill"/>
-                                                                             <!-- Content on top of progress bar -->
-                                                                             <Grid Grid.Row="0"
-                                                                                   Grid.Column="0"
-                                                                                   RowDefinitions="Auto,Auto"
-                                                                                   ColumnDefinitions="*,Auto"
-                                                                                   Padding="16,8">
-                                                                                    <!-- Theme name - top left -->
-                                                                                    <Label Text="{Binding ThemeName}"
-                                                                                           FontSize="16"
-                                                                                           TextColor="#2B638D"
-                                                                                           FontAttributes="Bold"
-                                                                                           VerticalOptions="Start"
-                                                                                           Grid.Row="0"
-                                                                                           Grid.Column="0"
-                                                                                           Margin="0,0,0,8"/>
-                                                                                    <!-- Count - bottom left -->
+                                                                       HeightRequest="85"
+                                                                       Margin="0,8">
+                                                                       <Border.Background>
+                                                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                                                <GradientStop Color="{Binding BackgroundColor}" Offset="0.0"/>
+                                                                                <GradientStop Color="{Binding BackgroundColor}" Offset="{Binding PercentageDecimal}"/>
+                                                                                <GradientStop Color="{Binding TrackColor}" Offset="{Binding PercentageDecimal}"/>
+                                                                                <GradientStop Color="{Binding TrackColor}" Offset="1.0"/>
+                                                                            </LinearGradientBrush>
+                                                                       </Border.Background>
+                                                                       
+                                                                       <Grid RowDefinitions="Auto,Auto"
+                                                                             ColumnDefinitions="*,Auto"
+                                                                             Padding="20,12">
+                                                                              
+                                                                              <!-- Theme name - top left -->
+                                                                              <Label Text="{Binding ThemeName}"
+                                                                                     FontSize="18"
+                                                                                     TextColor="#2B638D"
+                                                                                     FontAttributes="Bold"
+                                                                                     VerticalOptions="Start"
+                                                                                     Grid.Row="0"
+                                                                                     Grid.Column="0"
+                                                                                     Grid.ColumnSpan="2"/>
+                                                                              
+                                                                              <!-- Trophy Icon/Count - bottom left -->
+                                                                              <!-- Improving design: adding a small icon or just count -->
+                                                                               <HorizontalStackLayout Grid.Row="1" 
+                                                                                                      Grid.Column="0"
+                                                                                                      VerticalOptions="End"
+                                                                                                      Spacing="4">
+                                                                                    <Image Source="trophy_icon.png" HeightRequest="16" WidthRequest="16" IsVisible="False"/> <!-- Placeholder for icon -->
+                                                                                    <Label Text="🏆" FontSize="14" TextColor="#4A7BA7"/>
                                                                                     <Label Text="{Binding Count}"
-                                                                                           FontSize="11"
+                                                                                           FontSize="14"
                                                                                            FontAttributes="Bold"
                                                                                            TextColor="#4A7BA7"
-                                                                                           VerticalOptions="End"
-                                                                                           Grid.Row="1"
-                                                                                           Grid.Column="0"/>
-                                                                                    <!-- Percentage - bottom right -->
-                                                                                    <Label Text="{Binding PercentageText}"
-                                                                                           FontSize="20"
-                                                                                           FontAttributes="Bold"
-                                                                                           TextColor="#4A7BA7"
-                                                                                           VerticalOptions="End"
-                                                                                           Grid.Row="1"
-                                                                                           Grid.Column="1"/>
-                                                                             </Grid>
-                                                                      </Grid>
+                                                                                           VerticalTextAlignment="Center"/>
+                                                                               </HorizontalStackLayout>
+                                                                              
+                                                                              <!-- Amount - bottom right (Percentage) -->
+                                                                              <Label Text="{Binding PercentageText}"
+                                                                                     FontSize="24"
+                                                                                     FontAttributes="Bold"
+                                                                                     TextColor="#2B638D"
+                                                                                     VerticalOptions="End"
+                                                                                     Grid.Row="1"
+                                                                                     Grid.Column="1"/>
+                                                                       </Grid>
                                                                </Border>
                                                         </DataTemplate>
                                                  </CollectionView.ItemTemplate>
@@ -358,6 +440,23 @@
                      </Grid>
               </ScrollView>
 
+              <!-- Loading Overlay -->
+              <Grid Grid.Row="0" Grid.RowSpan="2"
+                    BackgroundColor="#F8FAED"
+                    IsVisible="{Binding IsLoading}"
+                    InputTransparent="False">
+                   <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20">
+                      <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                         Color="#4A7BA7"
+                                         HeightRequest="50"
+                                         WidthRequest="50"/>
+                      <Label Text="Analyzing your week..." 
+                             TextColor="#4A7BA7" 
+                             FontSize="18"
+                             FontAttributes="Bold"
+                             HorizontalOptions="Center"/>
+                   </VerticalStackLayout>
+              </Grid>
 
               <!-- Back Button - Fixed position outside ScrollView -->
               <ImageButton Grid.Row="0"

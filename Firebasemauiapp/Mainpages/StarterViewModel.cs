@@ -18,6 +18,9 @@ public partial class StarterViewModel : ObservableObject
     private readonly FirestoreService _firestoreService;
 
     [ObservableProperty]
+    private bool _isLoading;
+
+    [ObservableProperty]
     private string _username = "Friend";
 
     public string WelcomeMessage => Username;
@@ -52,12 +55,15 @@ public partial class StarterViewModel : ObservableObject
     {
         try
         {
+            IsLoading = true; // Start loading
+
             // Try to get from Preferences first (cached value)
             var savedUsername = Preferences.Get("USER_DISPLAY_NAME", string.Empty);
             if (!string.IsNullOrWhiteSpace(savedUsername))
             {
                 Username = savedUsername;
                 System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username from Preferences: {savedUsername}");
+                IsLoading = false; // Early exit
                 return;
             }
 
@@ -71,6 +77,7 @@ public partial class StarterViewModel : ObservableObject
                     Username = username;
                     Preferences.Set("USER_DISPLAY_NAME", username);
                     System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username from Firestore: {username}");
+                   IsLoading = false; // Early exit
                     return;
                 }
             }
@@ -102,6 +109,10 @@ public partial class StarterViewModel : ObservableObject
         {
             System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Error loading username: {ex.Message}");
             Username = "Friend";
+        }
+        finally
+        {
+            IsLoading = false; // Ensure loading stops
         }
     }
 

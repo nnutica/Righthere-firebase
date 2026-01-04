@@ -15,20 +15,35 @@
                             IsEnabled="False"/>
     </Shell.BackButtonBehavior>
 
-    <Grid Padding="16,12,16,0"
-          RowSpacing="10"
-          RowDefinitions="Auto,Auto,*">
+    <Grid>
+        <Grid Padding="16,12,16,0"
+              RowSpacing="10"
+              RowDefinitions="Auto,Auto,*">
 
         <!-- ===== HEADER ===== -->
         <VerticalStackLayout Grid.Row="0"
                              Spacing="6">
 
-            <!-- Logo -->
-            <Image Source="logo.png"
-                   HeightRequest="60"
-                   WidthRequest="84"
-                   Margin="10,0,0,0"
-                   HorizontalOptions="Start"/>
+            <Grid ColumnDefinitions="*,Auto">
+                <!-- Logo -->
+                <Image Source="logo.png"
+                       HeightRequest="60"
+                       WidthRequest="84"
+                       Margin="10,0,0,0"
+                       HorizontalOptions="Start"/>
+                
+                <!-- Logout Button -->
+                <Button Grid.Column="1"
+                        Text="Log out"
+                        TextColor="#FF6B6B"
+                        BackgroundColor="Transparent"
+                        FontAttributes="Bold"
+                        FontSize="14"
+                        HeightRequest="40"
+                        VerticalOptions="Center"
+                        Margin="0,0,10,0"
+                        Command="{Binding LogOutCommand}"/>
+            </Grid>
 
 
             <!-- Welcome Text -->
@@ -126,5 +141,25 @@
             </VerticalStackLayout>
         </ScrollView>
 
+        </Grid>
+
+        <!-- Loading Overlay -->
+        <Grid BackgroundColor="#F0FFFFFF"
+              IsVisible="{Binding IsLoading}"
+              InputTransparent="False"
+              ZIndex="999">
+             <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="20">
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                   Color="#8FAF8B"
+                                   HeightRequest="50"
+                                   WidthRequest="50"/>
+                <Label Text="Getting things ready..." 
+                       TextColor="#8FAF8B" 
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       FontFamily="mediumfont"
+                       HorizontalOptions="Center"/>
+             </VerticalStackLayout>
+        </Grid>
     </Grid>
 </ContentPage>

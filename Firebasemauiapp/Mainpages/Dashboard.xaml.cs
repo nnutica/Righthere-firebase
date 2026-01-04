@@ -12,7 +12,25 @@ public partial class Dashboard : ContentPage
 		InitializeComponent();
 		this.viewModel = viewModel;
 		BindingContext = viewModel;
+        viewModel.DataLoaded += OnDataLoaded;
 	}
+
+    private void OnDataLoaded(object? sender, EventArgs e)
+    {
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            // Delay slightly to ensure layout / loading overlay is gone
+            await Task.Delay(250);
+            try
+            {
+                await MainScrollView.ScrollToAsync(WellnessCard, ScrollToPosition.Start, true);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Auto-scroll error: {ex.Message}");
+            }
+        });
+    }
 
 	protected override async void OnAppearing()
 	{

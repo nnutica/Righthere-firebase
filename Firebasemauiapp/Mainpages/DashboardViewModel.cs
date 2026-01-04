@@ -12,9 +12,12 @@ namespace Firebasemauiapp.Mainpages;
 
 public partial class DashboardViewModel : ObservableObject
 {
+    public event EventHandler? DataLoaded;
 	// Chart property and related logic removed
 	private readonly DiaryDatabase _diaryDatabase;
 	private readonly FirebaseAuthClient _authClient;
+
+	private List<DiaryData> _cachedAllDiaries = new();
 
 	[ObservableProperty]
 	private ObservableCollection<double> _sentimentScores = new();
@@ -87,6 +90,7 @@ public partial class DashboardViewModel : ObservableObject
 		private string _day = "";
 
 		[ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ScoreText))]
 		private double _score;
 
 		public string ScoreText => Score > 0 ? Score.ToString("F0") : "";
@@ -97,8 +101,10 @@ public partial class DashboardViewModel : ObservableObject
 		public string ThemeName { get; set; } = "";
 		public int Count { get; set; }
 		public double Percentage { get; set; }
-		public string PercentageText => $"{Percentage:F1}%";
+        public double PercentageDecimal => Percentage / 100.0;
+		public string PercentageText => $"{Percentage:0.##}%";
 		public Color BackgroundColor { get; set; } = Colors.LightGray;
+        public Color TrackColor { get; set; } = Colors.Gray;
 	}
 
 	// For Syncfusion chart binding
@@ -106,6 +112,8 @@ public partial class DashboardViewModel : ObservableObject
 	private ObservableCollection<ChartDataPoint> _chartData = new();
 
 	public string TodayString => DateTime.Now.ToString("ddd, dd MMM");
+
+
 
 	public DashboardViewModel(DiaryDatabase diaryDatabase, FirebaseAuthClient authClient)
 	{
@@ -166,7 +174,6 @@ public partial class DashboardViewModel : ObservableObject
 		{
 			IsLoading = true;
 
-			// Initialize collections if null
 			if (SentimentScores == null) SentimentScores = new ObservableCollection<double>();
 			if (ChartData == null) ChartData = new ObservableCollection<ChartDataPoint>();
 			if (ResonatingThemes == null) ResonatingThemes = new ObservableCollection<ThemeData>();
@@ -179,10 +186,9 @@ public partial class DashboardViewModel : ObservableObject
 			if (string.IsNullOrWhiteSpace(uid))
 			{
 				_retryCount++;
-				Console.WriteLine($"Dashboard: UID still null after waiting (and no cached UID). Retry {_retryCount}/{MaxRetry}");
+				Console.WriteLine($"Dashboard: UID null. Retry {_retryCount}/{MaxRetry}");
 				if (_retryCount <= MaxRetry)
 				{
-					// wait 1s and retry
 					await Task.Delay(1000);
 					await LoadSentimentScores();
 					return;
@@ -190,14 +196,13 @@ public partial class DashboardViewModel : ObservableObject
 				else
 				{
 					_retryCount = 0;
-					// แจ้งเตือนผู้ใช้ (ต้องรันบน UI thread)
 					try
 					{
 						MainThread.BeginInvokeOnMainThread(async () =>
 						{
 							await Application.Current?.MainPage?.DisplayAlert(
 								"เกิดข้อผิดพลาด",
-								"ไม่สามารถโหลดข้อมูลผู้ใช้ได้ กรุณาออกจากระบบแล้วเข้าสู่ระบบใหม่อีกครั้ง",
+								"ไม่สามารถโหลดข้อมูลผู้ใช้ได้",
 								"ตกลง");
 						});
 					}
@@ -208,44 +213,35 @@ public partial class DashboardViewModel : ObservableObject
 			}
 			_retryCount = 0;
 
-			Console.WriteLine($"Dashboard: Loading diaries for user: {uid}");
+			Console.WriteLine($"Dashboard: Loading diaries for user: {uid} (Offset: {WeekOffset})");
 			var diaries = (await _diaryDatabase.GetDiariesByUserAsync(uid))
 				?.OrderBy(x => x.CreatedAtDateTime)
 				.ToList();
 
-			if (diaries == null)
-			{
-				Console.WriteLine("Dashboard: GetDiariesByUserAsync returned null");
-				diaries = new List<DiaryData>();
-			}
+			if (diaries == null) diaries = new List<DiaryData>();
 
-			Console.WriteLine($"Dashboard: Loaded {diaries.Count} diaries");
 			foreach (var d in diaries)
 			{
 				SentimentScores.Add(d.SentimentScore);
 			}
 
-			// Calculate week range based on offset
-			// Week starts on Sunday (0) and ends on Saturday (6)
+			// Calculate week range
 			var today = DateTime.Today;
-			var currentDayOfWeek = (int)today.DayOfWeek; // Sunday = 0, Saturday = 6
-
-			// Calculate the start of current week (Sunday)
+			var currentDayOfWeek = (int)today.DayOfWeek; 
 			var currentWeekStart = today.AddDays(-currentDayOfWeek);
-
-			// Apply week offset
 			var weekStart = currentWeekStart.AddDays(WeekOffset * 7);
 			var weekEnd = weekStart.AddDays(6);
+            
+            Console.WriteLine($"[LoadSentimentScores] Filter Range: {weekStart:d} - {weekEnd:d}");
 
-			// Filter diaries for the selected week
 			var weekDiaries = diaries
 				.Where(d => d.CreatedAtDateTime.Date >= weekStart && d.CreatedAtDateTime.Date <= weekEnd)
 				.ToList();
+            
+            Console.WriteLine($"[LoadSentimentScores] Found {weekDiaries.Count} items.");
 
-			// Calculate most frequent mood in selected week
 			CalculateMostFrequentMood(weekDiaries);
 
-			// Calculate Overall Wellness Pulse (average of selected week)
 			if (weekDiaries.Any())
 			{
 				AverageSentimentScore = weekDiaries.Average(d => d.SentimentScore);
@@ -256,7 +252,6 @@ public partial class DashboardViewModel : ObservableObject
 			}
 			OnPropertyChanged(nameof(AverageDisplay));
 
-			// Update Weekly Pulse data (Column Chart)
 			for (int i = 0; i < 7; i++)
 			{
 				var targetDate = weekStart.AddDays(i);
@@ -265,17 +260,12 @@ public partial class DashboardViewModel : ObservableObject
 				WeeklyPulseData[i].Day = targetDate.ToString("ddd");
 				WeeklyPulseData[i].Score = diary?.SentimentScore ?? 0;
 			}
+            OnPropertyChanged(nameof(WeeklyPulseData));
 
-			// Update date range display
 			WeekDateRange = $"{weekStart:ddd, dd} - {weekEnd:ddd, dd}";
 
-			// Notify changes
-			OnPropertyChanged(nameof(WeeklyPulseData));
-
-			// Calculate Resonating Themes from selected week
 			CalculateResonatingThemes(weekDiaries);
 
-			// Show week scores for line chart
 			foreach (var d in weekDiaries)
 			{
 				string day = d.CreatedAtDateTime.ToString("ddd");
@@ -284,10 +274,7 @@ public partial class DashboardViewModel : ObservableObject
 		}
 		catch (Exception ex)
 		{
-			Console.WriteLine($"Dashboard LoadSentimentScores Error: {ex.Message}");
-			Console.WriteLine($"StackTrace: {ex.StackTrace}");
-
-			// Reset to safe defaults on error
+			Console.WriteLine($"Dashboard Error: {ex.Message}");
 			MostFrequentMoodImage = "empty.png";
 			MostFrequentMoodName = "No Data";
 			MoodBackgroundColor = Color.FromArgb("#F8FAED");
@@ -297,6 +284,7 @@ public partial class DashboardViewModel : ObservableObject
 		finally
 		{
 			IsLoading = false;
+			DataLoaded?.Invoke(this, EventArgs.Empty);
 		}
 	}
 
@@ -400,12 +388,12 @@ public partial class DashboardViewModel : ObservableObject
 
 			int total = keywordCounts.Values.Sum();
 
-			// Define colors for 1st, 2nd, 3rd place
+			// Define colors for 1st, 2nd, 3rd place (Progress Color, Track Color)
 			var rankColors = new[]
 			{
-				Color.FromArgb("#F0E7D6"), // 1st: Beige/Cream
-				Color.FromArgb("#02DF82"), // 2nd: Green
-				Color.FromArgb("#EBEBEB")  // 3rd: Light Gray
+				(Progress: Color.FromArgb("#EFDFC7"), Track: Color.FromArgb("#B0BEC5")), // 1st: Beige / BlueGrey
+				(Progress: Color.FromArgb("#00E676"), Track: Color.FromArgb("#2E7D32")), // 2nd: Bright Green / Dark Green
+				(Progress: Color.FromArgb("#CFD8DC"), Track: Color.FromArgb("#90A4AE"))  // 3rd: Light Grey / BlueGrey
 			};
 
 			// Add themes with their respective colors
@@ -413,13 +401,16 @@ public partial class DashboardViewModel : ObservableObject
 			{
 				var keyword = top3Keywords[i];
 				var percentage = (keyword.Value / (double)total) * 100;
+                // Use safe default if more than 3 items (though we Take(3) above)
+                var colors = i < rankColors.Length ? rankColors[i] : (Progress: Colors.LightGray, Track: Colors.Gray);
 
 				ResonatingThemes.Add(new ThemeData
 				{
 					ThemeName = keyword.Key,
 					Count = keyword.Value,
 					Percentage = percentage,
-					BackgroundColor = rankColors[i]
+					BackgroundColor = colors.Progress,
+                    TrackColor = colors.Track
 				});
 			}
 		}
@@ -428,8 +419,6 @@ public partial class DashboardViewModel : ObservableObject
 			Console.WriteLine($"Dashboard CalculateResonatingThemes Error: {ex.Message}");
 		}
 	}
-
-
 
 	private async Task GoToDiaryHistory()
 	{
@@ -440,16 +429,15 @@ public partial class DashboardViewModel : ObservableObject
 	private async Task PreviousWeek()
 	{
 		WeekOffset--;
-		await LoadSentimentScores();
+        await LoadSentimentScores();
 	}
 
 	private async Task NextWeek()
 	{
-		// Don't allow going beyond current week
 		if (WeekOffset < 0)
 		{
 			WeekOffset++;
-			await LoadSentimentScores();
+            await LoadSentimentScores();
 		}
 	}
 }
