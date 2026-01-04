@@ -33,6 +33,7 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
 
     [ObservableProperty]
     private bool _isLoading = false; // ? ?? set ???? true ??????? load
+    [ObservableProperty]
     private Color _moodBackgroundColor = Color.FromArgb("#FBC30A"); // Default Happiness color
 
     public LevelMoodViewModel(FirebaseAuthClient authClient)

@@ -49,22 +49,19 @@ public partial class DiaryViewModel : ObservableObject
     private string? _imageUrl;
 
     [ObservableProperty]
-    private bool _isImageAreaEnabled = false;
-
-    [ObservableProperty]
     private bool _isUploadingImage;
 
     [ObservableProperty]
-    private Color _moodBackgroundColor = Color.FromArgb("#FBC30A"); // Default Happiness color
+    private bool _isImageAreaEnabled = true;
 
-    private bool _allowUpload = false;
+    [ObservableProperty]
+    private Color _moodBackgroundColor = Colors.Transparent;
 
     public DiaryViewModel(DiaryDatabase diaryDatabase, FirebaseAuthClient authClient, GitHubUploadService uploadService)
     {
         _diaryDatabase = diaryDatabase;
         _authClient = authClient;
         _uploadService = uploadService;
-        _allowUpload = true; // ให้ผู้ใช้กดเพิ่มรูปได้ทันที
     }
 
     partial void OnMoodChanged(MoodOption? value)
@@ -227,6 +224,5 @@ public partial class DiaryViewModel : ObservableObject
         IsLoadingVisible = false;
         AnalyzeButtonText = "Next";
         ImageUrl = null;
-        _allowUpload = true; // reset ให้กดเพิ่มรูปใหม่ได้
     }
 }

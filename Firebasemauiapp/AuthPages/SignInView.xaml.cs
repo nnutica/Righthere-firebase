@@ -41,7 +41,7 @@ public partial class SignInView : ContentPage
 #endif
     }
 
-    private async void OnGoogleSignInClicked(object sender, EventArgs e)
+
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
