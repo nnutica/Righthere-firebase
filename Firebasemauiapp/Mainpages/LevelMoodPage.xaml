@@ -5,10 +5,10 @@
              x:Class="Firebasemauiapp.Mainpages.LevelMoodPage"
              Shell.NavBarIsVisible="False"
              Title="Level of Mood">
-        <!-- Orange card-like area -->
+        <!-- Background color changes based on mood -->
         <Grid Padding="20,24"
               RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto"
-              BackgroundColor="#FFC566">
+              BackgroundColor="{Binding MoodBackgroundColor}">
                 <!-- Row 0: Back Button -->
                 <ImageButton Grid.Row="0"
                              Source="back.png"
@@ -83,8 +83,8 @@
                         TextColor="#F8A33A"
                         FontAttributes="Bold"
                         FontSize="20"
-                        CornerRadius="28"
-                        HeightRequest="60"
+                        CornerRadius="16"
+                        HeightRequest="50"
                         VerticalOptions="FillAndExpand"
                         Margin="0,0,0,0"
                         Command="{Binding SetMoodCommand}">

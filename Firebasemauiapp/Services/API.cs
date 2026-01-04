@@ -11,14 +11,21 @@ public class API
     private string emotionalReflection = string.Empty;
     private string keywords = string.Empty;
 
-    public async Task SendData(string Diary)
+    public async Task SendData(string Diary, string? moodData = null)
     {
         using HttpClient client = new HttpClient();
 
         string url = "https://nitinat-right-here.hf.space/getadvice"; // Hugging Face Spaces URL
 
-        var data = new { text = Diary }; // API ต้องการ key "text"
-        string jsonData = JsonSerializer.Serialize(data);
+        // Build request data - combine diary with mood data if provided
+        string requestText = Diary;
+        if (!string.IsNullOrEmpty(moodData))
+        {
+            requestText = $"{Diary}\n\n{moodData}";
+        }
+
+        var requestData = new { text = requestText };
+        string jsonData = JsonSerializer.Serialize(requestData);
         HttpContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
 
         try

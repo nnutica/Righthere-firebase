@@ -6,6 +6,10 @@ namespace Firebasemauiapp.Mainpages;
 
 public partial class SummaryMockView : ContentPage
 {
+    public SummaryMockView()
+    {
+    }
+
     public SummaryMockView(SummaryViewModel vm)
     {
         InitializeComponent();

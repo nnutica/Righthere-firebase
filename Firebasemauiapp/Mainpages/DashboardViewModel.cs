@@ -95,6 +95,7 @@ public partial class DashboardViewModel : ObservableObject
 	public class ThemeData
 	{
 		public string ThemeName { get; set; } = "";
+		public int Count { get; set; }
 		public double Percentage { get; set; }
 		public string PercentageText => $"{Percentage:F1}%";
 		public Color BackgroundColor { get; set; } = Colors.LightGray;
@@ -336,12 +337,12 @@ public partial class DashboardViewModel : ObservableObject
 			// Set background color based on mood
 			MoodBackgroundColor = mood switch
 			{
-				"happiness" => Color.FromArgb("#F5C857"), // Light yellow
-				"anger" => Color.FromArgb("#FF5555"), // Light red
+				"happiness" => Color.FromArgb("#FBC30A"), // Light yellow
+				"angry" => Color.FromArgb("#E4000F"), // Light red
 				"sadness" => Color.FromArgb("#2B638D"), // Light blue
-				"fear" => Color.FromArgb("#662B8D"), // Light purple
-				"love" => Color.FromArgb("#FF82E8"), // Light pink
-				"surprise" => Color.FromArgb("#DFBC31"), // Light orange
+				"fear" => Color.FromArgb("#9E9AAB"), // Light purple
+				"love" => Color.FromArgb("#FF60A0"), // Light pink
+				"disgust" => Color.FromArgb("#1EA064"), // Light orange
 				_ => Color.FromArgb("#F8FAED")
 			};
 		}
@@ -364,24 +365,61 @@ public partial class DashboardViewModel : ObservableObject
 				return;
 			}
 
-			// Group by Reason (use "ETC" if empty)
-			var reasonGroups = diaries
-				.Select(d => string.IsNullOrWhiteSpace(d.Reason) ? "ETC" : d.Reason)
-				.GroupBy(r => r)
-				.Select(g => new { Reason = g.Key, Count = g.Count() })
-				.OrderByDescending(x => x.Count)
+			// Extract and count keywords from all diaries in the week
+			var keywordCounts = new Dictionary<string, int>();
+
+			foreach (var diary in diaries)
+			{
+				if (string.IsNullOrWhiteSpace(diary.Keywords))
+					continue;
+
+				// Split keywords by comma and clean up
+				var keywords = diary.Keywords.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+					.Select(k => k.Trim())
+					.Where(k => !string.IsNullOrWhiteSpace(k));
+
+				foreach (var keyword in keywords)
+				{
+					if (keywordCounts.ContainsKey(keyword))
+						keywordCounts[keyword]++;
+					else
+						keywordCounts[keyword] = 1;
+				}
+			}
+
+			// Get top 3 keywords by count
+			var top3Keywords = keywordCounts
+				.OrderByDescending(x => x.Value)
+				.Take(3)
 				.ToList();
 
-			var total = reasonGroups.Sum(x => x.Count);
-
-			foreach (var group in reasonGroups)
+			if (!top3Keywords.Any())
 			{
-				var percentage = (group.Count / (double)total) * 100;
+				return;
+			}
+
+			int total = keywordCounts.Values.Sum();
+
+			// Define colors for 1st, 2nd, 3rd place
+			var rankColors = new[]
+			{
+				Color.FromArgb("#F0E7D6"), // 1st: Beige/Cream
+				Color.FromArgb("#02DF82"), // 2nd: Green
+				Color.FromArgb("#EBEBEB")  // 3rd: Light Gray
+			};
+
+			// Add themes with their respective colors
+			for (int i = 0; i < top3Keywords.Count; i++)
+			{
+				var keyword = top3Keywords[i];
+				var percentage = (keyword.Value / (double)total) * 100;
+
 				ResonatingThemes.Add(new ThemeData
 				{
-					ThemeName = group.Reason ?? "Unknown",
+					ThemeName = keyword.Key,
+					Count = keyword.Value,
 					Percentage = percentage,
-					BackgroundColor = MoodBackgroundColor // Use same color as mood
+					BackgroundColor = rankColors[i]
 				});
 			}
 		}
@@ -391,34 +429,7 @@ public partial class DashboardViewModel : ObservableObject
 		}
 	}
 
-	private void CalculateAverageSentiment(List<DiaryData> diaries)
-	{
-		if (!diaries.Any())
-		{
-			AverageSentimentScore = 0;
-			return;
-		}
 
-		List<DiaryData> filteredDiaries = SelectedPeriod switch
-		{
-			"3 วันล่าสุด" => diaries.TakeLast(3).ToList(),
-			"5 วันล่าสุด" => diaries.TakeLast(5).ToList(),
-			"สัปดาห์ที่แล้ว" => diaries.TakeLast(7).ToList(),
-			"ทั้งหมด" => diaries,
-			_ => diaries
-		};
-
-		if (filteredDiaries.Any())
-		{
-			AverageSentimentScore = filteredDiaries.Average(d => d.SentimentScore);
-		}
-		else
-		{
-			AverageSentimentScore = 0;
-		}
-
-		OnPropertyChanged(nameof(AverageDisplay));
-	}
 
 	private async Task GoToDiaryHistory()
 	{

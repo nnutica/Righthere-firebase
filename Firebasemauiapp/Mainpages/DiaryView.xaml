@@ -4,7 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:conv="clr-namespace:Firebasemauiapp.Converters"
              Title="DiaryView"
-             BackgroundColor="#FEAA3A"
+             BackgroundColor="{Binding MoodBackgroundColor}"
              Shell.NavBarIsVisible="False">
     <ContentPage.Resources>
         <conv:MoodNameToImageConverter x:Key="MoodNameToImageConverter"/>
@@ -13,6 +13,17 @@
     <Grid RowDefinitions="Auto,*"
           Padding="20"
           RowSpacing="12">
+
+        <!-- Loading Indicator Overlay -->
+        <ActivityIndicator Grid.RowSpan="2"
+                           IsRunning="{Binding IsAnalyzing}"
+                           IsVisible="{Binding IsAnalyzing}"
+                           Color="White"
+                           Scale="2"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           ZIndex="999"/>
+
         <!-- Header -->
         <Grid Grid.Row="0"
               RowDefinitions="Auto,Auto"
@@ -44,7 +55,6 @@
 
             <!-- Mood indicator -->
             <Border Grid.Row="0"
-                    BackgroundColor="White"
                     WidthRequest="50"
                     HeightRequest="50"
                     HorizontalOptions="Start">
@@ -67,11 +77,14 @@
                 <Editor x:Name="DiaryEntry"
                         BackgroundColor="Transparent"
                         Placeholder="share something good..."
+                        PlaceholderColor="#FFDDDDDD"
                         Text="{Binding DiaryContent}"
                         FontSize="16"
+                        FontAttributes="None"
                         TextColor="White"
                         VerticalOptions="FillAndExpand"
-                        VerticalTextAlignment="Start"/>
+                        VerticalTextAlignment="Start"
+                        AutoSize="TextChanges"/>
             </Border>
 
             <!-- Image area -->
@@ -86,7 +99,9 @@
 
                 <Grid HeightRequest="150">
                     <!-- Upload Image Button (shown when no image) -->
-                    <Border BackgroundColor="#A8D5BA"
+                    <Border BackgroundColor="White"
+                            Stroke="#FEAA3A"
+                            StrokeThickness="2"
                             WidthRequest="100"
                             HeightRequest="100"
                             HorizontalOptions="Center"
@@ -120,7 +135,8 @@
                             <Image Source="imgicon.png"
                                    WidthRequest="48"
                                    HeightRequest="48"
-                                   HorizontalOptions="Center"/>
+                                   HorizontalOptions="Center"
+                                   Opacity="0.6"/>
 
                         </VerticalStackLayout>
                     </Border>
@@ -175,23 +191,45 @@
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnCancelClicked"/>
                     </Border.GestureRecognizers>
-                    
+
                     <Grid>
                         <!-- Image icon (shown when Image Area is disabled) -->
-                        <Image Source="imgicon.png"
-                               WidthRequest="32"
-                               HeightRequest="32"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               IsVisible="{Binding IsImageAreaEnabled, Converter={StaticResource InvertedBoolConverter}}"/>
-                        
+                        <Border BackgroundColor="White"
+                                Stroke="#FEAA3A"
+                                StrokeThickness="2"
+                                WidthRequest="56"
+                                HeightRequest="56"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                IsVisible="{Binding IsImageAreaEnabled, Converter={StaticResource InvertedBoolConverter}}">
+                            <Border.StrokeShape>
+                                <Ellipse/>
+                            </Border.StrokeShape>
+                            <Image Source="imgicon.png"
+                                   WidthRequest="32"
+                                   HeightRequest="32"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
+
                         <!-- X icon (shown when Image Area is enabled) -->
-                        <Label Text="✕"
-                               FontSize="24"
-                               TextColor="#FEAA3A"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               IsVisible="{Binding IsImageAreaEnabled}"/>
+                        <Border BackgroundColor="#A5F88C"
+                                Stroke="#FEAA3A"
+                                StrokeThickness="2"
+                                WidthRequest="56"
+                                HeightRequest="56"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                IsVisible="{Binding IsImageAreaEnabled}">
+                            <Border.StrokeShape>
+                                <Ellipse/>
+                            </Border.StrokeShape>
+                            <Label Text="✕"
+                                   FontSize="24"
+                                   TextColor="#FEAA3A"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
                     </Grid>
                 </Border>
 
@@ -202,12 +240,13 @@
                         Text="Next"
                         Command="{Binding AnalyzeContentCommand}"
                         IsEnabled="{Binding IsAnalyzing, Converter={StaticResource InvertedBoolConverter}}"
-                        CornerRadius="28"
-                        HeightRequest="56"
+                        CornerRadius="16"
+                        HeightRequest="50"
+                        FontFamily="contextfont"
                         HorizontalOptions="Fill"
                         VerticalOptions="Center"
                         FontAttributes="Bold"
-                        FontSize="18">
+                        FontSize="20">
                     <Button.Shadow>
                         <Shadow Brush="#40000000"
                                 Radius="16"

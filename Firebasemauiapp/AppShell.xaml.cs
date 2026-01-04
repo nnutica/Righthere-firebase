@@ -18,6 +18,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("starter", typeof(StarterView));
 		Routing.RegisterRoute("diary", typeof(SelectMoodPage));
 		Routing.RegisterRoute("history", typeof(DiaryHistory));
+		Routing.RegisterRoute("SummaryMockView", typeof(SummaryMockView));
 		Routing.RegisterRoute("summary", typeof(SummaryView));
 		Routing.RegisterRoute("levelmood", typeof(LevelMoodPage));
 		Routing.RegisterRoute("write", typeof(DiaryView));
@@ -55,7 +56,7 @@ public partial class AppShell : Shell
 			{
 				_navigationHistory.Pop(); // ลบ current page
 				System.Diagnostics.Debug.WriteLine($"✅ Going back - Stack now has {_navigationHistory.Count} items");
-				
+
 				MainThread.BeginInvokeOnMainThread(async () =>
 				{
 					try

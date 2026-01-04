@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
+using Firebase.Auth.Providers;
 using Firebasemauiapp.Services;
 using Firebasemauiapp.Config;
 using Google.Cloud.Firestore;
@@ -134,12 +135,12 @@ public partial class SignInViewModel : ObservableObject
     }
 
     [RelayCommand]
+
     private async Task SignInWithGoogle()
     {
         try
         {
             Console.WriteLine("[SignInViewModel] Starting Google Sign-In");
-
             ErrorMessage = string.Empty;
             HasError = false;
 

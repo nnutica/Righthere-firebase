@@ -17,11 +17,19 @@ public partial class StarterViewModel : ObservableObject
     private readonly DiaryDatabase _diaryDatabase;
     private readonly FirestoreService _firestoreService;
 
+    [ObservableProperty]
+    private string _username = "Friend";
+
+    public string WelcomeMessage => Username;
+
     public StarterViewModel(FirebaseAuthClient authClient, DiaryDatabase diaryDatabase, FirestoreService firestoreService)
     {
         _authClient = authClient;
         _diaryDatabase = diaryDatabase;
         _firestoreService = firestoreService;
+
+        // Load username asynchronously
+        _ = LoadUsernameAsync();
     }
 
     [RelayCommand]
@@ -37,6 +45,63 @@ public partial class StarterViewModel : ObservableObject
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Navigation error: {ex.Message}");
+        }
+    }
+
+    private async Task LoadUsernameAsync()
+    {
+        try
+        {
+            // Try to get from Preferences first (cached value)
+            var savedUsername = Preferences.Get("USER_DISPLAY_NAME", string.Empty);
+            if (!string.IsNullOrWhiteSpace(savedUsername))
+            {
+                Username = savedUsername;
+                System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username from Preferences: {savedUsername}");
+                return;
+            }
+
+            // If not in Preferences, try to get from Firestore using AUTH_UID
+            var uid = Preferences.Get("AUTH_UID", string.Empty);
+            if (!string.IsNullOrEmpty(uid))
+            {
+                var username = await _firestoreService.GetUsernameAsync(uid);
+                if (!string.IsNullOrEmpty(username))
+                {
+                    Username = username;
+                    Preferences.Set("USER_DISPLAY_NAME", username);
+                    System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username from Firestore: {username}");
+                    return;
+                }
+            }
+
+            // Fallback: try Firebase Auth
+            var user = _authClient.User;
+            if (user != null)
+            {
+                var displayName = user.Info?.DisplayName;
+                if (string.IsNullOrWhiteSpace(displayName))
+                {
+                    var email = user.Info?.Email;
+                    displayName = !string.IsNullOrWhiteSpace(email) && email.Contains('@')
+                        ? email.Split('@')[0]
+                        : "Friend";
+                }
+                Username = displayName;
+                Preferences.Set("USER_DISPLAY_NAME", displayName);
+                System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username from Firebase Auth: {displayName}");
+            }
+            else
+            {
+                // If nothing works, use default
+                Username = "Friend";
+                System.Diagnostics.Debug.WriteLine("[StarterViewModel] No username found, using default: Friend");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Error loading username: {ex.Message}");
+            Username = "Friend";
         }
     }
 
