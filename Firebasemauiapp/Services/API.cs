@@ -57,8 +57,8 @@ public class API
             }
 
             // ดึงค่าจาก result object
-            suggestion = apiResponse.Result.Suggestion ?? "";
-            emotionalReflection = apiResponse.Result.EmotionalReflection ?? "";
+            suggestion = apiResponse.Result.suggestion ?? "";
+            emotionalReflection = apiResponse.Result.reflection_message ?? "";
 
             // Convert keywords array to comma-separated string
             if (apiResponse.Result.Keywords != null && apiResponse.Result.Keywords.Length > 0)
