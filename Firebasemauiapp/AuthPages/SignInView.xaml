@@ -63,7 +63,7 @@
 
                         <!-- Username -->
                         <VerticalStackLayout Spacing="4">
-                            <Label Text="Username"
+                            <Label Text="Email"
                                    FontSize="12"
                                    FontFamily="AppFont"
                                    TextColor="#8FB78F"/>
