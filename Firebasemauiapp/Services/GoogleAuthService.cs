@@ -50,6 +50,7 @@ public class GoogleAuthService
     {
         try
         {
+            // Clear local tokens first
             SecureStorage.Remove("GOOGLE_ID_TOKEN");
             SecureStorage.Remove("GOOGLE_REFRESH_TOKEN");
             SecureStorage.Remove("GOOGLE_UID");
@@ -58,11 +59,32 @@ public class GoogleAuthService
             Preferences.Remove("IS_GOOGLE_USER");
             Preferences.Remove("AUTH_UID");
 
+#if __ANDROID__
+            // Native Android Sign-Out to prevent auto-login
+            try 
+            {
+                var context = Android.App.Application.Context;
+                
+                // We need to build options even for sign out to get the client
+                var signInOptions = new Android.Gms.Auth.Api.SignIn.GoogleSignInOptions.Builder(Android.Gms.Auth.Api.SignIn.GoogleSignInOptions.DefaultSignIn)
+                    .RequestEmail()
+                    .Build();
+                    
+                var googleSignInClient = Android.Gms.Auth.Api.SignIn.GoogleSignIn.GetClient(context, signInOptions);
+                await googleSignInClient.SignOutAsync();
+                Console.WriteLine("[GoogleAuthService] Native Android SignOut success");
+            }
+            catch (System.Exception ex)
+            {
+                Console.WriteLine($"[GoogleAuthService] Native Android SignOut failed: {ex.Message}");
+            }
+#endif
+
             await Task.CompletedTask;
         }
-        catch
+        catch (System.Exception ex)
         {
-            // Ignore errors during sign out
+            Console.WriteLine($"[GoogleAuthService] SignOutAsync error: {ex.Message}");
         }
     }
 

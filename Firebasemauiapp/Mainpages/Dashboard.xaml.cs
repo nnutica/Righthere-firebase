@@ -36,9 +36,7 @@ public partial class Dashboard : ContentPage
 	{
 		base.OnAppearing();
 
-		// 🔒 อย่าโหลด ถ้า AuthRouting ยังไม่ route เสร็จ
-		if (Shell.Current?.CurrentState?.Location?.ToString().Contains("starter") != true)
-			return;
+
 
 		var uid = Preferences.Get("AUTH_UID", null);
 		if (string.IsNullOrWhiteSpace(uid))

@@ -87,55 +87,17 @@ public partial class StarterViewModel : ObservableObject
     {
         try
         {
-            IsLoading = true; // Start loading
-
-            // Try to get from Preferences first (cached value)
-            var savedUsername = Preferences.Get("USER_DISPLAY_NAME", string.Empty);
-            if (!string.IsNullOrWhiteSpace(savedUsername))
+            IsLoading = true;
+            
+            // Check if user is already loaded in UserService
+            if (!UserService.Instance.IsLoaded)
             {
-                Username = savedUsername;
-                System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username from Preferences: {savedUsername}");
-                IsLoading = false; // Early exit
-                return;
+                await UserService.Instance.LoadUserAsync();
             }
 
-            // If not in Preferences, try to get from Firestore using AUTH_UID
-            var uid = Preferences.Get("AUTH_UID", string.Empty);
-            if (!string.IsNullOrEmpty(uid))
-            {
-                var username = await _firestoreService.GetUsernameAsync(uid);
-                if (!string.IsNullOrEmpty(username))
-                {
-                    Username = username;
-                    Preferences.Set("USER_DISPLAY_NAME", username);
-                    System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username from Firestore: {username}");
-                   IsLoading = false; // Early exit
-                    return;
-                }
-            }
-
-            // Fallback: try Firebase Auth
-            var user = _authClient.User;
-            if (user != null)
-            {
-                var displayName = user.Info?.DisplayName;
-                if (string.IsNullOrWhiteSpace(displayName))
-                {
-                    var email = user.Info?.Email;
-                    displayName = !string.IsNullOrWhiteSpace(email) && email.Contains('@')
-                        ? email.Split('@')[0]
-                        : "Friend";
-                }
-                Username = displayName;
-                Preferences.Set("USER_DISPLAY_NAME", displayName);
-                System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username from Firebase Auth: {displayName}");
-            }
-            else
-            {
-                // If nothing works, use default
-                Username = "Friend";
-                System.Diagnostics.Debug.WriteLine("[StarterViewModel] No username found, using default: Friend");
-            }
+            // Sync from UserService
+            Username = UserService.Instance.Username;
+            System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username via UserService: {Username}");
         }
         catch (Exception ex)
         {
@@ -144,7 +106,7 @@ public partial class StarterViewModel : ObservableObject
         }
         finally
         {
-            IsLoading = false; // Ensure loading stops
+            IsLoading = false;
         }
     }
 
@@ -212,24 +174,22 @@ public partial class StarterViewModel : ObservableObject
         }
     }
 
+    public async Task RefreshUserDataAsync()
+    {
+        // Force refresh capability
+        await UserService.Instance.RefreshAsync();
+        Username = UserService.Instance.Username;
+    }
+
     [RelayCommand]
     private async Task LogOut()
     {
         try
         {
             Console.WriteLine("[StarterViewModel] Starting logout...");
-            
-            // ? Sign out from Firebase client (with null check)
-            try
-            {
-                _authClient?.SignOut();
-                Console.WriteLine("[StarterViewModel] Firebase sign out completed");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"[StarterViewModel] Firebase sign out error: {ex.Message}");
-            }
 
+            // 1. Clear local data FIRST to prevent race condition with AuthRoutingService
+            
             // ? Sign out from Google Auth Service
             try
             {
@@ -252,7 +212,7 @@ public partial class StarterViewModel : ObservableObject
                 Console.WriteLine($"[StarterViewModel] UserService clear error: {ex.Message}");
             }
 
-            // ? Clear any locally persisted tokens/preferences (best-effort)
+            // ? Clear any locally persisted tokens/preferences
             try 
             { 
                 SecureStorage.Default.RemoveAll(); 
@@ -273,6 +233,18 @@ public partial class StarterViewModel : ObservableObject
                 Console.WriteLine($"[StarterViewModel] Preferences clear error: {ex.Message}");
             }
 
+            // 2. Sign out from Firebase client LAST
+            // This triggers AuthStateChanged, but now local data is gones so AuthRoutingService should route to //signin
+            try
+            {
+                _authClient?.SignOut();
+                Console.WriteLine("[StarterViewModel] Firebase sign out completed");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[StarterViewModel] Firebase sign out error: {ex.Message}");
+            }
+
             Console.WriteLine("[StarterViewModel] Navigating to signin...");
             if (Shell.Current != null)
                 await Shell.Current.GoToAsync("//signin");
@@ -281,7 +253,6 @@ public partial class StarterViewModel : ObservableObject
         {
             Console.WriteLine($"[StarterViewModel] Logout error: {ex.Message}\n{ex.StackTrace}");
             
-            // ? ?????? DisplayAlertAsync ???? DisplayAlert
             if (Shell.Current != null)
                 await Shell.Current.DisplayAlert("Error", $"Logout failed: {ex.Message}", "OK");
         }

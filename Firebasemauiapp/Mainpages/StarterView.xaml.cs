@@ -13,9 +13,12 @@ public partial class StarterView : ContentPage
 		BindingContext = _viewModel = viewModel;
 	}
 
-	protected override void OnAppearing()
+	protected override async void OnAppearing()
 	{
 		base.OnAppearing();
-		// Starter page is just a menu, no need to refresh anything
+		if (_viewModel != null)
+		{
+			await _viewModel.RefreshUserDataAsync();
+		}
 	}
 }

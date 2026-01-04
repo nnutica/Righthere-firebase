@@ -166,6 +166,11 @@ public partial class DashboardViewModel : ObservableObject
 		return string.IsNullOrWhiteSpace(lastCached) ? null : lastCached;
 	}
 
+	public async Task InitializeAsync()
+	{
+		await LoadSentimentScores();
+	}
+
 	private int _retryCount = 0;
 	private const int MaxRetry = 3;
 	private async Task LoadSentimentScores()
