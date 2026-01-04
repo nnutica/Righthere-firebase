@@ -8,7 +8,6 @@ using Firebasemauiapp.Services;
 using Firebasemauiapp.Helpers;
 using Firebasemauiapp.Model;
 using Microsoft.Maui.Storage;
-// Crop removed per request
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -67,10 +66,8 @@ public partial class DiaryViewModel : ObservableObject
     }
 
     [RelayCommand]
-
     private async Task UploadImage()
     {
-
         try
         {
             var action = await Shell.Current.DisplayActionSheet(
@@ -110,7 +107,6 @@ public partial class DiaryViewModel : ObservableObject
         }
     }
 
-
     // Crop function removed
 
     [RelayCommand]
@@ -122,15 +118,18 @@ public partial class DiaryViewModel : ObservableObject
             return;
         }
 
+        // ✅ Check both Firebase and Google user
         var currentUser = _authClient.User;
-        if (currentUser == null)
+        var googleUser = await GoogleAuthService.Instance.GetGoogleUserAsync();
+        
+        if (currentUser == null && googleUser == null)
         {
             await Shell.Current.DisplayAlert("Error", "User session expired. Please log in again.", "OK");
             await Shell.Current.GoToAsync("//signin");
             return;
         }
 
-        // Check if Mood and MoodScore are available (from SelectMood and LevelMood pages)
+        // Check if Mood and MoodScore are available
         if (Mood == null)
         {
             await Shell.Current.DisplayAlert("Error", "Mood information is missing. Please select your mood first.", "OK");
@@ -180,7 +179,11 @@ public partial class DiaryViewModel : ObservableObject
     {
         Console.WriteLine("📍 DiaryPage Appeared");
 
-        if (_authClient.User == null)
+        // ✅ Check both auth sources
+        var hasFirebaseUser = _authClient.User != null;
+        var hasGoogleUser = await GoogleAuthService.Instance.IsSignedInAsync();
+
+        if (!hasFirebaseUser && !hasGoogleUser)
         {
             await Shell.Current.DisplayAlert("Error", "User not logged in. Redirecting to login...", "OK");
             await Shell.Current.GoToAsync("//signin");

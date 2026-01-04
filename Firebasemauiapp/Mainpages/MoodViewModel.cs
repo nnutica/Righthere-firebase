@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
 using Firebasemauiapp.Model;
+using Firebasemauiapp.Services;
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -13,7 +14,7 @@ public partial class MoodViewModel : ObservableObject
     private readonly FirebaseAuthClient _authClient;
 
     [ObservableProperty]
-    private string _username = "Daniel";
+    private string _username = "";
 
     [ObservableProperty]
     private ObservableCollection<MoodOption> _moods = new();
@@ -24,37 +25,35 @@ public partial class MoodViewModel : ObservableObject
     [ObservableProperty]
     private bool _isNextEnabled;
 
+    [ObservableProperty]
+    private bool _isLoading = true; // ? ???????????? true ????????? loading
+
     public MoodViewModel(FirebaseAuthClient authClient)
     {
         _authClient = authClient;
-        LoadUser();
         LoadMoods();
+        _ = InitializeAsync(); // ? ???? user ????????????????????
+    }
+
+    // ? ??? initialization ?????????
+    private async Task InitializeAsync()
+    {
+        IsLoading = true;
+        
+        // ? ?????? UserService ?????? (??????? load ????)
+        if (!UserService.Instance.IsLoaded)
+        {
+            await UserService.Instance.LoadUserAsync();
+        }
+        
+        Username = UserService.Instance.Username;
+        
+        IsLoading = false;
     }
 
     partial void OnSelectedMoodChanged(MoodOption value)
     {
-        IsNextEnabled = value != null;
-    }
-
-    private void LoadUser()
-    {
-        try
-        {
-            var user = _authClient.User;
-            if (user != null)
-            {
-                var display = user.Info?.DisplayName;
-                if (string.IsNullOrWhiteSpace(display))
-                {
-                    var email = user.Info?.Email;
-                    display = !string.IsNullOrWhiteSpace(email) && email.Contains('@')
-                        ? email.Split('@')[0]
-                        : "Friend";
-                }
-                Username = display;
-            }
-        }
-        catch { /* keep default */ }
+        IsNextEnabled = value != null && !IsLoading;
     }
 
     private void LoadMoods()
@@ -82,6 +81,13 @@ public partial class MoodViewModel : ObservableObject
         if (Shell.Current == null)
         {
             System.Diagnostics.Debug.WriteLine("[MoodViewModel] Shell.Current is null!");
+            return;
+        }
+
+        // ? ????????????????????????????
+        if (IsLoading)
+        {
+            System.Diagnostics.Debug.WriteLine("[MoodViewModel] Still loading...");
             return;
         }
 

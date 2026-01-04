@@ -5,6 +5,7 @@ using Firebase.Auth;
 using Microsoft.Maui.Controls;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Firebasemauiapp.Services;
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -16,10 +17,10 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
     private readonly FirebaseAuthClient _authClient;
 
     [ObservableProperty]
-    private string _username = "Daniel";
+    private string _username = "Loading..."; // ? ???? loading
 
     [ObservableProperty]
-    private MoodOption? _mood = new MoodOption("Happiness", "", "happiness.png"); // Default value to prevent null crash
+    private MoodOption? _mood = new MoodOption("Happiness", "", "happiness.png");
 
     [ObservableProperty]
     private int? _score = 5;
@@ -30,10 +31,13 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
     [ObservableProperty]
     private string _intensityQuote = "\"Just a little bit\"";
 
+    [ObservableProperty]
+    private bool _isLoading = false; // ? ?? set ???? true ??????? load
+
     public LevelMoodViewModel(FirebaseAuthClient authClient)
     {
         _authClient = authClient;
-        LoadUser();
+        // ??????? load ???????????????? Username ??? navigation parameter
     }
 
     // Receive navigation parameters reliably
@@ -43,10 +47,16 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
         {
             System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] ApplyQueryAttributes called with {query.Count} parameters");
 
-            if (query.TryGetValue("Username", out var username) && username is string u)
+            // ? ?????? Username ??? navigation ?????? ??????? load
+            if (query.TryGetValue("Username", out var username) && username is string u && !string.IsNullOrWhiteSpace(u))
             {
                 Username = u;
                 System.Diagnostics.Debug.WriteLine($"[LevelMoodViewModel] Username set to: {u}");
+            }
+            else
+            {
+                // ? ????????? Username ??? load
+                _ = LoadUserAsync();
             }
 
             if (query.TryGetValue("Mood", out var mood))
@@ -85,25 +95,27 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
         }
     }
 
-    private void LoadUser()
+    private async Task LoadUserAsync()
     {
+        IsLoading = true;
         try
         {
-            var user = _authClient.User;
-            if (user != null)
+            // ? ?????? UserService ??????
+            if (!UserService.Instance.IsLoaded)
             {
-                var display = user.Info?.DisplayName;
-                if (string.IsNullOrWhiteSpace(display))
-                {
-                    var email = user.Info?.Email;
-                    display = !string.IsNullOrWhiteSpace(email) && email.Contains('@')
-                        ? email.Split('@')[0]
-                        : "Friend";
-                }
-                Username = display;
+                await UserService.Instance.LoadUserAsync();
             }
+            
+            Username = UserService.Instance.Username;
         }
-        catch { }
+        catch 
+        { 
+            Username = "Friend";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     partial void OnScoreChanged(int? value)
@@ -161,7 +173,6 @@ public partial class LevelMoodViewModel : ObservableObject, IQueryAttributable
             ["MoodScore"] = Score ?? 0,
             ["IntensityText"] = IntensityText
         };
-        // Use relative route (registered in AppShell.xaml.cs)
         await Shell.Current.GoToAsync("write", true, navParams);
     }
 }

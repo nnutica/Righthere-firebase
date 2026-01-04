@@ -218,8 +218,17 @@ public partial class SummaryViewModel : ObservableObject
         {
             try
             {
+                // ✅ Try both Firebase and Google user
                 var currentUser = _authClient.User;
-                if (currentUser == null)
+                string? uid = currentUser?.Uid;
+                
+                if (string.IsNullOrWhiteSpace(uid))
+                {
+                    var googleUser = await Services.GoogleAuthService.Instance.GetGoogleUserAsync();
+                    uid = googleUser?.Uid;
+                }
+                
+                if (string.IsNullOrWhiteSpace(uid))
                 {
                     await Shell.Current.DisplayAlert("Error", "User session expired. Please log in again.", "OK");
                     await Shell.Current.GoToAsync("//signin");
@@ -228,7 +237,7 @@ public partial class SummaryViewModel : ObservableObject
 
                 var diary = new DiaryData
                 {
-                    UserId = currentUser.Uid,
+                    UserId = uid,
                     Content = Content,
                     Mood = Mood,
                     SentimentScore = double.TryParse(Score, out var scoreValue) ? scoreValue : 0.0,
@@ -288,8 +297,17 @@ public partial class SummaryViewModel : ObservableObject
     {
         try
         {
+            // ✅ Try both Firebase and Google user
             var currentUser = _authClient.User;
-            if (currentUser == null)
+            string? uid = currentUser?.Uid;
+            
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                var googleUser = await Services.GoogleAuthService.Instance.GetGoogleUserAsync();
+                uid = googleUser?.Uid;
+            }
+            
+            if (string.IsNullOrWhiteSpace(uid))
             {
                 await Shell.Current.DisplayAlert("Error", "User session expired. Please log in again.", "OK");
                 await Shell.Current.GoToAsync("//signin");
@@ -298,7 +316,7 @@ public partial class SummaryViewModel : ObservableObject
 
             var diary = new DiaryData
             {
-                UserId = currentUser.Uid,
+                UserId = uid,
                 Content = Content,
                 Mood = Mood,
                 SentimentScore = double.TryParse(Score, out var scoreValue) ? scoreValue : 0.0,

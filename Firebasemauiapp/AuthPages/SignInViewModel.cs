@@ -6,6 +6,8 @@ using Firebasemauiapp.Config;
 using Google.Cloud.Firestore;
 using System.Collections.Generic;
 using Microsoft.Maui.Storage;
+using System.Text.Json;
+
 #if __ANDROID__
 using Android.Gms.Auth.Api.SignIn;
 using Android.Gms.Auth.Api;
@@ -71,6 +73,7 @@ public partial class SignInViewModel : ObservableObject
             if (!string.IsNullOrWhiteSpace(uid))
             {
                 Preferences.Set("AUTH_UID", uid);
+                Preferences.Remove("IS_GOOGLE_USER"); // Clear Google flag for email/password login
                 var db = await _firestoreService.GetDatabaseAsync();
                 var userDocRef = db.Collection("users").Document(uid);
                 var snapshot = await userDocRef.GetSnapshotAsync();
@@ -104,11 +107,15 @@ public partial class SignInViewModel : ObservableObject
                 }
             }
 
-            // Clear error and navigate to Main TabBar after successful login
+            // Clear error and navigate to Starter after successful login
             ErrorMessage = string.Empty;
             HasError = false;
+            
+            // ✅ Load user into UserService
+            await UserService.Instance.LoadUserAsync();
+            
             if (Shell.Current != null)
-                await Shell.Current.GoToAsync("//main/starter");
+                await Shell.Current.GoToAsync("//starter");
         }
         catch (Exception ex)
         {
@@ -132,88 +139,91 @@ public partial class SignInViewModel : ObservableObject
         try
         {
             Console.WriteLine("[SignInViewModel] Starting Google Sign-In");
-            
+
             ErrorMessage = string.Empty;
             HasError = false;
 
-            #if __ANDROID__
-            // Android Google Sign-In using Xamarin.GooglePlayServices.Auth
-            // โหลด Web Client ID จาก admin-sdk.json
+#if __ANDROID__
             var webClientId = await FirebaseConfig.Instance.GetWebClientIdAsync();
             Console.WriteLine($"[SignInViewModel] Web Client ID: {webClientId}");
-            
+
             var signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DefaultSignIn)
-                .RequestServerAuthCode(webClientId)
                 .RequestIdToken(webClientId)
                 .RequestEmail()
                 .Build();
-            
+
             var context = Android.App.Application.Context;
             var googleSignInClient = Android.Gms.Auth.Api.SignIn.GoogleSignIn.GetClient(context, signInOptions);
-            
-            // Start the sign-in intent
+
             var signInIntent = googleSignInClient.SignInIntent;
             var activity = Microsoft.Maui.ApplicationModel.Platform.CurrentActivity;
-            
-            Console.WriteLine($"[SignInViewModel] Activity: {(activity != null ? "available" : "null")}");
-            
+
             if (activity != null)
             {
                 Console.WriteLine("[SignInViewModel] Launching Google Sign-In activity");
                 activity.StartActivityForResult(signInIntent, 9001);
-                
-                // Wait for OnActivityResult callback to provide the account
-                Console.WriteLine("[SignInViewModel] Waiting for account selection...");
-                var account = await GoogleSignInResultHandler.Instance.GetAccountAsync(TimeSpan.FromSeconds(5));
+
+                var account = await GoogleSignInResultHandler.Instance.GetAccountAsync(TimeSpan.FromSeconds(60));
                 Console.WriteLine($"[SignInViewModel] Received account: {(account != null ? account.Email : "null")}");
-                
+
                 if (account != null && !string.IsNullOrEmpty(account.IdToken))
                 {
                     var idToken = account.IdToken;
                     Console.WriteLine("[SignInViewModel] IdToken received, exchanging for Firebase token...");
-                    
+
                     // Exchange Google ID token for Firebase auth using REST API
                     using var httpClient = new System.Net.Http.HttpClient();
                     var requestData = new
                     {
                         postBody = $"id_token={idToken}&providerId=google.com",
-                        requestUri = "http://localhost",
+                        requestUri = "https://righthere-backend.firebaseapp.com",
                         returnIdpCredential = true,
                         returnSecureToken = true
                     };
-                    
-                    var json = System.Text.Json.JsonSerializer.Serialize(requestData);
+
+                    var json = JsonSerializer.Serialize(requestData);
                     var content = new System.Net.Http.StringContent(json, System.Text.Encoding.UTF8, "application/json");
                     var response = await httpClient.PostAsync(
                         $"https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=AIzaSyCtqanoTU24UXz82KyZI8phmYae09sIx5U",
                         content);
-                    
+
                     if (!response.IsSuccessStatusCode)
                     {
                         var error = await response.Content.ReadAsStringAsync();
                         Console.WriteLine($"[SignInViewModel] Firebase exchange failed: {error}");
                         throw new Exception($"Google sign-in failed: {error}");
                     }
-                    
+
                     Console.WriteLine("[SignInViewModel] Firebase token exchange successful");
                     var resultJson = await response.Content.ReadAsStringAsync();
-                    var doc = System.Text.Json.JsonDocument.Parse(resultJson);
-                    var firebaseToken = doc.RootElement.GetProperty("idToken").GetString();
+                    var doc = JsonDocument.Parse(resultJson);
+                    var firebaseIdToken = doc.RootElement.GetProperty("idToken").GetString();
+                    var firebaseRefreshToken = doc.RootElement.GetProperty("refreshToken").GetString();
                     var firebaseUid = doc.RootElement.GetProperty("localId").GetString();
-                    
+                    var firebaseEmail = doc.RootElement.TryGetProperty("email", out var emailProp) ? emailProp.GetString() : account.Email;
+                    var firebaseDisplayName = doc.RootElement.TryGetProperty("displayName", out var nameProp) ? nameProp.GetString() : account.DisplayName;
+
                     Console.WriteLine($"[SignInViewModel] Got Firebase UID: {firebaseUid}");
+
+                    // ✅ Save Google Sign-In session manually using SecureStorage
+                    await SecureStorage.SetAsync("GOOGLE_ID_TOKEN", firebaseIdToken ?? "");
+                    await SecureStorage.SetAsync("GOOGLE_REFRESH_TOKEN", firebaseRefreshToken ?? "");
+                    await SecureStorage.SetAsync("GOOGLE_UID", firebaseUid ?? "");
+                    await SecureStorage.SetAsync("GOOGLE_EMAIL", firebaseEmail ?? "");
+                    await SecureStorage.SetAsync("GOOGLE_DISPLAY_NAME", firebaseDisplayName ?? "");
                     
-                    // Store the token for future use
-                    OnPropertyChanged(nameof(Username));
+                    Preferences.Set("AUTH_UID", firebaseUid);
+                    Preferences.Set("IS_GOOGLE_USER", true); // Mark as Google user
+
+                    Console.WriteLine("[SignInViewModel] Google session saved successfully");
 
                     if (!string.IsNullOrWhiteSpace(firebaseUid))
                     {
-                        Preferences.Set("AUTH_UID", firebaseUid);
                         var db = await _firestoreService.GetDatabaseAsync();
                         var userDocRef = db.Collection("users").Document(firebaseUid);
                         var snapshot = await userDocRef.GetSnapshotAsync();
                         var now = Timestamp.FromDateTime(DateTime.UtcNow);
-                        
+
                         // Check if user document exists - if not, create it (auto sign up)
                         if (!snapshot.Exists)
                         {
@@ -235,15 +245,13 @@ public partial class SignInViewModel : ObservableObject
                             };
                             await userDocRef.SetAsync(payload, SetOptions.Overwrite);
                             Console.WriteLine("[SignInViewModel] User document created successfully");
-                            
-                            // Show welcome message for new users
+
                             if (Shell.Current != null)
-                                await Shell.Current.DisplayAlertAsync("Welcome!", "Your account has been created successfully.", "OK");
+                                await Shell.Current.DisplayAlert("Welcome!", "Your account has been created successfully.", "OK");
                         }
                         else
                         {
                             Console.WriteLine("[SignInViewModel] User document already exists, updating last active...");
-                            // Update existing user's last active time
                             await userDocRef.UpdateAsync(new Dictionary<string, object>
                             {
                                 { "lastActiveAt", now },
@@ -252,32 +260,36 @@ public partial class SignInViewModel : ObservableObject
                         }
 
                         Console.WriteLine("[SignInViewModel] Navigating to starter page...");
+
+                        // ✅ Load user into UserService
+                        await UserService.Instance.LoadUserAsync();
+                        
                         if (Shell.Current != null)
-                            await Shell.Current.GoToAsync("//main/starter");
+                            await Shell.Current.GoToAsync("//starter");
                     }
                     else
                     {
                         Console.WriteLine("[SignInViewModel] Firebase UID is empty");
                         if (Shell.Current != null)
-                            await Shell.Current.DisplayAlertAsync("Error", "Google Sign In failed: Could not get user ID", "OK");
+                            await Shell.Current.DisplayAlert("Error", "Google Sign In failed: Could not get user ID", "OK");
                     }
                 }
                 else
                 {
                     Console.WriteLine("[SignInViewModel] No account selected or no IdToken");
                     if (Shell.Current != null)
-                        await Shell.Current.DisplayAlertAsync("Error", "Google Sign In failed: No account selected. Please try again.", "OK");
+                        await Shell.Current.DisplayAlert("Error", "Google Sign In failed: No account selected. Please try again.", "OK");
                 }
             }
             else
             {
                 if (Shell.Current != null)
-                    await Shell.Current.DisplayAlertAsync("Error", "Google Sign In failed: Activity not available", "OK");
+                    await Shell.Current.DisplayAlert("Error", "Google Sign In failed: Activity not available", "OK");
             }
-            #else
+#else
             ErrorMessage = "Google Sign In is only available on Android";
             HasError = true;
-            #endif
+#endif
         }
         catch (Exception ex)
         {
@@ -286,5 +298,4 @@ public partial class SignInViewModel : ObservableObject
             HasError = true;
         }
     }
-
 }

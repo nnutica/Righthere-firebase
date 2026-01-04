@@ -62,6 +62,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="google-services.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="13.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<!-- Removed HotReload plugin due to potential AndroidX/Material mismatch on .NET 10 -->
@@ -75,9 +79,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Config\" />
 	  <Folder Include="res\" />
 	  <Folder Include="res\xml\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <GoogleServicesJson Include="google-services.json" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -100,11 +100,25 @@ public partial class QuestViewModel : ObservableObject
 
     public void RefreshUserInfo()
     {
-        var user = _authClient.User;
-        if (user != null)
+        // ✅ ดึงจาก UserService แทน
+        if (UserService.Instance.IsLoaded)
         {
-            UserName = user.Info.DisplayName ?? user.Info.Email ?? "Guest";
+            UserName = UserService.Instance.Username;
         }
+        else
+        {
+            // Fallback: Try Firebase user
+            var user = _authClient.User;
+            if (user != null)
+            {
+                UserName = user.Info.DisplayName ?? user.Info.Email ?? "Guest";
+            }
+            else
+            {
+                UserName = "Guest";
+            }
+        }
+        
         _ = RefreshCoinAsync();
         _ = LoadUserPlantAndPotAsync();
     }

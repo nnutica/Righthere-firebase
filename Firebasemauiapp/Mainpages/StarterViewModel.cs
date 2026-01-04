@@ -109,20 +109,73 @@ public partial class StarterViewModel : ObservableObject
     {
         try
         {
-            // Sign out from Firebase client
-            _authClient.SignOut();
+            Console.WriteLine("[StarterViewModel] Starting logout...");
+            
+            // ? Sign out from Firebase client (with null check)
+            try
+            {
+                _authClient?.SignOut();
+                Console.WriteLine("[StarterViewModel] Firebase sign out completed");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[StarterViewModel] Firebase sign out error: {ex.Message}");
+            }
 
-            // Clear any locally persisted tokens/preferences (best-effort)
-            try { SecureStorage.Default.RemoveAll(); } catch { /* ignore */ }
-            try { Preferences.Default.Clear(); } catch { /* ignore */ }
+            // ? Sign out from Google Auth Service
+            try
+            {
+                await GoogleAuthService.Instance.SignOutAsync();
+                Console.WriteLine("[StarterViewModel] Google sign out completed");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[StarterViewModel] Google sign out error: {ex.Message}");
+            }
+            
+            // ? Clear UserService
+            try
+            {
+                UserService.Instance.Clear();
+                Console.WriteLine("[StarterViewModel] UserService cleared");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[StarterViewModel] UserService clear error: {ex.Message}");
+            }
 
+            // ? Clear any locally persisted tokens/preferences (best-effort)
+            try 
+            { 
+                SecureStorage.Default.RemoveAll(); 
+                Console.WriteLine("[StarterViewModel] SecureStorage cleared");
+            } 
+            catch (Exception ex) 
+            { 
+                Console.WriteLine($"[StarterViewModel] SecureStorage clear error: {ex.Message}");
+            }
+            
+            try 
+            { 
+                Preferences.Default.Clear(); 
+                Console.WriteLine("[StarterViewModel] Preferences cleared");
+            } 
+            catch (Exception ex) 
+            { 
+                Console.WriteLine($"[StarterViewModel] Preferences clear error: {ex.Message}");
+            }
+
+            Console.WriteLine("[StarterViewModel] Navigating to signin...");
             if (Shell.Current != null)
                 await Shell.Current.GoToAsync("//signin");
         }
         catch (Exception ex)
         {
+            Console.WriteLine($"[StarterViewModel] Logout error: {ex.Message}\n{ex.StackTrace}");
+            
+            // ? ?????? DisplayAlertAsync ???? DisplayAlert
             if (Shell.Current != null)
-                await Shell.Current.DisplayAlertAsync("Error", $"Logout failed: {ex.Message}", "OK");
+                await Shell.Current.DisplayAlert("Error", $"Logout failed: {ex.Message}", "OK");
         }
     }
 }

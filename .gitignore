@@ -40,3 +40,4 @@ ehthumbs.db
 # Firebase (Android) config – do not commit secrets
 Firebasemauiapp/Platforms/Android/google-services.json
 
+google-services.json

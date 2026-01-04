@@ -67,7 +67,11 @@ namespace Firebasemauiapp.Services
                 if (_disposed || Shell.Current == null)
                     return;
 
-                var isLoggedIn = _auth.User != null;
+                // ✅ Check both Firebase and Google auth
+                var isFirebaseUser = _auth.User != null;
+                var isGoogleUser = await GoogleAuthService.Instance.IsSignedInAsync();
+                var isLoggedIn = isFirebaseUser || isGoogleUser;
+                
                 var targetState = isLoggedIn ? "AUTHENTICATED" : "UNAUTHENTICATED";
 
                 // 3️⃣ route เฉพาะตอน state เปลี่ยน
@@ -101,7 +105,16 @@ namespace Firebasemauiapp.Services
 
         private async Task UpdateLastActiveAsync()
         {
+            // Try Firebase user first
             var uid = _auth.User?.Uid;
+            
+            // If not Firebase user, try Google user
+            if (string.IsNullOrWhiteSpace(uid))
+            {
+                var googleUser = await GoogleAuthService.Instance.GetGoogleUserAsync();
+                uid = googleUser?.Uid;
+            }
+            
             if (string.IsNullOrWhiteSpace(uid))
                 return;
 
