@@ -21,10 +21,11 @@
         <!-- Back Button -->
         <ImageButton Source="back.png"
                      Grid.Row="0"
-                     WidthRequest="80"
-                     HeightRequest="80"
+                     WidthRequest="40"
+                     HeightRequest="40"
                      HorizontalOptions="Start"
                      VerticalOptions="Start"
+                     Margin="10,24,0,0"
                      Clicked="OnBackClicked"/>
         <!-- Main content area -->
         <ScrollView Grid.Row="1">

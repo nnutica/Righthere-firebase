@@ -1,3 +1,4 @@
+#pragma warning disable CS0618 // Type or member is obsolete
 using Android.Gms.Auth.Api.SignIn;
 using System;
 
@@ -86,3 +87,4 @@ public class GoogleSignInResultHandler
         }
     }
 }
+#pragma warning restore CS0618 // Type or member is obsolete

@@ -50,6 +50,37 @@ public partial class DiaryViewModel : ObservableObject
     private string? _imageUrl;
 
     [ObservableProperty]
+    private string? _imageDisplayUrl;
+
+    [ObservableProperty]
+    private bool _isUploadButtonVisible = true;
+
+    partial void OnImageUrlChanged(string? value)
+    {
+        System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.OnImageUrlChanged] === START === ImageUrl changed to: '{value}'");
+        
+        // When image URL is set, make sure section is visible
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.OnImageUrlChanged] Image received, setting ImageDisplayUrl: {value}");
+            IsImageSectionVisible = true;
+            ImageDisplayUrl = value;  // Set display URL
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.OnImageUrlChanged] ImageDisplayUrl set to: {ImageDisplayUrl}");
+            IsUploadButtonVisible = false;  // Hide upload button
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.OnImageUrlChanged] IsUploadButtonVisible set to: false");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.OnImageUrlChanged] Image cleared, clearing ImageDisplayUrl");
+            ImageDisplayUrl = null;  // Clear display URL
+            IsUploadButtonVisible = true;  // Show upload button
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.OnImageUrlChanged] IsUploadButtonVisible set to: true");
+        }
+        
+        System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.OnImageUrlChanged] === END ===");
+    }
+
+    [ObservableProperty]
     private bool _isUploadingImage;
 
     [ObservableProperty]
@@ -91,8 +122,33 @@ public partial class DiaryViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void ToggleImageSection()
+    private async Task ToggleImageSection()
     {
+        System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.ToggleImageSection] Toggle called. Current state - IsVisible: {IsImageSectionVisible}, ImageUrl: {ImageUrl}");
+
+        // If section is currently OPEN and we have an image, DELETE it before closing
+        if (IsImageSectionVisible && !string.IsNullOrWhiteSpace(ImageUrl))
+        {
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.ToggleImageSection] Section is open, deleting image: {ImageUrl}");
+            var urlToDelete = ImageUrl; // Store it because we're about to set it to null
+            
+            try 
+            { 
+                System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.ToggleImageSection] Starting delete...");
+                await _uploadService.DeleteImageAsync(urlToDelete);
+                System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.ToggleImageSection] Delete completed");
+            } 
+            catch (Exception ex) 
+            { 
+                System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.ToggleImageSection] Delete error: {ex.Message}");
+            }
+            
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.ToggleImageSection] Setting ImageUrl to null");
+            ImageUrl = null;
+        }
+
+        // Toggle open/close
+        System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.ToggleImageSection] Toggling IsImageSectionVisible from {IsImageSectionVisible} to {!IsImageSectionVisible}");
         IsImageSectionVisible = !IsImageSectionVisible;
     }
 
@@ -101,6 +157,8 @@ public partial class DiaryViewModel : ObservableObject
     {
         try
         {
+            System.Diagnostics.Debug.WriteLine("[DiaryViewModel] UploadImage started");
+            
             // Request permissions first
             var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
             var photoStatus = await Permissions.CheckStatusAsync<Permissions.Photos>();
@@ -122,6 +180,8 @@ public partial class DiaryViewModel : ObservableObject
                 "Take Photo",
                 "Choose from Gallery");
 
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] User selected: {action}");
+
             FileResult? result = null;
 
             if (action == "Take Photo")
@@ -132,8 +192,18 @@ public partial class DiaryViewModel : ObservableObject
                     return;
                 }
 
-                // MediaPicker must run on main thread on Android to register ActivityResultLauncher
-                result = await MainThread.InvokeOnMainThreadAsync(() => MediaPicker.Default.CapturePhotoAsync());
+                System.Diagnostics.Debug.WriteLine("[DiaryViewModel] Capturing photo...");
+                // MediaPicker must run on UI thread - RelayCommand is already on UI thread
+                try
+                {
+                    result = await MediaPicker.Default.CapturePhotoAsync();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] CapturePhotoAsync error: {ex.Message}");
+                    throw;
+                }
+                System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Capture result: {(result != null ? "File selected" : "Cancelled")}");
             }
             else if (action == "Choose from Gallery")
             {
@@ -143,30 +213,64 @@ public partial class DiaryViewModel : ObservableObject
                     return;
                 }
 
-                // MediaPicker must run on main thread on Android to register ActivityResultLauncher
-                result = await MainThread.InvokeOnMainThreadAsync(() => MediaPicker.Default.PickPhotoAsync());
+                System.Diagnostics.Debug.WriteLine("[DiaryViewModel] Picking from gallery...");
+                // MediaPicker must run on UI thread - RelayCommand is already on UI thread
+                try
+                {
+                    result = await MediaPicker.Default.PickPhotoAsync();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] PickPhotoAsync error: {ex.Message}");
+                    throw;
+                }
+                System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Gallery result: {(result != null ? "File selected" : "Cancelled")}");
             }
 
-            if (result == null) return;
+            if (result == null)
+            {
+                System.Diagnostics.Debug.WriteLine("[DiaryViewModel] No file selected, cancelling upload");
+                return;
+            }
 
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] File selected: {result.FileName}, Path: {result.FullPath}");
+            
             IsUploadingImage = true;
+            System.Diagnostics.Debug.WriteLine("[DiaryViewModel] IsUploadingImage set to true, showing loading indicator");
 
             using var stream = File.OpenRead(result.FullPath);
+            var fileSize = stream.Length;
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] File size: {fileSize} bytes");
 
             if (!string.IsNullOrWhiteSpace(ImageUrl))
             {
-                try { await _uploadService.DeleteImageAsync(ImageUrl); } catch { }
+                System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Deleting old image: {ImageUrl}");
+                try { await _uploadService.DeleteImageAsync(ImageUrl); } catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Delete old image error: {ex.Message}"); }
             }
 
-            ImageUrl = await _uploadService.UploadImageAsync(stream, result.FileName);
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Uploading image: {result.FileName}");
+            string uploadedUrl = await _uploadService.UploadImageAsync(stream, result.FileName);
+            
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Upload successful! URL: {uploadedUrl}");
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Current ImageUrl before setting: {ImageUrl}");
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Current IsImageSectionVisible before setting: {IsImageSectionVisible}");
+            
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Setting ImageUrl property to new URL...");
+            ImageUrl = uploadedUrl;
+            
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] ImageUrl property set to: {ImageUrl}");
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] IsImageSectionVisible is now: {IsImageSectionVisible}");
         }
         catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] ❌ Upload error: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel] Stack trace: {ex.StackTrace}");
             await Shell.Current.DisplayAlert("Upload Failed", ex.Message, "OK");
         }
         finally
         {
             IsUploadingImage = false;
+            System.Diagnostics.Debug.WriteLine("[DiaryViewModel] IsUploadingImage set to false");
         }
     }
 
@@ -267,5 +371,6 @@ public partial class DiaryViewModel : ObservableObject
         AnalyzeButtonText = "Next";
         ImageUrl = null;
         IsImageSectionVisible = false;
+        System.Diagnostics.Debug.WriteLine("[DiaryViewModel] ResetDiaryForm: cleared all fields");
     }
 }

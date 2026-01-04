@@ -330,11 +330,11 @@ public partial class DashboardViewModel : ObservableObject
 			// Set background color based on mood
 			MoodBackgroundColor = mood switch
 			{
-				"happiness" => Color.FromArgb("#ECC540"), 
-				"angry" => Color.FromArgb("#EF6465"), 
+				"happiness" => Color.FromArgb("#FBC30A"), 
+				"angry" => Color.FromArgb("#E4000F"), 
 				"sadness" => Color.FromArgb("#2B638D"), 
 				"fear" => Color.FromArgb("#9E9AAB"), 
-				"love" => Color.FromArgb("#F390A6"), 
+				"love" => Color.FromArgb("#FF60A0"), 
 				"disgust" => Color.FromArgb("#1EA064"), 
 				_ => Color.FromArgb("#F8FAED")
 			};

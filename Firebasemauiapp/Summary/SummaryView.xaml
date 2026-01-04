@@ -374,7 +374,7 @@
             <!-- Suggestion layout: card centered -->
             <Grid HorizontalOptions="Start"
                   VerticalOptions="Center"
-                  Margin="0,0,0,0">
+                  Margin="0,0,0,20">
                 <Border BackgroundColor="#CCFFFFFF"
                         HeightRequest="390"
                         HorizontalOptions="Start"
@@ -583,7 +583,7 @@
                 <Button Text="Leave it"
                         BackgroundColor="White"
                         TextColor="#FEAA3A"
-                        CornerRadius="28"
+                        CornerRadius="16"
                         HeightRequest="40"
                         Padding="16,0"
                         FontSize="14"

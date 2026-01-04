@@ -5,7 +5,7 @@
              x:Class="Firebasemauiapp.Mainpages.DiaryHistory"
              Title="My Memory"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="#F5F5F5">
+             BackgroundColor="{AppThemeBinding Light=#F5F5F5, Dark=#4F5259}">
 
     <ContentPage.Resources>
         <converters:SeeMoreLinesConverter x:Key="SeeMoreLinesConverter"/>
@@ -21,17 +21,18 @@
               Margin="16,0,16,20">
             <ImageButton Grid.Column="0"
                          Source="back_green.png"
-                         WidthRequest="60"
-                         HeightRequest="60"
+                         WidthRequest="40"
+                         HeightRequest="40"
                          BackgroundColor="Transparent"
-                         Clicked="OnBackClicked"/>
+                         Clicked="OnBackClicked"
+                         Margin="0,0,0,12"/>
             <Label Grid.Column="1"
                    Text="My Memory"
-                   FontSize="24"
+                   FontSize="28"
                    FontAttributes="Bold"
                    TextColor="#8FBC8F"
                    VerticalOptions="Center"
-                   Margin="12,0,0,0"/>
+                   Margin="16,0,0,0"/>
         </Grid>
 
         <!-- Row 1: Everything in one big white border -->
@@ -176,20 +177,21 @@
                                     <VerticalStackLayout Margin="0,0,0,16"
                                                          Padding="0">
                                         <Grid ColumnDefinitions="Auto,*"
-                                              ColumnSpacing="16">
+                                              ColumnSpacing="12">
                                             <!-- Left Column: Large Mood Icon -->
                                             <Image Grid.Column="0"
                                                    Source="{Binding MoodImage}"
-                                                   HeightRequest="100"
-                                                   WidthRequest="100"
-                                                   VerticalOptions="Start"/>
+                                                   HeightRequest="120"
+                                                   WidthRequest="120"
+                                                   VerticalOptions="Start"
+                                                   Margin="0,0,20,0"/>
 
                                             <!-- Right Column: Content -->
                                             <VerticalStackLayout Grid.Column="1"
                                                                  Spacing="10">
                                                 <!-- Date/Time -->
                                                 <Label Text="{Binding FormattedDateTime}"
-                                                       FontSize="14"
+                                                       FontSize="16"
                                                        TextColor="#8FBC8F"
                                                        FontAttributes="Bold"/>
 
@@ -206,7 +208,7 @@
                                                                     Padding="12,6"
                                                                     Margin="0,0,6,6">
                                                                 <Label Text="{Binding .}"
-                                                                       FontSize="13"
+                                                                       FontSize="14"
                                                                        TextColor="White"
                                                                        FontAttributes="Bold"/>
                                                             </Border>
@@ -219,7 +221,7 @@
                                                       Margin="0,4,0,0">
                                                     <Label Grid.Column="0"
                                                            Text="{Binding SentimentScore, StringFormat='Wellness Pulse : {0}'}"
-                                                           FontSize="14"
+                                                           FontSize="16"
                                                            TextColor="#8FBC8F"
                                                            FontAttributes="Bold"
                                                            VerticalOptions="Center"/>

@@ -12,8 +12,11 @@ namespace Firebasemauiapp.Converters
         {
             if (value is string str)
             {
-                return !string.IsNullOrWhiteSpace(str);
+                var result = !string.IsNullOrWhiteSpace(str);
+                System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.StringToBoolConverter] value: '{str}' -> result: {result}");
+                return result;
             }
+            System.Diagnostics.Debug.WriteLine($"[DiaryViewModel.StringToBoolConverter] value is not string: {value?.GetType().Name}");
             return false;
         }
 

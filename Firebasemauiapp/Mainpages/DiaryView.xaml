@@ -90,7 +90,7 @@
                         x:Name="ImageBorder"
                         BackgroundColor="White"
                         StrokeThickness="0"
-                        HeightRequest="150"
+                        HeightRequest="200"
                         IsVisible="{Binding IsImageSectionVisible}">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="16"/>
@@ -98,20 +98,22 @@
                     
                     <Grid>
                         <!-- Show image if uploaded -->
-                        <Image Source="{Binding ImageUrl}"
+                        <Image x:Name="UploadedImage"
+                               Source="{Binding ImageDisplayUrl}"
                                Aspect="AspectFill"
-                               IsVisible="{Binding ImageUrl, Converter={StaticResource StringToBoolConverter}}">
+                               IsVisible="{Binding ImageDisplayUrl, Converter={StaticResource StringToBoolConverter}}">
                             <Image.Clip>
                                 <RoundRectangleGeometry CornerRadius="16"
-                                                        Rect="0,0,1000,150"/>
+                                                        Rect="0,0,1000,200"/>
                             </Image.Clip>
                         </Image>
                         
                         <!-- Upload button placeholder (when no image) -->
-                        <VerticalStackLayout VerticalOptions="Center"
+                        <VerticalStackLayout x:Name="UploadButtonContainer"
+                                             VerticalOptions="Center"
                                              HorizontalOptions="Center"
                                              Spacing="8"
-                                             IsVisible="{Binding ImageUrl, Converter={StaticResource InvertedBoolConverter}}">
+                                             IsVisible="{Binding IsUploadButtonVisible}">
                             <Border BackgroundColor="Transparent"
                                     Stroke="#FEAA3A"
                                     StrokeThickness="2"
@@ -196,6 +198,23 @@
                                    WidthRequest="60"
                                    HeightRequest="60"/>
                 <Label Text="Analyzing your diary..."
+                       TextColor="White"
+                       FontSize="16"
+                       HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Image Upload Loading Indicator -->
+        <Grid IsVisible="{Binding IsUploadingImage}"
+              BackgroundColor="#80000000">
+            <VerticalStackLayout VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Spacing="16">
+                <ActivityIndicator IsRunning="True"
+                                   Color="White"
+                                   WidthRequest="60"
+                                   HeightRequest="60"/>
+                <Label Text="Uploading image..."
                        TextColor="White"
                        FontSize="16"
                        HorizontalOptions="Center"/>

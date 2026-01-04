@@ -15,19 +15,63 @@ public partial class DiaryView : ContentPage
 		_viewModel = viewModel;
 		BindingContext = _viewModel;
 
-		// Subscribe to ImageUrl changes to adjust layout
+		// Subscribe to ImageDisplayUrl changes to adjust layout
 		_viewModel.PropertyChanged += (s, e) =>
 		{
-			if (e.PropertyName == nameof(DiaryViewModel.ImageUrl))
+			if (e.PropertyName == nameof(DiaryViewModel.ImageDisplayUrl))
 			{
+				System.Diagnostics.Debug.WriteLine($"[DiaryView.PropertyChanged] ImageDisplayUrl changed to: {_viewModel.ImageDisplayUrl}");
 				UpdateLayoutForImage();
+				
+				// Also update Image.Source directly
+				MainThread.BeginInvokeOnMainThread(async () =>
+				{
+					System.Diagnostics.Debug.WriteLine($"[DiaryView] Setting Image.Source to: {_viewModel.ImageDisplayUrl}");
+					
+					if (string.IsNullOrWhiteSpace(_viewModel.ImageDisplayUrl))
+					{
+						UploadedImage.Source = null;
+						System.Diagnostics.Debug.WriteLine($"[DiaryView] Image.Source cleared");
+					}
+					else
+					{
+						try
+						{
+							// Download image via HttpClient to avoid format issues
+							using var httpClient = new HttpClient();
+							System.Diagnostics.Debug.WriteLine($"[DiaryView] Downloading image from: {_viewModel.ImageDisplayUrl}");
+							
+							var response = await httpClient.GetAsync(_viewModel.ImageDisplayUrl);
+							if (response.IsSuccessStatusCode)
+							{
+								var imageBytes = await response.Content.ReadAsByteArrayAsync();
+								System.Diagnostics.Debug.WriteLine($"[DiaryView] Downloaded {imageBytes.Length} bytes");
+								
+								var stream = new MemoryStream(imageBytes);
+								UploadedImage.Source = ImageSource.FromStream(() => stream);
+								System.Diagnostics.Debug.WriteLine($"[DiaryView] Image loaded from stream");
+							}
+							else
+							{
+								System.Diagnostics.Debug.WriteLine($"[DiaryView] HTTP error: {response.StatusCode}");
+								UploadedImage.Source = null;
+							}
+						}
+						catch (Exception ex)
+						{
+							System.Diagnostics.Debug.WriteLine($"[DiaryView] Error loading image: {ex.Message}");
+							UploadedImage.Source = null;
+						}
+					}
+				});
 			}
 		};
 	}
 
 	private void UpdateLayoutForImage()
 	{
-		var hasImage = !string.IsNullOrEmpty(_viewModel.ImageUrl);
+		var hasImage = !string.IsNullOrEmpty(_viewModel.ImageDisplayUrl);
+		System.Diagnostics.Debug.WriteLine($"[DiaryView.UpdateLayoutForImage] hasImage: {hasImage}, ImageDisplayUrl: {_viewModel.ImageDisplayUrl}");
 
 		if (hasImage)
 		{
@@ -54,11 +98,16 @@ public partial class DiaryView : ContentPage
 			{
 				await _viewModel.CheckUserAuthentication();
 
-				// ตรวจสอบว่า SummaryPageData ถูกเครียร์หรือยัง 
-				// ถ้าเครียร์แล้วแสดงว่าเพิ่งเซฟไดอารี่มา ให้รีเซ็ตฟอร์ม
-				if (string.IsNullOrEmpty(Firebasemauiapp.Helpers.SummaryPageData.Content))
+				// Only reset form if we came back from Summary (diary was saved)
+				// If content is NOT empty, it means we just saved - so reset
+				if (!string.IsNullOrEmpty(Firebasemauiapp.Helpers.SummaryPageData.Content))
 				{
+					System.Diagnostics.Debug.WriteLine("[DiaryView.OnAppearing] Resetting form (came from Summary)");
 					_viewModel.ResetDiaryForm();
+				}
+				else
+				{
+					System.Diagnostics.Debug.WriteLine($"[DiaryView.OnAppearing] NOT resetting - preserving image: {_viewModel.ImageUrl}");
 				}
 
 				// Update current date label

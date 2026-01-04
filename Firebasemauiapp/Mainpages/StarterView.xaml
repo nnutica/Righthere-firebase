@@ -8,7 +8,7 @@
     Shell.FlyoutBehavior="Disabled"
     Shell.NavBarIsVisible="False"
     Shell.BackgroundColor="Transparent"
-    BackgroundColor="White">
+    BackgroundColor="{AppThemeBinding Light=White, Dark=#4F5259}">
 
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False"
@@ -27,17 +27,17 @@
             <Grid ColumnDefinitions="*,Auto">
                 <!-- Logo -->
                 <Image Source="logo.png"
-                       HeightRequest="60"
-                       WidthRequest="84"
-                       Margin="10,0,0,0"
+                       HeightRequest="80"
+                       WidthRequest="100"
+                       Margin="10,5,0,0"
                        HorizontalOptions="Start"/>
                 
                 <!-- Settings Button -->
                 <ImageButton Grid.Column="1"
                         Source="settings.png"
                         BackgroundColor="Transparent"
-                        HeightRequest="32"
-                        WidthRequest="32"
+                        HeightRequest="20"
+                        WidthRequest="20"
                         VerticalOptions="Center"
                         Margin="0,0,10,0"
                         Command="{Binding OpenSettingsCommand}"/>
@@ -156,6 +156,14 @@
                    Padding="30"
                    WidthRequest="300"
                    HasShadow="False">
+                   <Frame.Triggers>
+                       <DataTrigger TargetType="Frame" Binding="{Binding IsLightMode}" Value="True">
+                           <Setter Property="BackgroundColor" Value="White"/>
+                       </DataTrigger>
+                       <DataTrigger TargetType="Frame" Binding="{Binding IsLightMode}" Value="False">
+                           <Setter Property="BackgroundColor" Value="#4F5259"/>
+                       </DataTrigger>
+                   </Frame.Triggers>
                    <Frame.GestureRecognizers>
                        <TapGestureRecognizer />
                    </Frame.GestureRecognizers>
@@ -248,10 +256,20 @@
                                </Grid>
                            </Grid>
                        </Border>
-
-                       <!-- Logout Button -->
+                        <!-- Logout Button -->
                        <Button Text="Logout" 
                                Command="{Binding LogOutCommand}"
+                               BackgroundColor="#E4000F"
+                               TextColor="#FFFFFF"
+                               BorderColor="#E0E0E0"
+                               BorderWidth="1"
+                               CornerRadius="22"
+                               HeightRequest="50"
+                               FontAttributes="Bold"
+                               FontSize="16"/>
+                       <!-- Close Popup Button -->
+                       <Button Text="Okay" 
+                               Command="{Binding CloseSettingsCommand}"
                                BackgroundColor="White"
                                TextColor="#8FAF8B"
                                BorderColor="#E0E0E0"

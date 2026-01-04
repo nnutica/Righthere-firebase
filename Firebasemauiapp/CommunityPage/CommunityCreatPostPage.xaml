@@ -13,11 +13,12 @@
 
             <!-- Back Button -->
             <ImageButton Source="back_green.png"
-                         WidthRequest="20"
-                         HeightRequest="20"
+                         WidthRequest="16"
+                         HeightRequest="16"
                          HorizontalOptions="Start"
                          VerticalOptions="Start"
                          Command="{Binding GoBackCommand}"
+                         Margin="0,10,0,0"
                          Grid.Row="0"/>
 
             <!-- Header -->

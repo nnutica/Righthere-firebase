@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="Firebasemauiapp.Mainpages.SelectMoodPage"
              Shell.NavBarIsVisible="False"
-             Title="Select Mood">
+             Title="Select Mood"
+             BackgroundColor="{AppThemeBinding Light=White, Dark=#4F5259}">
     <Grid RowDefinitions="*,32"
           Padding="20,24,20,0">
         <!-- Main content -->
@@ -13,10 +14,10 @@
             <!-- Back Button -->
             <ImageButton Source="back_green.png"
                          WidthRequest="20"
-                         HeightRequest="20  "
+                         HeightRequest="20"
                          HorizontalOptions="Start"
                          VerticalOptions="Start"
-                         Margin="0,10,0,0"
+                         Margin="0,24,0,0"
                          Clicked="OnBackClicked"/>
 
             <!-- Header -->
