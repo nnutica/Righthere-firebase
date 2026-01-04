@@ -56,9 +56,11 @@ public class API
                 throw new Exception("API response missing 'result' field");
             }
 
+            
+
             // ดึงค่าจาก result object
-            suggestion = apiResponse.Result.suggestion ?? "";
-            emotionalReflection = apiResponse.Result.reflection_message ?? "";
+            suggestion = apiResponse.Result.Suggestion ?? "";
+            emotionalReflection = apiResponse.Result.Reflection_message ?? "";
 
             // Convert keywords array to comma-separated string
             if (apiResponse.Result.Keywords != null && apiResponse.Result.Keywords.Length > 0)
@@ -104,8 +106,8 @@ public class ResultData
     [JsonPropertyName("suggestion")]
     public string? Suggestion { get; set; }
 
-    [JsonPropertyName("emotional_reflection")]
-    public string? EmotionalReflection { get; set; }
+    [JsonPropertyName("reflection_message")]
+    public string? Reflection_message { get; set; }
 
     [JsonPropertyName("keywords")]
     public string[]? Keywords { get; set; }
