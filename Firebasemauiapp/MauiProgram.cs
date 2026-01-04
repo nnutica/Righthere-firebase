@@ -114,10 +114,7 @@ public static class MauiProgram
 		// Expose service provider and start auth-driven routing
 		ServiceHelper.Initialize(app.Services);
 		// Apply default GitHub upload settings to Preferences (fill values in Config/GitHubSettings.cs)
-		//GitHubSettings.ApplyToPreferences();
-		app.Services.GetRequiredService<AuthRoutingService>().Start();
-
-		// Pre-warm Firestore in background to avoid first-use delay when opening Diary/History
+	GitHubSettings.ApplyToPreferences();
 		_ = app.Services.GetRequiredService<FirestoreService>().GetDatabaseAsync();
 
 		return app;

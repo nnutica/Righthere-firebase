@@ -8,6 +8,7 @@ using Firebasemauiapp.Services;
 using Firebasemauiapp.Helpers;
 using Firebasemauiapp.Model;
 using Microsoft.Maui.Storage;
+using Microsoft.Maui.ApplicationModel;
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -55,6 +56,9 @@ public partial class DiaryViewModel : ObservableObject
     private bool _isImageAreaEnabled = true;
 
     [ObservableProperty]
+    private bool _isImageSectionVisible = false;
+
+    [ObservableProperty]
     private Color _moodBackgroundColor = Colors.Transparent;
 
     public DiaryViewModel(DiaryDatabase diaryDatabase, FirebaseAuthClient authClient, GitHubUploadService uploadService)
@@ -87,10 +91,30 @@ public partial class DiaryViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void ToggleImageSection()
+    {
+        IsImageSectionVisible = !IsImageSectionVisible;
+    }
+
+    [RelayCommand]
     private async Task UploadImage()
     {
         try
         {
+            // Request permissions first
+            var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
+            var photoStatus = await Permissions.CheckStatusAsync<Permissions.Photos>();
+
+            if (cameraStatus != PermissionStatus.Granted)
+            {
+                cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
+            }
+
+            if (photoStatus != PermissionStatus.Granted)
+            {
+                photoStatus = await Permissions.RequestAsync<Permissions.Photos>();
+            }
+
             var action = await Shell.Current.DisplayActionSheet(
                 "Choose photo source",
                 "Cancel",
@@ -101,9 +125,27 @@ public partial class DiaryViewModel : ObservableObject
             FileResult? result = null;
 
             if (action == "Take Photo")
-                result = await MediaPicker.Default.CapturePhotoAsync();
+            {
+                if (cameraStatus != PermissionStatus.Granted)
+                {
+                    await Shell.Current.DisplayAlert("Permission Denied", "Camera permission is required to take photos.", "OK");
+                    return;
+                }
+
+                // MediaPicker must run on main thread on Android to register ActivityResultLauncher
+                result = await MainThread.InvokeOnMainThreadAsync(() => MediaPicker.Default.CapturePhotoAsync());
+            }
             else if (action == "Choose from Gallery")
-                result = await MediaPicker.Default.PickPhotoAsync();
+            {
+                if (photoStatus != PermissionStatus.Granted)
+                {
+                    await Shell.Current.DisplayAlert("Permission Denied", "Photo library permission is required to choose photos.", "OK");
+                    return;
+                }
+
+                // MediaPicker must run on main thread on Android to register ActivityResultLauncher
+                result = await MainThread.InvokeOnMainThreadAsync(() => MediaPicker.Default.PickPhotoAsync());
+            }
 
             if (result == null) return;
 
@@ -224,5 +266,6 @@ public partial class DiaryViewModel : ObservableObject
         IsLoadingVisible = false;
         AnalyzeButtonText = "Next";
         ImageUrl = null;
+        IsImageSectionVisible = false;
     }
 }

@@ -175,7 +175,8 @@ public class MainActivity : MauiAppCompatActivity
         }
         else
         {
-            Console.WriteLine($"[MainActivity.OnActivityResult] ⊘ Ignoring unknown requestCode: {requestCode}");
+            // Other request codes (like MediaPicker) are handled internally by MAUI
+            // No action needed here
         }
     }
 }

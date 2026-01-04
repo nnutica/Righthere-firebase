@@ -91,18 +91,45 @@
                         BackgroundColor="White"
                         StrokeThickness="0"
                         HeightRequest="150"
-                        IsVisible="{Binding ImageUrl, Converter={StaticResource StringToBoolConverter}}">
+                        IsVisible="{Binding IsImageSectionVisible}">
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="16"/>
                     </Border.StrokeShape>
                     
-                    <Image Source="{Binding ImageUrl}"
-                           Aspect="AspectFill">
-                        <Image.Clip>
-                            <RoundRectangleGeometry CornerRadius="16"
-                                                    Rect="0,0,1000,150"/>
-                        </Image.Clip>
-                    </Image>
+                    <Grid>
+                        <!-- Show image if uploaded -->
+                        <Image Source="{Binding ImageUrl}"
+                               Aspect="AspectFill"
+                               IsVisible="{Binding ImageUrl, Converter={StaticResource StringToBoolConverter}}">
+                            <Image.Clip>
+                                <RoundRectangleGeometry CornerRadius="16"
+                                                        Rect="0,0,1000,150"/>
+                            </Image.Clip>
+                        </Image>
+                        
+                        <!-- Upload button placeholder (when no image) -->
+                        <VerticalStackLayout VerticalOptions="Center"
+                                             HorizontalOptions="Center"
+                                             Spacing="8"
+                                             IsVisible="{Binding ImageUrl, Converter={StaticResource InvertedBoolConverter}}">
+                            <Border BackgroundColor="Transparent"
+                                    Stroke="#FEAA3A"
+                                    StrokeThickness="2"
+                                    WidthRequest="60"
+                                    HeightRequest="60"
+                                    HorizontalOptions="Center">
+                                <Border.StrokeShape>
+                                    <Ellipse/>
+                                </Border.StrokeShape>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding UploadImageCommand}"/>
+                                </Border.GestureRecognizers>
+                                <Image Source="imgicon.png"
+                                       WidthRequest="32"
+                                       HeightRequest="32"/>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Grid>
                 </Border>
 
                 <!-- Action Buttons -->
@@ -111,7 +138,7 @@
                       ColumnSpacing="12"
                       Margin="0,8,0,0">
 
-                    <!-- Image Upload Button -->
+                    <!-- Toggle Image Section Button -->
                     <Border Grid.Column="0"
                             BackgroundColor="White"
                             Stroke="#FEAA3A"
@@ -128,7 +155,7 @@
                                     Opacity="0.2"/>
                         </Border.Shadow>
                         <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding UploadImageCommand}"/>
+                            <TapGestureRecognizer Command="{Binding ToggleImageSectionCommand}"/>
                         </Border.GestureRecognizers>
 
                         <Image Source="imgicon.png"
