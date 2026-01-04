@@ -21,6 +21,38 @@ public partial class StarterViewModel : ObservableObject
     private bool _isLoading;
 
     [ObservableProperty]
+    private bool _isSettingsOpen;
+
+    [ObservableProperty]
+    private bool _isLightMode = true;
+
+    [RelayCommand]
+    private void OpenSettings()
+    {
+        IsSettingsOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseSettings()
+    {
+        IsSettingsOpen = false;
+    }
+
+    [RelayCommand]
+    private void SetLightTheme()
+    {
+        IsLightMode = true;
+        if (Application.Current != null) Application.Current.UserAppTheme = AppTheme.Light;
+    }
+
+    [RelayCommand]
+    private void SetDarkTheme()
+    {
+        IsLightMode = false;
+        if (Application.Current != null) Application.Current.UserAppTheme = AppTheme.Dark;
+    }
+
+    [ObservableProperty]
     private string _username = "Friend";
 
     public string WelcomeMessage => Username;
