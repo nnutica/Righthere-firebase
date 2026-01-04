@@ -325,12 +325,12 @@ public partial class DashboardViewModel : ObservableObject
 			// Set background color based on mood
 			MoodBackgroundColor = mood switch
 			{
-				"happiness" => Color.FromArgb("#FBC30A"), // Light yellow
-				"angry" => Color.FromArgb("#E4000F"), // Light red
-				"sadness" => Color.FromArgb("#2B638D"), // Light blue
-				"fear" => Color.FromArgb("#9E9AAB"), // Light purple
-				"love" => Color.FromArgb("#FF60A0"), // Light pink
-				"disgust" => Color.FromArgb("#1EA064"), // Light orange
+				"happiness" => Color.FromArgb("#ECC540"), 
+				"angry" => Color.FromArgb("#EF6465"), 
+				"sadness" => Color.FromArgb("#2B638D"), 
+				"fear" => Color.FromArgb("#9E9AAB"), 
+				"love" => Color.FromArgb("#F390A6"), 
+				"disgust" => Color.FromArgb("#1EA064"), 
 				_ => Color.FromArgb("#F8FAED")
 			};
 		}
@@ -389,26 +389,37 @@ public partial class DashboardViewModel : ObservableObject
 			int total = keywordCounts.Values.Sum();
 
 			// Define colors for 1st, 2nd, 3rd place (Progress Color, Track Color)
+			// Define colors: 1st #018440, 2nd #8ACA74, 3rd #DCDEC6
 			var rankColors = new[]
 			{
-				(Progress: Color.FromArgb("#EFDFC7"), Track: Color.FromArgb("#B0BEC5")), // 1st: Beige / BlueGrey
-				(Progress: Color.FromArgb("#00E676"), Track: Color.FromArgb("#2E7D32")), // 2nd: Bright Green / Dark Green
-				(Progress: Color.FromArgb("#CFD8DC"), Track: Color.FromArgb("#90A4AE"))  // 3rd: Light Grey / BlueGrey
+				(Progress: Color.FromArgb("#018440"), Track: Color.FromArgb("#DCEBDD")), // 1st
+				(Progress: Color.FromArgb("#8ACA74"), Track: Color.FromArgb("#EDF6EA")), // 2nd
+				(Progress: Color.FromArgb("#DCDEC6"), Track: Color.FromArgb("#F3F3EF"))  // 3rd
 			};
 
 			// Add themes with their respective colors
+            int currentRank = 0;
+
 			for (int i = 0; i < top3Keywords.Count; i++)
 			{
 				var keyword = top3Keywords[i];
-				var percentage = (keyword.Value / (double)total) * 100;
-                // Use safe default if more than 3 items (though we Take(3) above)
-                var colors = i < rankColors.Length ? rankColors[i] : (Progress: Colors.LightGray, Track: Colors.Gray);
+                
+                // If count decreases compared to previous, increment rank
+                if (i > 0 && keyword.Value < top3Keywords[i-1].Value)
+                {
+                    currentRank++;
+                }
+
+                int colorIndex = currentRank;
+                if (colorIndex >= rankColors.Length) colorIndex = rankColors.Length - 1;
+
+                var colors = rankColors[colorIndex];
 
 				ResonatingThemes.Add(new ThemeData
 				{
 					ThemeName = keyword.Key,
 					Count = keyword.Value,
-					Percentage = percentage,
+					Percentage = (keyword.Value / (double)total) * 100,
 					BackgroundColor = colors.Progress,
                     TrackColor = colors.Track
 				});

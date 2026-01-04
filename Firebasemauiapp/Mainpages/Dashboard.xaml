@@ -154,7 +154,7 @@
                                                         
                                                         <!-- Sun -->
                                                         <VerticalStackLayout Grid.Column="0" Spacing="2" VerticalOptions="End">
-                                                               <Border BackgroundColor="#8FB8D6"
+                                                               <Border BackgroundColor="#8FB78F"
                                                                        StrokeThickness="0"
                                                                        StrokeShape="RoundRectangle 8"
                                                                        HeightRequest="24"
@@ -169,7 +169,7 @@
                                                                              VerticalOptions="Center"/>
                                                                </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[0].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#8FB8D6"
+                                                                        BackgroundColor="#8FB78F"
                                                                         CornerRadius="10,10,10,10"
                                                                         WidthRequest="36"
                                                                         HorizontalOptions="Center"/>
@@ -183,7 +183,7 @@
 
                                                         <!-- Mon -->
                                                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="End">
-                                                               <Border BackgroundColor="#8FB8D6"
+                                                               <Border BackgroundColor="#8FB78F"
                                                                        StrokeThickness="0"
                                                                        StrokeShape="RoundRectangle 8"
                                                                        HeightRequest="24"
@@ -198,7 +198,7 @@
                                                                              VerticalOptions="Center"/>
                                                                </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[1].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#8FB8D6"
+                                                                        BackgroundColor="#8FB78F"
                                                                         CornerRadius="10,10,10,10"
                                                                         WidthRequest="36"
                                                                         HorizontalOptions="Center"/>
@@ -212,7 +212,7 @@
 
                                                         <!-- Tue -->
                                                         <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="End">
-                                                               <Border BackgroundColor="#8FB8D6"
+                                                               <Border BackgroundColor="#8FB78F"
                                                                        StrokeThickness="0"
                                                                        StrokeShape="RoundRectangle 8"
                                                                        HeightRequest="24"
@@ -227,7 +227,7 @@
                                                                              VerticalOptions="Center"/>
                                                                </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[2].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#8FB8D6"
+                                                                        BackgroundColor="#8FB78F"
                                                                         CornerRadius="10,10,10,10"
                                                                         WidthRequest="36"
                                                                         HorizontalOptions="Center"/>
@@ -241,7 +241,7 @@
 
                                                         <!-- Wed -->
                                                         <VerticalStackLayout Grid.Column="3" Spacing="2" VerticalOptions="End">
-                                                               <Border BackgroundColor="#8FB8D6"
+                                                               <Border BackgroundColor="#8FB78F"
                                                                        StrokeThickness="0"
                                                                        StrokeShape="RoundRectangle 8"
                                                                        HeightRequest="24"
@@ -256,7 +256,7 @@
                                                                              VerticalOptions="Center"/>
                                                                </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[3].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#8FB8D6"
+                                                                        BackgroundColor="#8FB78F"
                                                                         CornerRadius="10,10,10,10"
                                                                         WidthRequest="36"
                                                                         HorizontalOptions="Center"/>
@@ -270,7 +270,7 @@
 
                                                         <!-- Thu -->
                                                         <VerticalStackLayout Grid.Column="4" Spacing="2" VerticalOptions="End">
-                                                               <Border BackgroundColor="#8FB8D6"
+                                                               <Border BackgroundColor="#8FB78F"
                                                                        StrokeThickness="0"
                                                                        StrokeShape="RoundRectangle 8"
                                                                        HeightRequest="24"
@@ -285,7 +285,7 @@
                                                                              VerticalOptions="Center"/>
                                                                </Border>
                                                                <BoxView HeightRequest="{Binding WeeklyPulseData[4].Score, Converter={StaticResource ScoreToHeightConverter}}"
-                                                                        BackgroundColor="#8FB8D6"
+                                                                        BackgroundColor="#8FB78F"
                                                                         CornerRadius="10,10,10,10"
                                                                         WidthRequest="36"
                                                                         HorizontalOptions="Center"/>
