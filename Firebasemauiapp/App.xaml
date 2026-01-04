@@ -17,6 +17,7 @@
             <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
             <converters:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
             <converters:CalendarDayColorConverter x:Key="CalendarDayColorConverter"/>
+            <converters:StringToBoolConverter x:Key="StringToBoolConverter"/>
 
             <!-- Make Shell navigation bar transparent and remove shadow globally -->
             <Style TargetType="ContentPage"
