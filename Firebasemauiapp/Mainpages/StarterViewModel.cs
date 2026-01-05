@@ -57,6 +57,21 @@ public partial class StarterViewModel : ObservableObject
 
     public string WelcomeMessage => Username;
 
+    // ✅ Change Password Properties
+    public bool IsGoogleUser => UserService.Instance.IsGoogleUser;
+
+    [ObservableProperty]
+    private bool _isChangePasswordOpen;
+
+    [ObservableProperty]
+    private string _oldPassword = string.Empty;
+
+    [ObservableProperty]
+    private string _newPassword = string.Empty;
+
+    [ObservableProperty]
+    private string _confirmPassword = string.Empty;
+
     public StarterViewModel(FirebaseAuthClient authClient, DiaryDatabase diaryDatabase, FirestoreService firestoreService)
     {
         _authClient = authClient;
@@ -65,6 +80,71 @@ public partial class StarterViewModel : ObservableObject
 
         // Load username asynchronously
         _ = LoadUsernameAsync();
+    }
+
+    // ... (Existing GoDiary Command) ...
+
+    [RelayCommand]
+    private void OpenChangePassword()
+    {
+        OldPassword = string.Empty;
+        NewPassword = string.Empty;
+        ConfirmPassword = string.Empty;
+        IsSettingsOpen = false; // Close settings menu
+        IsChangePasswordOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseChangePassword()
+    {
+        IsChangePasswordOpen = false;
+        IsSettingsOpen = true; // Re-open settings menu
+    }
+
+    [RelayCommand]
+    private async Task SubmitChangePassword()
+    {
+        if (string.IsNullOrWhiteSpace(OldPassword) || 
+            string.IsNullOrWhiteSpace(NewPassword) || 
+            string.IsNullOrWhiteSpace(ConfirmPassword))
+        {
+            await Shell.Current.DisplayAlert("Error", "Please fill in all fields.", "OK");
+            return;
+        }
+
+        if (NewPassword != ConfirmPassword)
+        {
+            await Shell.Current.DisplayAlert("Error", "New passwords do not match.", "OK");
+            return;
+        }
+
+        if (OldPassword == NewPassword)
+        {
+            await Shell.Current.DisplayAlert("Error", "New password cannot be the same as the old password.", "OK");
+            return;
+        }
+
+        try
+        {
+            IsLoading = true;
+            // 1. Re-authenticate
+            var email = UserService.Instance.Email;
+            if (string.IsNullOrEmpty(email)) throw new Exception("No email found.");
+
+            await _authClient.SignInWithEmailAndPasswordAsync(email, OldPassword);
+            
+            // 2. Change Password
+            await _authClient.User.ChangePasswordAsync(NewPassword);
+
+            IsChangePasswordOpen = false;
+            IsLoading = false;
+            await Shell.Current.DisplayAlert("Success", "Password changed successfully.", "OK");
+        }
+        catch (Exception ex)
+        {
+            IsLoading = false;
+            await Shell.Current.DisplayAlert("Error", $"Failed to change password. Please check your old password.\n{ex.Message}", "OK");
+        }
     }
 
     [RelayCommand]
@@ -97,6 +177,7 @@ public partial class StarterViewModel : ObservableObject
 
             // Sync from UserService
             Username = UserService.Instance.Username;
+            OnPropertyChanged(nameof(IsGoogleUser));
             System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username via UserService: {Username}");
 
             // Load Plant and Pot
