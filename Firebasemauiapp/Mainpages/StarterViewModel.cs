@@ -257,4 +257,110 @@ public partial class StarterViewModel : ObservableObject
                 await Shell.Current.DisplayAlert("Error", $"Logout failed: {ex.Message}", "OK");
         }
     }
+
+    // ==========================================
+    // DELETE ACCOUNT LOGIC
+    // ==========================================
+
+    [ObservableProperty]
+    private bool _isDeleteConfirmationOpen;
+
+    [ObservableProperty]
+    private bool _isFinalDeleteConfirmationOpen;
+
+    [ObservableProperty]
+    private string _deleteConfirmationInput = "";
+
+    [ObservableProperty]
+    private string _deleteErrorMessage = "";
+
+    [ObservableProperty]
+    private bool _hasDeleteError;
+
+    [RelayCommand]
+    private void ShowDeleteConfirmation()
+    {
+        // Close settings, open first confirmation
+        IsSettingsOpen = false;
+        IsDeleteConfirmationOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseDeleteConfirmation()
+    {
+        IsDeleteConfirmationOpen = false;
+        IsFinalDeleteConfirmationOpen = false;
+        DeleteConfirmationInput = "";
+        DeleteErrorMessage = "";
+        HasDeleteError = false;
+    }
+
+    [RelayCommand]
+    private void ShowFinalDeleteConfirmation()
+    {
+        IsDeleteConfirmationOpen = false;
+        IsFinalDeleteConfirmationOpen = true;
+        DeleteConfirmationInput = ""; // Reset input
+        HasDeleteError = false;
+    }
+
+    [RelayCommand]
+    private async Task ExecuteDeleteAccount()
+    {
+        if (string.IsNullOrWhiteSpace(DeleteConfirmationInput) || 
+            !DeleteConfirmationInput.Trim().Equals("delete", StringComparison.OrdinalIgnoreCase))
+        {
+            DeleteErrorMessage = "Incorrect. Please try again";
+            HasDeleteError = true;
+            return;
+        }
+
+        // Correct input, proceed to delete
+        try
+        {
+            IsLoading = true;
+            HasDeleteError = false;
+
+            // Close popup immediately or keep it showing loading state? 
+            // Better to show loading.
+            
+            await UserService.Instance.DeleteAccountAsync();
+
+            // After successful deletion, navigate to sign in
+            // Use MainThread to ensure UI update
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                IsFinalDeleteConfirmationOpen = false;
+                IsSettingsOpen = false;
+                if (Shell.Current != null)
+                    await Shell.Current.GoToAsync("//signin");
+            });
+        }
+        catch (Exception ex)
+        {
+            DeleteErrorMessage = "Error deleting account. Please try again later.";
+            HasDeleteError = true;
+            System.Diagnostics.Debug.WriteLine($"Delete error: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [ObservableProperty]
+    private bool _isLogoutConfirmationOpen;
+
+    [RelayCommand]
+    private void ShowLogoutConfirmation()
+    {
+        IsSettingsOpen = false;
+        IsLogoutConfirmationOpen = true;
+    }
+
+    [RelayCommand]
+    private void CloseLogoutConfirmation()
+    {
+        IsLogoutConfirmationOpen = false;
+    }
 }

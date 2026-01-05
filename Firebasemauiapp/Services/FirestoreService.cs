@@ -160,4 +160,42 @@ public class FirestoreService
             return ("empty.png", "pot.png");
         }
     }
+
+    /// <summary>
+    /// Deletes all user data from Firestore (Documents in 'users' and 'diaries')
+    /// </summary>
+    public async Task DeleteUserDataAsync(string uid)
+    {
+        try
+        {
+            var database = await GetDatabaseAsync();
+
+            // 1. Delete User Profile
+            var userDocRef = database.Collection("users").Document(uid);
+            await userDocRef.DeleteAsync();
+            Console.WriteLine($"[FirestoreService] Deleted user profile for {uid}");
+
+            // 2. Delete All Diaries for this user
+            // Note: In production with many documents, this should be done differently (e.g. valid batching or cloud function)
+            // But for this scope, a client-side query and batch delete is acceptable.
+            var diariesQuery = database.Collection("diaries").WhereEqualTo("userId", uid);
+            var diariesSnapshot = await diariesQuery.GetSnapshotAsync();
+
+            if (diariesSnapshot.Count > 0)
+            {
+                var batch = database.StartBatch();
+                foreach (var doc in diariesSnapshot.Documents)
+                {
+                    batch.Delete(doc.Reference);
+                }
+                await batch.CommitAsync();
+                Console.WriteLine($"[FirestoreService] Deleted {diariesSnapshot.Count} diaries for {uid}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[FirestoreService] Error deleting user data: {ex.Message}");
+            throw; 
+        }
+    }
 }
