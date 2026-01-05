@@ -159,4 +159,71 @@ public class UserService
         IsLoaded = false;
         await LoadUserAsync();
     }
+
+    /// <summary>
+    /// delete account and all data
+    /// </summary>
+    public async Task DeleteAccountAsync()
+    {
+        try
+        {
+            Console.WriteLine($"[UserService] Starting account deletion for {Uid}...");
+            
+            // 1. Delete Firestore Data FIRST (while we still have auth permission if needed)
+            // Note: If you need ID token verification for backend, do it before deleting Auth user.
+            // Using Admin SDK in FirestoreService (if configured) or Client SDK.
+            // Assuming FirestoreService uses Admin SDK or rules allow user to delete their own data.
+            try 
+            {
+                var firestoreService = ServiceHelper.Get<FirestoreService>();
+                if (firestoreService != null && !string.IsNullOrEmpty(Uid))
+                {
+                    await firestoreService.DeleteUserDataAsync(Uid);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[UserService] Warning: Failed to delete Firestore data: {ex.Message}");
+                // Continue to delete Auth user anyway? Or stop? 
+                // Usually better to ensure Auth is gone so they can't login again.
+            }
+
+            // 2. Delete Google Auth connection (if applicable)
+            if (IsGoogleUser)
+            {
+                 try
+                {
+                    await GoogleAuthService.Instance.SignOutAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[UserService] Google disconnect error: {ex.Message}");
+                }
+            }
+
+            // 3. Delete Firebase Auth User
+            if (_authClient?.User != null)
+            {
+                await _authClient.User.DeleteAsync();
+                Console.WriteLine("[UserService] Firebase Auth user deleted");
+            }
+            else
+            {
+                Console.WriteLine("[UserService] No active Firebase user to delete");
+            }
+
+            // 4. Clear Local Data
+            Clear();
+            SecureStorage.Default.RemoveAll();
+            Preferences.Default.Clear();
+
+            Console.WriteLine("[UserService] Account deletion complete.");
+
+        }
+        catch (Exception ex)
+        {
+             Console.WriteLine($"[UserService] Fatal error during account deletion: {ex.Message}");
+             throw; // Re-throw to let ViewModel handle UI feedback
+        }
+    }
 }

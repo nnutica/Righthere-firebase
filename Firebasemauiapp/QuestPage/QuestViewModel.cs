@@ -308,20 +308,21 @@ public partial class QuestViewModel : ObservableObject
         IsBusy = true;
         Quests.Clear();
 
-        var user = _authClient.User;
-        if (user == null)
+        // Use UserService to support both Firebase and Google users
+        var uid = UserService.Instance.Uid;
+        if (string.IsNullOrEmpty(uid))
         {
             IsBusy = false;
             return;
         }
 
         // ดึง quest ทั้งหมดจาก Quest.cs
-        var dailyQuests = await Quest.GetDailyQuestsAsync(_diaryDatabase, _postDatabase, user.Uid);
+        var dailyQuests = await Quest.GetDailyQuestsAsync(_diaryDatabase, _postDatabase, uid);
 
         // อัพเดท claimed status และ button state
         foreach (var quest in dailyQuests)
         {
-            quest.IsClaimed = await IsQuestClaimedAsync(user.Uid, quest.QuestID);
+            quest.IsClaimed = await IsQuestClaimedAsync(uid, quest.QuestID);
             quest.UpdateButtonState();
             Quests.Add(quest);
         }
@@ -395,11 +396,12 @@ public partial class QuestViewModel : ObservableObject
         if (quest.IsClaimed || !quest.IsCompleted)
             return;
 
-        var user = _authClient.User;
-        if (user == null)
+        // Use UserService to support both Firebase and Google users
+        var uid = UserService.Instance.Uid;
+        if (string.IsNullOrEmpty(uid))
             return;
 
-        await ClaimQuestInternalAsync(user.Uid, quest);
+        await ClaimQuestInternalAsync(uid, quest);
         quest.UpdateButtonState();
         await RefreshCoinAsync();
     }

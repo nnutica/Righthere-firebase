@@ -37,12 +37,21 @@ public partial class SignInViewModel : ObservableObject
     [ObservableProperty]
     private bool _isPasswordVisible = false;
 
+    [ObservableProperty]
+    private bool _isRememberMeChecked = false;
+
     public string? Username => _authClient.User?.Info?.DisplayName;
 
     [RelayCommand]
     private void TogglePasswordVisibility()
     {
         IsPasswordVisible = !IsPasswordVisible;
+    }
+
+    [RelayCommand]
+    private void ToggleRememberMe()
+    {
+        IsRememberMeChecked = !IsRememberMeChecked;
     }
 
 
@@ -114,6 +123,9 @@ public partial class SignInViewModel : ObservableObject
             ErrorMessage = string.Empty;
             HasError = false;
             
+            // ✅ Save Remember Me Preference
+            Preferences.Set("REMEMBER_ME", IsRememberMeChecked);
+
             // ✅ Load user into UserService
             await UserService.Instance.LoadUserAsync();
             
@@ -248,6 +260,7 @@ private void CheckSha1Fingerprint()
                     
                     Preferences.Set("AUTH_UID", firebaseUid);
                     Preferences.Set("IS_GOOGLE_USER", true); // Mark as Google user
+                    Preferences.Set("REMEMBER_ME", IsRememberMeChecked); // ✅ Save Remember Me Preference
 
                     Console.WriteLine("[SignInViewModel] Google session saved successfully");
 

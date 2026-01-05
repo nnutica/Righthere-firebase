@@ -71,6 +71,26 @@ namespace Firebasemauiapp.Services
                 var isFirebaseUser = _auth.User != null;
                 var isGoogleUser = await GoogleAuthService.Instance.IsSignedInAsync();
                 var isLoggedIn = isFirebaseUser || isGoogleUser;
+
+                // ✅ Check Remember Me Preference
+                if (isLoggedIn)
+                {
+                    var rememberMe = Preferences.Get("REMEMBER_ME", false);
+                    if (!rememberMe)
+                    {
+                        Console.WriteLine("[AuthRoutingService] Remember Me is FALSE. Logging out...");
+                        try 
+                        {
+                            _auth.SignOut();
+                            await GoogleAuthService.Instance.SignOutAsync();
+                            isLoggedIn = false; // Force status to false
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"[AuthRoutingService] Error during auto-logout: {ex.Message}");
+                        }
+                    }
+                }
                 
                 var targetState = isLoggedIn ? "AUTHENTICATED" : "UNAUTHENTICATED";
 
