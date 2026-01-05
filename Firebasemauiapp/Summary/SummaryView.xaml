@@ -397,7 +397,7 @@
                                FontAttributes="Bold"
                                TextColor="#FEAA3A"/>
                         <Label Text="{Binding Suggestion}"
-                               FontFamily="contextfont"
+                               FontFamily="regularfont"
                                FontSize="14"
                                TextColor="#8FB78F"
                                LineHeight="1.2"/>

@@ -39,16 +39,28 @@ public partial class AppShell : Shell
 		{
 			try
 			{
-				var nav = Shell.Current?.Navigation;
-				if (nav != null && nav.NavigationStack.Count > 1)
+				var currentRoute = Shell.Current?.CurrentState?.Location?.OriginalString ?? string.Empty;
+				System.Diagnostics.Debug.WriteLine($"🔍 Current route: {currentRoute}");
+
+				// Handle specific routes with custom back navigation
+				if (currentRoute.Contains("signup"))
 				{
-					System.Diagnostics.Debug.WriteLine($"🔙 Popping page. Stack before pop: {nav.NavigationStack.Count}");
-					await nav.PopAsync();
+					System.Diagnostics.Debug.WriteLine("🔙 SignUp page detected - navigating to SignIn");
+					await Shell.Current.GoToAsync("//signin", false);
 				}
 				else
 				{
-					System.Diagnostics.Debug.WriteLine("⚠️  No stack to pop, going to starter");
-					await Shell.Current.GoToAsync("//starter", false);
+					var nav = Shell.Current?.Navigation;
+					if (nav != null && nav.NavigationStack.Count > 1)
+					{
+						System.Diagnostics.Debug.WriteLine($"🔙 Popping page. Stack before pop: {nav.NavigationStack.Count}");
+						await nav.PopAsync();
+					}
+					else
+					{
+						System.Diagnostics.Debug.WriteLine("⚠️  No stack to pop, going to starter");
+						await Shell.Current.GoToAsync("//starter", false);
+					}
 				}
 			}
 			catch (Exception ex)
