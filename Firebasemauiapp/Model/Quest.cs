@@ -82,10 +82,13 @@ public static class Quest
 
         try
         {
+            Console.WriteLine($"[Quest] Checking if user '{userId}' has posted today for 'Share Your Love' quest");
             hasPostedToday = await postDatabase.HasUserPostedTodayAsync(userId);
+            Console.WriteLine($"[Quest] Share Your Love quest check result: {hasPostedToday}");
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine($"[Quest] Error checking posts for Share Your Love quest: {ex.Message}");
             hasPostedToday = false;
         }
 

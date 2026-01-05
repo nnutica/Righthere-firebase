@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using Firebase.Auth;
 using Firebasemauiapp.Data;
 using Firebasemauiapp.Model;
+using Firebasemauiapp.Services;
 
 namespace Firebasemauiapp.Mainpages;
 
@@ -223,26 +224,63 @@ public partial class DiaryHistoryViewModel : ObservableObject
             IsLoading = true;
             var currentUser = _authClient.User;
 
+            // Check Firebase user first
             if (currentUser == null)
             {
-                if (Shell.Current != null)
-                    await Shell.Current.GoToAsync("//signin");
+                // Check Google user
+                var googleUser = await GoogleAuthService.Instance.GetGoogleUserAsync();
+                if (googleUser == null || string.IsNullOrWhiteSpace(googleUser.Uid))
+                {
+                    if (Shell.Current != null)
+                        await Shell.Current.GoToAsync("//signin");
+                    return;
+                }
+                // Use Google user's UID
+                var diaries = await _diaryDatabase.GetDiariesByUserAsync(googleUser.Uid);
+
+                if (diaries == null)
+                {
+                    Console.WriteLine("GetDiariesByUserAsync returned null");
+                    diaries = new List<DiaryData>();
+                }
+
+                Console.WriteLine($"Loaded {diaries.Count} diaries");
+
+                // Store all diaries
+                _allDiaries = diaries.OrderByDescending(x => x.CreatedAtDateTime).ToList();
+
+                // Filter by selected date
+                FilterDiariesBySelectedDate();
+
+                // Update calendar to show if days have diaries
+                foreach (var day in CalendarDays)
+                {
+                    if (day.Date.HasValue)
+                    {
+                        day.HasDiary = _allDiaries.Any(d => d.CreatedAtDateTime.Date == day.Date.Value.Date);
+                    }
+                }
+
+                if (IsEmpty)
+                {
+                    Console.WriteLine($"No diaries found for Google user: {googleUser.Uid}");
+                }
                 return;
             }
 
             // Load all diaries
-            var diaries = await _diaryDatabase.GetDiariesByUserAsync(currentUser.Uid);
+            var diariesFirebase = await _diaryDatabase.GetDiariesByUserAsync(currentUser.Uid);
 
-            if (diaries == null)
+            if (diariesFirebase == null)
             {
                 Console.WriteLine("GetDiariesByUserAsync returned null");
-                diaries = new List<DiaryData>();
+                diariesFirebase = new List<DiaryData>();
             }
 
-            Console.WriteLine($"Loaded {diaries.Count} diaries");
+            Console.WriteLine($"Loaded {diariesFirebase.Count} diaries");
 
             // Store all diaries
-            _allDiaries = diaries.OrderByDescending(x => x.CreatedAtDateTime).ToList();
+            _allDiaries = diariesFirebase.OrderByDescending(x => x.CreatedAtDateTime).ToList();
 
             // Filter by selected date
             FilterDiariesBySelectedDate();

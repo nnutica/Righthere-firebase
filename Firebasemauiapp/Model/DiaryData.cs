@@ -68,8 +68,9 @@ namespace Firebasemauiapp.Model
                 {
                     "happiness" => "happiness.png",
                     "joy" => "happiness.png",
-                    "anger" => "anger.png",
+                    "angry" => "angry.png",
                     "sadness" => "sadness.png",
+                    "disgust" => "disgust.png",
                     "fear" => "fear.png",
                     "love" => "love.png",
                     "surprise" => "surprise.png",

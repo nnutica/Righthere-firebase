@@ -16,6 +16,9 @@ public class PostData
     public string Author { get; set; }
 
     [FirestoreProperty]
+    public string UserId { get; set; } = string.Empty;
+
+    [FirestoreProperty]
     public int Likes { get; set; }
 
     [FirestoreProperty]

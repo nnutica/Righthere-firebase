@@ -35,6 +35,9 @@ public partial class SignUpViewModel : ObservableObject
     private bool _isTermsAccepted;
 
     [ObservableProperty]
+    private bool _isSensitiveDataConsent;
+
+    [ObservableProperty]
     private bool _isPasswordVisible = false;
 
     [ObservableProperty]
@@ -80,7 +83,14 @@ public partial class SignUpViewModel : ObservableObject
             if (!IsTermsAccepted)
             {
                 if (Shell.Current != null)
-                    await Shell.Current.DisplayAlert("Terms", "Please agree to the Terms & Privacy Policy.", "OK");
+                    await Shell.Current.DisplayAlert("Terms", "Please agree to the Terms of Service and Medical Disclaimer.", "OK");
+                return;
+            }
+
+            if (!IsSensitiveDataConsent)
+            {
+                if (Shell.Current != null)
+                    await Shell.Current.DisplayAlert("Consent", "Please consent to the collection of your Sensitive Data for AI analysis.", "OK");
                 return;
             }
 
@@ -114,7 +124,9 @@ public partial class SignUpViewModel : ObservableObject
                     { "inventory", new List<string>() },
                     { "currentPlant", "empty.png" },
                     { "currentPot", "pot.png" },
-                    { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) }
+                    { "createdAt", Timestamp.FromDateTime(DateTime.UtcNow) },
+                    { "agree_TOS", IsTermsAccepted },
+                    { "agree_AIAnalysis", IsSensitiveDataConsent }
                 };
                 await userDoc.SetAsync(payload, SetOptions.Overwrite);
             }
@@ -139,6 +151,20 @@ public partial class SignUpViewModel : ObservableObject
     {
         if (Shell.Current != null)
             await Shell.Current.GoToAsync("//signin");
+    }
+
+    [RelayCommand]
+    private async Task NavigateTermsPage()
+    {
+        if (Shell.Current != null)
+            await Shell.Current.GoToAsync("//termpage");
+    }
+
+    [RelayCommand]
+    private async Task NavigateMedicalDisclaimer()
+    {
+        if (Shell.Current != null)
+            await Shell.Current.GoToAsync("//termpage");
     }
 
     [RelayCommand]
@@ -253,7 +279,14 @@ public partial class SignUpViewModel : ObservableObject
                             Console.WriteLine("[SignUpViewModel] User document created successfully");
                             
                             if (Shell.Current != null)
-                                await Shell.Current.DisplayAlert("Welcome!", "Your account has been created successfully.", "OK");
+                                await Shell.Current.DisplayAlert("Welcome!", "Please review and accept the Terms of Service.", "OK");
+                            
+                            // Navigate to TermPage with Google signup flag
+                            // Store a flag to indicate Google signup flow
+                            Preferences.Set("GOOGLE_SIGNUP_FLOW", true);
+                            
+                            if (Shell.Current != null)
+                                await Shell.Current.GoToAsync("//termpage", false);
                         }
                         else
                         {
@@ -263,15 +296,13 @@ public partial class SignUpViewModel : ObservableObject
                                 { "lastActiveAt", now },
                                 { "email", account.Email ?? "" }
                             });
+                            
+                            // Navigate to TermPage with Google signup flag
+                            Preferences.Set("GOOGLE_SIGNUP_FLOW", true);
+                            
+                            if (Shell.Current != null)
+                                await Shell.Current.GoToAsync("//termpage", false);
                         }
-
-                        Console.WriteLine("[SignUpViewModel] Loading user into UserService...");
-                        // ✅ Load user into UserService
-                        await UserService.Instance.LoadUserAsync();
-                        
-                        Console.WriteLine("[SignUpViewModel] Navigating to starter page...");
-                        if (Shell.Current != null)
-                            await Shell.Current.GoToAsync("//starter");
                     }
                     else
                     {

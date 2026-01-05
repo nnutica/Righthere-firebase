@@ -37,8 +37,8 @@
                     <!-- Back Button -->
                     <ImageButton Grid.Column="0"
                                  Source="back.png"
-                                 WidthRequest="50"
-                                 HeightRequest="50"
+                                 WidthRequest="60"
+                                 HeightRequest="60"
                                  HorizontalOptions="Start"
                                  VerticalOptions="Center"
                                  BackgroundColor="Transparent"

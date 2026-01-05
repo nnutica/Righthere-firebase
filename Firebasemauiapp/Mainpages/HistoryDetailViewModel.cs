@@ -39,6 +39,9 @@ public partial class HistoryDetailViewModel : ObservableObject
     [ObservableProperty]
     private ImageSource? _emotionImage;
 
+    [ObservableProperty]
+    private Color _moodBackgroundColor = Color.FromArgb("#FBC30A"); // Default Happiness color
+
     // Paging state for 4-step view
     [ObservableProperty]
     private int _pageIndex = 0; // 0: DiaryContent, 1: KeyThemes, 2: Reflection, 3: Suggestion
@@ -93,6 +96,9 @@ public partial class HistoryDetailViewModel : ObservableObject
         IntensityText = ""; // You can add intensity if needed
         MoodIntensityLabel = Mood;
         ImageUrl = diary.ImageUrl;
+
+        // Set background color based on mood
+        MoodBackgroundColor = GetMoodColor(Mood);
 
         SetEmotionImage(Mood);
         BuildKeywordsList(Keywords);
@@ -196,6 +202,20 @@ public partial class HistoryDetailViewModel : ObservableObject
             _ => "empty.png"
         };
         EmotionImage = ImageSource.FromFile(imageName);
+    }
+
+    private Color GetMoodColor(string moodName)
+    {
+        return moodName switch
+        {
+            "Happiness" => Color.FromArgb("#FBC30A"),
+            "Love" => Color.FromArgb("#FF60A0"),
+            "Angry" => Color.FromArgb("#E4000F"),
+            "Disgust" => Color.FromArgb("#1EA064"),
+            "Sadness" => Color.FromArgb("#2B638D"),
+            "Fear" => Color.FromArgb("#9E9AAB"),
+            _ => Color.FromArgb("#FBC30A")
+        };
     }
 
     private void PreviousPage()

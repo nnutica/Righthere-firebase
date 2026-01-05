@@ -12,13 +12,16 @@
               RowDefinitions="Auto,Auto,*,Auto"
               RowSpacing="16">
             <!-- Back Button -->
-            <ImageButton Source="back_green.png"
-                         WidthRequest="20"
-                         HeightRequest="20"
-                         HorizontalOptions="Start"
-                         VerticalOptions="Start"
-                         Margin="0,24,0,0"
-                         Clicked="OnBackClicked"/>
+            <Grid WidthRequest="32"
+                  HeightRequest="32"
+                  HorizontalOptions="Start"
+                  VerticalOptions="Start"
+                  Margin="0,24,0,0">
+                <ImageButton Source="back_green.png"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Clicked="OnBackClicked"/>
+            </Grid>
 
             <!-- Header -->
             <VerticalStackLayout Spacing="0"

@@ -21,8 +21,8 @@
         <!-- Back Button -->
         <ImageButton Source="back.png"
                      Grid.Row="0"
-                     WidthRequest="40"
-                     HeightRequest="40"
+                     WidthRequest="60"
+                     HeightRequest="60"
                      HorizontalOptions="Start"
                      VerticalOptions="Start"
                      Margin="10,24,0,0"
@@ -53,7 +53,7 @@
                            HeightRequest="240"
                            VerticalOptions="Start"
                            HorizontalOptions="Center"
-                           TranslationY="-30"
+                           TranslationY="-34"
                            ZIndex="1"/>
                     <!-- Pot (render second, in behind plant) -->
                     <Image Source="{Binding CurrentPot}"

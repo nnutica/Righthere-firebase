@@ -185,36 +185,92 @@
                         </Border>
                     </VerticalStackLayout>
 
-                    <!-- Terms & Privacy (FIX: กันโดนบีบ) -->
-                    <!-- Terms & Privacy -->
+                    <!-- Checkbox 1: Terms & Medical Disclaimer -->
                     <Grid ColumnDefinitions="28,*"
                           ColumnSpacing="10"
-                          Margin="0,6,0,0">
+                          Margin="0,6,0,0"
+                          RowSpacing="0">
 
                         <CheckBox Grid.Column="0"
+                                  Grid.Row="0"
                                   IsChecked="{Binding IsTermsAccepted}"
                                   Color="#8FB78F"
                                   HorizontalOptions="Start"
                                   VerticalOptions="Start"/>
 
-                        <FlexLayout Grid.Column="1"
-                                    Direction="Row"
-                                    Wrap="NoWrap"
-                                    AlignItems="Center">
+                        <VerticalStackLayout Grid.Column="1"
+                                             Spacing="0">
+                            <HorizontalStackLayout Spacing="2">
+                                <Label Text="I agree to the "
+                                       FontSize="13"
+                                       FontFamily="regularfont"
+                                       TextColor="#8FB78F"/>
+                                <Label Text="Terms of Service"
+                                       FontSize="13"
+                                       FontFamily="contextfont"
+                                       FontAttributes="Bold"
+                                       TextColor="#FEAA3A"
+                                       TextDecorations="Underline">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding NavigateTermsPageCommand}"/>
+                                    </Label.GestureRecognizers>
+                                </Label>
+                                <Label Text=" and acknowledge the "
+                                       FontSize="13"
+                                       FontFamily="regularfont"
+                                       TextColor="#8FB78F"/>
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="2">
+                                <Label Text="Medical Disclaimer"
+                                       FontSize="13"
+                                       FontFamily="contextfont"
+                                       FontAttributes="Bold"
+                                       TextColor="#FFB74D"
+                                       TextDecorations="Underline">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding NavigateMedicalDisclaimerCommand}"/>
+                                    </Label.GestureRecognizers>
+                                </Label>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Grid>
 
-                            <Label Text="I agree to the "
-                                   FontSize="14"
-                                   FontFamily="lightfont"
-                                   TextColor="#8FB78F"
-                                   LineBreakMode="NoWrap"/>
+                    <!-- Checkbox 2: Sensitive Data Consent -->
+                    <Grid ColumnDefinitions="28,*"
+                          ColumnSpacing="10"
+                          Margin="0,12,0,0">
 
-                            <Label Text="Terms &amp; Conditions and Privacy Policy"
-                                   FontSize="14"
-                                   FontFamily="contextfont"
-                                   TextColor="#8FB78F"
-                                   TextDecorations="Underline"
-                                   LineBreakMode="NoWrap"/>
-                        </FlexLayout>
+                        <CheckBox Grid.Column="0"
+                                  IsChecked="{Binding IsSensitiveDataConsent}"
+                                  Color="#8FB78F"
+                                  HorizontalOptions="Start"
+                                  VerticalOptions="Start"/>
+
+                        <VerticalStackLayout Grid.Column="1"
+                                             Spacing="0">
+                            <HorizontalStackLayout Spacing="2">
+                                <Label Text="I explicitly consent to the collection of my "
+                                       FontSize="13"
+                                       FontFamily="regularfont"
+                                       TextColor="#8FB78F"/>
+                                <Label Text="Sensitive Data"
+                                       FontSize="13"
+                                       FontFamily="contextfont"
+                                       FontAttributes="Bold"
+                                       TextColor="#FEAA3A"
+                                       TextDecorations="Underline">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding NavigateTermsPageCommand}"/>
+                                    </Label.GestureRecognizers>
+                                </Label>
+                            </HorizontalStackLayout>
+                            <HorizontalStackLayout Spacing="2">
+                                <Label Text=" for AI analysis"
+                                       FontSize="13"
+                                       FontFamily="regularfont"
+                                       TextColor="#8FB78F"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
                     </Grid>
 
 

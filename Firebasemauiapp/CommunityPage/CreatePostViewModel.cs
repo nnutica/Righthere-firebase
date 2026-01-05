@@ -85,6 +85,7 @@ public partial class CreatePostViewModel : ObservableObject
             {
                 Content = PostContent,
                 Author = userName,
+                UserId = uid,
                 PostItColor = SelectedColor.PostItImage,
                 TextColor = SelectedColor.TextColor,
                 Likes = 0,

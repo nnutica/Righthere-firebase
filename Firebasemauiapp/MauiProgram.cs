@@ -69,6 +69,9 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton(new FirebaseAuthClient(authConfig));
 
+		// Apply GitHub settings to Preferences
+		GitHubSettings.ApplyToPreferences();
+
 		// เพิ่ม Firestore services
 		builder.Services.AddSingleton<FirestoreService>();
 		builder.Services.AddSingleton<DiaryDatabase>();
@@ -79,6 +82,7 @@ public static class MauiProgram
 		// View Models
 		builder.Services.AddTransient<SignInViewModel>();
 		builder.Services.AddTransient<SignUpViewModel>();
+		builder.Services.AddTransient<TermPageViewModel>();
 		builder.Services.AddTransient<StarterViewModel>();
 		builder.Services.AddTransient<DiaryViewModel>();
 		builder.Services.AddTransient<MoodViewModel>();
@@ -95,6 +99,7 @@ public static class MauiProgram
 		// Views
 		builder.Services.AddTransient<SignInView>();
 		builder.Services.AddTransient<SignUpView>();
+		builder.Services.AddTransient<TermPage>();
 		builder.Services.AddTransient<StarterView>();
 		builder.Services.AddTransient<DiaryView>();
 		builder.Services.AddTransient<SelectMoodPage>();

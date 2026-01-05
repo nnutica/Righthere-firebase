@@ -19,13 +19,16 @@
         <Grid Grid.Row="0"
               ColumnDefinitions="Auto,*"
               Margin="16,0,16,20">
-            <ImageButton Grid.Column="0"
-                         Source="back_green.png"
-                         WidthRequest="40"
-                         HeightRequest="40"
-                         BackgroundColor="Transparent"
-                         Clicked="OnBackClicked"
-                         Margin="0,0,0,12"/>
+            <Grid Grid.Column="0"
+                  WidthRequest="24"
+                  HeightRequest="24"
+                  Padding="12">
+                <ImageButton Source="back_darkgreen.png"
+                             WidthRequest="20"
+                             HeightRequest="20"
+                             BackgroundColor="Transparent"
+                             Clicked="OnBackClicked"/>
+            </Grid>
             <Label Grid.Column="1"
                    Text="My Memory"
                    FontSize="28"

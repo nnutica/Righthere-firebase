@@ -297,8 +297,8 @@
                                                Grid.Column="1"
                                                Spacing="4"
                                                VerticalOptions="Center"
-                                               HorizontalOptions="Center"
-                                               Margin="0,4,0,0">
+                                               HorizontalOptions="Start"
+                                               Margin="8,4,0,0">
                             <Label Text="{Binding Score}"
                                    TextColor="#50A65D"
                                    FontSize="48"
@@ -306,7 +306,7 @@
                                    FontAttributes="Bold"/>
                             <Label Text="/10"
                                    TextColor="#50A65D"
-                                   FontSize="16"
+                                   FontSize="20"
                                    FontFamily="regularfont"
                                    VerticalOptions="End"/>
                         </HorizontalStackLayout>

@@ -399,7 +399,7 @@ public partial class DashboardViewModel : ObservableObject
 			{
 				(Progress: Color.FromArgb("#018440"), Track: Color.FromArgb("#DCEBDD")), // 1st
 				(Progress: Color.FromArgb("#8ACA74"), Track: Color.FromArgb("#EDF6EA")), // 2nd
-				(Progress: Color.FromArgb("#DCDEC6"), Track: Color.FromArgb("#F3F3EF"))  // 3rd
+				(Progress: Color.FromArgb("#C0DFB4"), Track: Color.FromArgb("#F3F3EF"))  // 3rd
 			};
 
 			// Add themes with their respective colors

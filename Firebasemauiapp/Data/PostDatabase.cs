@@ -212,19 +212,74 @@ public class PostDatabase
     // CHECK if user has posted today
     public async Task<bool> HasUserPostedTodayAsync(string userId)
     {
-        var db = await GetDatabaseAsync();
-        var todayStart = DateTime.UtcNow.Date;
-        var todayEnd = todayStart.AddDays(1).AddTicks(-1);
-        var todayStartTimestamp = Timestamp.FromDateTime(todayStart);
-        var todayEndTimestamp = Timestamp.FromDateTime(todayEnd);
+        try
+        {
+            Console.WriteLine($"[PostDatabase.HasUserPostedTodayAsync] Called with userId: '{userId}'");
+            
+            if (string.IsNullOrEmpty(userId))
+            {
+                Console.WriteLine("[PostDatabase] User ID is empty, returning false");
+                return false;
+            }
 
-        var query = db.Collection(_collectionName)
-            .WhereEqualTo(nameof(PostData.Author), userId)
-            .WhereGreaterThanOrEqualTo(nameof(PostData.CreatedAt), todayStartTimestamp)
-            .WhereLessThanOrEqualTo(nameof(PostData.CreatedAt), todayEndTimestamp)
-            .Limit(1);
-
-        var snapshot = await query.GetSnapshotAsync();
-        return snapshot.Count > 0;
+            var db = await GetDatabaseAsync();
+            
+            // Calculate today's date range in UTC
+            var today = DateTime.UtcNow.Date;
+            var todayStart = today;
+            var todayEnd = today.AddDays(1).AddMilliseconds(-1);
+            
+            var todayStartTimestamp = Timestamp.FromDateTime(todayStart);
+            var todayEndTimestamp = Timestamp.FromDateTime(todayEnd);
+            
+            Console.WriteLine($"[PostDatabase] UTC Date range - Start: {todayStart:yyyy-MM-dd HH:mm:ss}, End: {todayEnd:yyyy-MM-dd HH:mm:ss.fff}");
+            Console.WriteLine($"[PostDatabase] Querying for posts where UserId='{userId}'");
+            
+            // First fetch ALL posts from today (without userId filter) to debug
+            var allTodayQuery = db.Collection(_collectionName)
+                .WhereGreaterThanOrEqualTo(nameof(PostData.CreatedAt), todayStartTimestamp)
+                .WhereLessThanOrEqualTo(nameof(PostData.CreatedAt), todayEndTimestamp);
+            
+            var allTodaySnapshot = await allTodayQuery.GetSnapshotAsync();
+            Console.WriteLine($"[PostDatabase] Total posts from today: {allTodaySnapshot.Count}");
+            
+            // Then filter by UserId in memory to ensure match
+            var userPosts = new List<PostData>();
+            foreach (var doc in allTodaySnapshot.Documents)
+            {
+                if (doc.Exists)
+                {
+                    try
+                    {
+                        var post = doc.ConvertTo<PostData>();
+                        if (post != null)
+                        {
+                            Console.WriteLine($"[PostDatabase] Post doc={doc.Id}, UserId='{post.UserId}', Author='{post.Author}', CreatedAt={post.CreatedAt:yyyy-MM-dd HH:mm:ss UTC}");
+                            
+                            if (post.UserId == userId)
+                            {
+                                userPosts.Add(post);
+                                Console.WriteLine($"[PostDatabase] ✓ MATCH: Found user post: {post.Content?.Substring(0, Math.Min(50, post.Content?.Length ?? 0))}");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[PostDatabase] Error converting post doc {doc.Id}: {ex.Message}");
+                    }
+                }
+            }
+            
+            bool hasPosted = userPosts.Count > 0;
+            Console.WriteLine($"[PostDatabase] Final result: User '{userId}' has posted today: {hasPosted} (found {userPosts.Count} matching posts)");
+            
+            return hasPosted;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[PostDatabase] ERROR in HasUserPostedTodayAsync for user '{userId}': {ex.Message}");
+            Console.WriteLine($"[PostDatabase] Stack trace: {ex.StackTrace}");
+            return false;
+        }
     }
 }

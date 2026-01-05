@@ -21,13 +21,12 @@
 
                 <!-- Row 1: Header Text -->
                 <Label Grid.Row="1"
-                       Text="Where does&#10;this feeling&#10;sit for you&#10;right now?"
-                       FontFamily="AppFont"
-                       FontSize="36"
-                       FontAttributes="Bold"
+                       Text="How deep is &#10;this emotion?"
+                       FontFamily="contextfont"
+                       FontSize="44"
                        TextColor="White"
                        LineHeight="1.0"
-                       Margin="0,0,0,12"/>
+                       Margin="10,0,0,12"/>
 
                 <!-- Row 2: Mood Icon -->
                 <Image Grid.Row="2"

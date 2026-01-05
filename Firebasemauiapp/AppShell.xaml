@@ -29,6 +29,10 @@
         ContentTemplate="{DataTemplate pages:SignUpView}"
         Route="signup"/>
     <ShellContent
+        Title="Terms of Service"
+        ContentTemplate="{DataTemplate pages:TermPage}"
+        Route="termpage"/>
+    <ShellContent
         Title="Summary"
         ContentTemplate="{DataTemplate main:SummaryView}"
         Route="summary"/>
