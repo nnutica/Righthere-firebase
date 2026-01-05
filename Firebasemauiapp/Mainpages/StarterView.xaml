@@ -21,65 +21,92 @@
               RowDefinitions="Auto,Auto,*">
 
         <!-- ===== HEADER ===== -->
-        <VerticalStackLayout Grid.Row="0"
-                             Spacing="6">
+        <Grid Grid.Row="0" 
+              ColumnDefinitions="Auto, *"
+              RowDefinitions="Auto"
+              Margin="0,0,0,10">
 
-            <Grid ColumnDefinitions="*,Auto">
-                <!-- Logo -->
-                <Image Source="logo.png"
-                       HeightRequest="80"
+            <!-- Left: Plant & Pot -->
+            <Grid Grid.Column="0"
+                  WidthRequest="120"
+                  HeightRequest="140"
+                  VerticalOptions="End">
+                 <!-- Pot (Behind) -->
+                <Image Source="{Binding CurrentPotImage}"
+                       Aspect="AspectFit"
+                       VerticalOptions="End"
+                       HorizontalOptions="Center"
                        WidthRequest="100"
-                       Margin="10,5,0,0"
-                       HorizontalOptions="Start"/>
-                
-                <!-- Settings Button -->
-                <ImageButton Grid.Column="1"
-                        Source="settings.png"
-                        BackgroundColor="Transparent"
-                        HeightRequest="20"
-                        WidthRequest="20"
-                        VerticalOptions="Center"
-                        Margin="0,0,10,0"
-                        Command="{Binding OpenSettingsCommand}"/>
+                       HeightRequest="100"
+                       Margin="0,0,0,0"/>
+                 <!-- Plant (Front) -->
+                 <Image Source="{Binding CurrentPlantImage}"
+                        Aspect="AspectFit"
+                        VerticalOptions="End"
+                        HorizontalOptions="Center"
+                        WidthRequest="100"
+                        HeightRequest="100"
+                        Margin="0,0,0,40"/>
             </Grid>
 
+            <!-- Right: Text & Settings -->
+            <Grid Grid.Column="1" 
+                  RowDefinitions="Auto, *"
+                  Padding="10,0,0,0">
+                  
+                  <!-- Settings Icon (Top Right) -->
+                  <ImageButton Grid.Row="0"
+                             Source="settings.png"
+                             BackgroundColor="Transparent"
+                             HeightRequest="24"
+                             WidthRequest="24"
+                             HorizontalOptions="End"
+                             VerticalOptions="Start"
+                             Command="{Binding OpenSettingsCommand}"
+                             Margin="0,0,0,0"/>
 
-            <!-- Welcome Text -->
-            <Label Text="Welcome Home,"
-                   FontSize="32"
-                   FontAttributes="Bold"
-                   FontFamily="contextfont"
-                   TextColor="#8FAF8B"
-                   LineHeight="1.0"/>
-            <Label Text="{Binding WelcomeMessage}"
-                   FontSize="32"
-                   FontAttributes="Bold"
-                   FontFamily="contextfont"
-                   TextColor="#8FAF8B"
-                   LineHeight="1.0"
-                   Margin="0,-8,0,0"/>
-
-            <!-- Subtitle -->
-            <Label Text="Your safe space is ready."
-                   FontSize="16"
-                   FontFamily="regularfont"
-                   TextColor="#A9BEA6"/>
-
-        </VerticalStackLayout>
+                  <!-- Welcome Text (Middle) -->
+                  <VerticalStackLayout Grid.Row="1" 
+                                       VerticalOptions="Center" 
+                                       Spacing="2">
+                        <Label Text="Welcome Home,"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               FontFamily="contextfont"
+                               TextColor="#8FAF8B"/>
+                        <Label Text="{Binding WelcomeMessage, StringFormat='{0}.'}"
+                               FontSize="26"
+                               FontAttributes="Bold"
+                               FontFamily="contextfont"
+                               TextColor="#8FAF8B"
+                               LineBreakMode="TailTruncation"/>
+                        <Label Text="Your safe space is ready."
+                               FontSize="14"
+                               FontFamily="regularfont"
+                               TextColor="#A9BEA6"
+                               Margin="0,4,0,0"/>
+                  </VerticalStackLayout>
+            </Grid>
+        </Grid>
 
         <ScrollView Grid.Row="1"
                     Grid.RowSpan="2">
             <VerticalStackLayout Spacing="10">
                 <!-- ===== DIARY BUTTON (FULL WIDTH) ===== -->
-                <ImageButton
-                    Source="btn_diary.png"
-                    Aspect="AspectFill"
-                    CornerRadius="28"
-                    HeightRequest="140"
-                    Padding="0"
-                    Margin="0,4,0,0"
-                    BackgroundColor="Transparent"
-                    Command="{Binding GoDiaryCommand}"/>
+                <Border StrokeShape="RoundRectangle 20"
+                        StrokeThickness="0"
+                        HeightRequest="140"
+                        Margin="0,4,0,0"
+                        BackgroundColor="Transparent">
+                    <Grid>
+                        <Image Source="btn_diary.png"
+                               Aspect="AspectFill"
+                               HorizontalOptions="Fill"
+                               VerticalOptions="Fill"/>
+                        <Button BackgroundColor="Transparent"
+                                Command="{Binding GoDiaryCommand}"/>
+                    </Grid>
+                </Border>
 
                 <!-- ===== GRID BUTTONS ===== -->
                 <Grid
@@ -89,52 +116,74 @@
                     RowDefinitions="140,70,140">
 
                     <!-- Quests (left top) -->
-                    <ImageButton Grid.Row="0"
-                                 Grid.Column="0"
-                                 Source="btn_quest.png"
-                                 Aspect="AspectFill"
-                                 CornerRadius="28"
-                                 HeightRequest="140"
-                                 Padding="0"
-                                 VerticalOptions="Start"
-                                 BackgroundColor="Transparent"
-                                 Command="{Binding GoQuestCommand}"/>
+                    <Border Grid.Row="0"
+                            Grid.Column="0"
+                            StrokeShape="RoundRectangle 20"
+                            StrokeThickness="0"
+                            HeightRequest="140"
+                            BackgroundColor="Transparent">
+                        <Grid>
+                            <Image Source="btn_quest.png"
+                                   Aspect="AspectFill"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="Fill"/>
+                            <Button BackgroundColor="Transparent"
+                                    Command="{Binding GoQuestCommand}"/>
+                        </Grid>
+                    </Border>
 
                     <!-- Store (Right bottom) -->
-                    <ImageButton Grid.Row="2"
-                                 Grid.Column="1"
-                                 Source="btn_store.png"
-                                 Aspect="AspectFill"
-                                 CornerRadius="28"
-                                 HeightRequest="140"
-                                 Padding="0"
-                                 BackgroundColor="Transparent"
-                                 Command="{Binding GoStoreCommand}"/>
+                    <Border Grid.Row="2"
+                            Grid.Column="1"
+                            StrokeShape="RoundRectangle 20"
+                            StrokeThickness="0"
+                            HeightRequest="140"
+                            BackgroundColor="Transparent">
+                        <Grid>
+                            <Image Source="btn_store.png"
+                                   Aspect="AspectFill"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="Fill"/>
+                            <Button BackgroundColor="Transparent"
+                                    Command="{Binding GoStoreCommand}"/>
+                        </Grid>
+                    </Border>
 
                     <!-- Mind Dashboard (right top-middle) -->
-                    <ImageButton Grid.Row="0"
-                                 Grid.Column="1"
-                                 Grid.RowSpan="2"
-                                 Source="btn_dashboard.png"
-                                 Aspect="AspectFill"
-                                 CornerRadius="28"
-                                 HeightRequest="210"
-                                 Padding="0"
-                                 VerticalOptions="Start"
-                                 BackgroundColor="Transparent"
-                                 Command="{Binding GoDashboardCommand}"/>
+                    <Border Grid.Row="0"
+                            Grid.Column="1"
+                            Grid.RowSpan="2"
+                            StrokeShape="RoundRectangle 20"
+                            StrokeThickness="0"
+                            HeightRequest="210"
+                            BackgroundColor="Transparent">
+                        <Grid>
+                            <Image Source="btn_dashboard.png"
+                                   Aspect="AspectFill"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="Fill"/>
+                            <Button BackgroundColor="Transparent"
+                                    Command="{Binding GoDashboardCommand}"/>
+                        </Grid>
+                    </Border>
 
                     <!-- Kindness Forest (left middle-bottom) -->
-                    <ImageButton Grid.Row="1"
-                                 Grid.Column="0"
-                                 Grid.RowSpan="2"
-                                 Source="btn_forest.png"
-                                 Aspect="AspectFill"
-                                 CornerRadius="28"
-                                 HeightRequest="210"
-                                 Padding="0"
-                                 BackgroundColor="Transparent"
-                                 Command="{Binding GoForestCommand}"/>
+                    <Border Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.RowSpan="2"
+                            StrokeShape="RoundRectangle 20"
+                            StrokeThickness="0"
+                            HeightRequest="210"
+                            BackgroundColor="Transparent">
+                        <Grid>
+                            <Image Source="btn_forest.png"
+                                   Aspect="AspectFill"
+                                   HorizontalOptions="Fill"
+                                   VerticalOptions="Fill"/>
+                            <Button BackgroundColor="Transparent"
+                                    Command="{Binding GoForestCommand}"/>
+                        </Grid>
+                    </Border>
                 </Grid>
             </VerticalStackLayout>
         </ScrollView>

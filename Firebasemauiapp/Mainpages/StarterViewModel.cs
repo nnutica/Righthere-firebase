@@ -98,17 +98,34 @@ public partial class StarterViewModel : ObservableObject
             // Sync from UserService
             Username = UserService.Instance.Username;
             System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded username via UserService: {Username}");
+
+            // Load Plant and Pot
+             if (!string.IsNullOrEmpty(UserService.Instance.Uid))
+            {
+                var (plant, pot) = await _firestoreService.GetPlantAndPotAsync(UserService.Instance.Uid);
+                CurrentPlantImage = plant;
+                CurrentPotImage = pot;
+                System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Loaded plant: {plant}, pot: {pot}");
+            }
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Error loading username: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"[StarterViewModel] Error loading user data: {ex.Message}");
             Username = "Friend";
+            CurrentPlantImage = "plant.png"; // Default fallback
+            CurrentPotImage = "pot.png"; // Default fallback
         }
         finally
         {
             IsLoading = false;
         }
     }
+
+    [ObservableProperty]
+    private string _currentPlantImage = "plant.png"; // Default
+
+    [ObservableProperty]
+    private string _currentPotImage = "pot.png"; // Default
 
     [RelayCommand]
     private async Task GoForest()
@@ -179,6 +196,14 @@ public partial class StarterViewModel : ObservableObject
         // Force refresh capability
         await UserService.Instance.RefreshAsync();
         Username = UserService.Instance.Username;
+        
+        // Also refresh plant/pot
+        if (!string.IsNullOrEmpty(UserService.Instance.Uid))
+        {
+            var (plant, pot) = await _firestoreService.GetPlantAndPotAsync(UserService.Instance.Uid);
+            CurrentPlantImage = plant;
+            CurrentPotImage = pot;
+        }
     }
 
     [RelayCommand]
