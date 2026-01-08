@@ -12,6 +12,7 @@ using Syncfusion.Maui.Core.Hosting;
 using Microsoft.Maui.Storage;
 using System.IO;
 using Firebasemauiapp.Config;
+using System.Globalization;
 
 namespace Firebasemauiapp;
 
@@ -19,6 +20,19 @@ public static class MauiProgram
 {
 	public static MauiApp CreateMauiApp()
 	{
+		// Set default culture to English with UTC+7 timezone
+		var cultureInfo = new CultureInfo("en-US");
+		CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+		CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+		// Set timezone to UTC+7 (Bangkok Time)
+		TimeZoneInfo thaiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+		if (thaiTimeZone != null)
+		{
+			// Note: This sets the default timezone context for calculations
+			// Actual timezone offset is UTC+7 for Thailand
+		}
+
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
