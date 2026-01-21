@@ -63,7 +63,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="google-services.json" />
+	  <None Remove="..\google-services.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -85,7 +85,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <GoogleServicesJson Include="google-services.json" />
+	  <GoogleServicesJson Include="..\google-services.json" />
 	</ItemGroup>
 
 	<ItemGroup>
