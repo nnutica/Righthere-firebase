@@ -12,7 +12,7 @@ namespace Firebasemauiapp.Mainpages;
 
 public partial class DashboardViewModel : ObservableObject
 {
-    public event EventHandler? DataLoaded;
+	public event EventHandler? DataLoaded;
 	// Chart property and related logic removed
 	private readonly DiaryDatabase _diaryDatabase;
 	private readonly FirebaseAuthClient _authClient;
@@ -90,7 +90,7 @@ public partial class DashboardViewModel : ObservableObject
 		private string _day = "";
 
 		[ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(ScoreText))]
+		[NotifyPropertyChangedFor(nameof(ScoreText))]
 		private double _score;
 
 		public string ScoreText => Score > 0 ? Score.ToString("F0") : "";
@@ -101,10 +101,10 @@ public partial class DashboardViewModel : ObservableObject
 		public string ThemeName { get; set; } = "";
 		public int Count { get; set; }
 		public double Percentage { get; set; }
-        public double PercentageDecimal => Percentage / 100.0;
+		public double PercentageDecimal => Percentage / 100.0;
 		public string PercentageText => $"{Percentage:0.##}%";
 		public Color BackgroundColor { get; set; } = Colors.LightGray;
-        public Color TrackColor { get; set; } = Colors.Gray;
+		public Color TrackColor { get; set; } = Colors.Gray;
 	}
 
 	// For Syncfusion chart binding
@@ -232,18 +232,18 @@ public partial class DashboardViewModel : ObservableObject
 
 			// Calculate week range
 			var today = DateTime.Today;
-			var currentDayOfWeek = (int)today.DayOfWeek; 
+			var currentDayOfWeek = (int)today.DayOfWeek;
 			var currentWeekStart = today.AddDays(-currentDayOfWeek);
 			var weekStart = currentWeekStart.AddDays(WeekOffset * 7);
 			var weekEnd = weekStart.AddDays(6);
-            
-            Console.WriteLine($"[LoadSentimentScores] Filter Range: {weekStart:d} - {weekEnd:d}");
+
+			Console.WriteLine($"[LoadSentimentScores] Filter Range: {weekStart:d} - {weekEnd:d}");
 
 			var weekDiaries = diaries
 				.Where(d => d.CreatedAtDateTime.Date >= weekStart && d.CreatedAtDateTime.Date <= weekEnd)
 				.ToList();
-            
-            Console.WriteLine($"[LoadSentimentScores] Found {weekDiaries.Count} items.");
+
+			Console.WriteLine($"[LoadSentimentScores] Found {weekDiaries.Count} items.");
 
 			CalculateMostFrequentMood(weekDiaries);
 
@@ -265,7 +265,7 @@ public partial class DashboardViewModel : ObservableObject
 				WeeklyPulseData[i].Day = targetDate.ToString("ddd");
 				WeeklyPulseData[i].Score = diary?.SentimentScore ?? 0;
 			}
-            OnPropertyChanged(nameof(WeeklyPulseData));
+			OnPropertyChanged(nameof(WeeklyPulseData));
 
 			WeekDateRange = $"{weekStart:ddd, dd} - {weekEnd:ddd, dd}";
 
@@ -299,7 +299,7 @@ public partial class DashboardViewModel : ObservableObject
 		{
 			MostFrequentMoodImage = "empty.png";
 			MostFrequentMoodName = "No Data";
-			MoodBackgroundColor = Color.FromArgb("#F8FAED");
+			MoodBackgroundColor = Color.FromArgb("#10367D");
 			return;
 		}
 
@@ -323,27 +323,27 @@ public partial class DashboardViewModel : ObservableObject
 				"sadness" => "sadness.png",
 				"fear" => "fear.png",
 				"love" => "love.png",
-				"surprise" => "surprise.png",
+				"disgust" => "disgust .png",
 				_ => "empty.png"
 			};
 
 			// Set background color based on mood
 			MoodBackgroundColor = mood switch
 			{
-				"happiness" => Color.FromArgb("#FBC30A"), 
-				"angry" => Color.FromArgb("#E4000F"), 
-				"sadness" => Color.FromArgb("#2B638D"), 
-				"fear" => Color.FromArgb("#9E9AAB"), 
-				"love" => Color.FromArgb("#FF60A0"), 
-				"disgust" => Color.FromArgb("#1EA064"), 
-				_ => Color.FromArgb("#F8FAED")
+				"happiness" => Color.FromArgb("#FBC30A"),
+				"anger" => Color.FromArgb("#E4000F"),
+				"sadness" => Color.FromArgb("#2B638D"),
+				"fear" => Color.FromArgb("#9E9AAB"),
+				"love" => Color.FromArgb("#FF60A0"),
+				"disgust" => Color.FromArgb("#1EA064"),
+				_ => Color.FromArgb("#10367D")
 			};
 		}
 		else
 		{
 			MostFrequentMoodImage = "empty.png";
 			MostFrequentMoodName = "No Data";
-			MoodBackgroundColor = Color.FromArgb("#F8FAED");
+			MoodBackgroundColor = Color.FromArgb("#10367D");
 		}
 	}
 
@@ -403,22 +403,22 @@ public partial class DashboardViewModel : ObservableObject
 			};
 
 			// Add themes with their respective colors
-            int currentRank = 0;
+			int currentRank = 0;
 
 			for (int i = 0; i < top3Keywords.Count; i++)
 			{
 				var keyword = top3Keywords[i];
-                
-                // If count decreases compared to previous, increment rank
-                if (i > 0 && keyword.Value < top3Keywords[i-1].Value)
-                {
-                    currentRank++;
-                }
 
-                int colorIndex = currentRank;
-                if (colorIndex >= rankColors.Length) colorIndex = rankColors.Length - 1;
+				// If count decreases compared to previous, increment rank
+				if (i > 0 && keyword.Value < top3Keywords[i - 1].Value)
+				{
+					currentRank++;
+				}
 
-                var colors = rankColors[colorIndex];
+				int colorIndex = currentRank;
+				if (colorIndex >= rankColors.Length) colorIndex = rankColors.Length - 1;
+
+				var colors = rankColors[colorIndex];
 
 				ResonatingThemes.Add(new ThemeData
 				{
@@ -426,7 +426,7 @@ public partial class DashboardViewModel : ObservableObject
 					Count = keyword.Value,
 					Percentage = (keyword.Value / (double)total) * 100,
 					BackgroundColor = colors.Progress,
-                    TrackColor = colors.Track
+					TrackColor = colors.Track
 				});
 			}
 		}
@@ -445,7 +445,7 @@ public partial class DashboardViewModel : ObservableObject
 	private async Task PreviousWeek()
 	{
 		WeekOffset--;
-        await LoadSentimentScores();
+		await LoadSentimentScores();
 	}
 
 	private async Task NextWeek()
@@ -453,7 +453,7 @@ public partial class DashboardViewModel : ObservableObject
 		if (WeekOffset < 0)
 		{
 			WeekOffset++;
-            await LoadSentimentScores();
+			await LoadSentimentScores();
 		}
 	}
 }

@@ -8,8 +8,9 @@
              Shell.NavBarIsVisible="False">
     <ContentPage.Resources>
         <conv:MoodNameToImageConverter x:Key="MoodNameToImageConverter"/>
+        <conv:BoolToToggleImageConverter x:Key="BoolToToggleImageConverter"/>
     </ContentPage.Resources>
-    
+
     <Grid>
         <!-- ✅ Main Content -->
         <Grid RowDefinitions="Auto,*"
@@ -22,7 +23,7 @@
                   RowDefinitions="Auto,Auto"
                   ColumnDefinitions="Auto,*"
                   RowSpacing="8">
-                
+
                 <!-- Back Button -->
                 <ImageButton Source="back.png"
                              Clicked="OnBackClicked"
@@ -31,7 +32,7 @@
                              HeightRequest="60"
                              Grid.Row="0"
                              Grid.Column="0"/>
-                
+
                 <!-- Date with Calendar Icon -->
                 <HorizontalStackLayout Grid.Row="1"
                                        Grid.Column="0"
@@ -80,6 +81,7 @@
                             PlaceholderColor="#CCFFFFFF"
                             Text="{Binding DiaryContent}"
                             FontSize="16"
+                            FontFamily="regularfont"
                             TextColor="White"
                             VerticalOptions="FillAndExpand"
                             AutoSize="TextChanges"/>
@@ -95,7 +97,7 @@
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="16"/>
                     </Border.StrokeShape>
-                    
+
                     <Grid>
                         <!-- Show image if uploaded -->
                         <Image x:Name="UploadedImage"
@@ -107,7 +109,7 @@
                                                         Rect="0,0,1000,200"/>
                             </Image.Clip>
                         </Image>
-                        
+
                         <!-- Upload button placeholder (when no image) -->
                         <VerticalStackLayout x:Name="UploadButtonContainer"
                                              VerticalOptions="Center"
@@ -115,8 +117,6 @@
                                              Spacing="8"
                                              IsVisible="{Binding IsUploadButtonVisible}">
                             <Border BackgroundColor="Transparent"
-                                    Stroke="#FEAA3A"
-                                    StrokeThickness="2"
                                     WidthRequest="60"
                                     HeightRequest="60"
                                     HorizontalOptions="Center">
@@ -126,9 +126,9 @@
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding UploadImageCommand}"/>
                                 </Border.GestureRecognizers>
-                                <Image Source="imgicon.png"
-                                       WidthRequest="32"
-                                       HeightRequest="32"/>
+                                <Image Source="img_upload.png"
+                                       WidthRequest="60"
+                                       HeightRequest="60"/>
                             </Border>
                         </VerticalStackLayout>
                     </Grid>
@@ -160,7 +160,7 @@
                             <TapGestureRecognizer Command="{Binding ToggleImageSectionCommand}"/>
                         </Border.GestureRecognizers>
 
-                        <Image Source="imgicon.png"
+                        <Image Source="{Binding IsImageSectionVisible, Converter={StaticResource BoolToToggleImageConverter}}"
                                WidthRequest="28"
                                HeightRequest="28"/>
                     </Border>

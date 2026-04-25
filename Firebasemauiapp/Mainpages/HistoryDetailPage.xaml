@@ -448,7 +448,7 @@
             <Grid HorizontalOptions="Start"
                   VerticalOptions="Center"
                   Margin="0,0,0,20">
-                <Border BackgroundColor="#CCFFFFFF"
+                <Border BackgroundColor="#FFFFFF"
                         HeightRequest="390"
                         HorizontalOptions="Start"
                         VerticalOptions="Center"
@@ -471,7 +471,7 @@
                                TextColor="#FEAA3A"/>
                         <Label Text="{Binding Suggestion}"
                                FontFamily="regularfont"
-                               FontSize="14"
+                               FontSize="16"
                                TextColor="#8FB78F"
                                LineHeight="1.2"/>
                     </VerticalStackLayout>
