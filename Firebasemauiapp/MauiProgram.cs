@@ -11,7 +11,6 @@ using CommunityToolkit.Maui;
 using Syncfusion.Maui.Core.Hosting;
 using Microsoft.Maui.Storage;
 using System.IO;
-using Firebasemauiapp.Config;
 using System.Globalization;
 
 namespace Firebasemauiapp;
@@ -56,7 +55,7 @@ public static class MauiProgram
 
 				Microsoft.Maui.Handlers.EditorHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
 				{
-					handler.PlatformView.BackgroundTintList = 
+					handler.PlatformView.BackgroundTintList =
 						global::Android.Content.Res.ColorStateList.ValueOf(global::Android.Graphics.Color.Transparent);
 				});
 #endif
@@ -82,9 +81,6 @@ public static class MauiProgram
 		};
 
 		builder.Services.AddSingleton(new FirebaseAuthClient(authConfig));
-
-		// Apply GitHub settings to Preferences
-		GitHubSettings.ApplyToPreferences();
 
 		// เพิ่ม Firestore services
 		builder.Services.AddSingleton<FirestoreService>();
